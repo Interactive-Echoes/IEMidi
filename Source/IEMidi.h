@@ -30,8 +30,6 @@ public:
 
 public:
     IERenderer& GetRenderer() const { return *m_Renderer; }
-
-public:
     IEMidiProcessor& GetMidiProcessor() const { return *m_MidiProcessor; }
     IEMidiProfileManager& GetMidiProfileManager() const { return *m_MidiProfileManager; }
     IEMidiEditor& GetMidiEditor() const { return *m_MidiEditor; }
@@ -40,6 +38,7 @@ public:
     IEAppState GetAppState() const;
     void SetAppState(IEAppState AppState);
 
+    void PostRendererInitialized();
     void OnPreFrameRender();
     void OnPostFrameRender();
 
@@ -49,13 +48,11 @@ private:
     void DrawSideBar();
 
 private:
-    static void OnAppWindowClosed(uint32_t WindowID, void* UserData);
-    static void OnAppWindowRestored(uint32_t WindowID, void* UserData);
+    void OnAppWindowClosed(uint32_t WindowID);
+    void OnAppWindowRestored(uint32_t WindowID);
 
 private:
     std::shared_ptr<IERenderer> m_Renderer;
-
-private:
     std::shared_ptr<IEMidiProcessor> m_MidiProcessor;
     std::unique_ptr<IEMidiProfileManager> m_MidiProfileManager;
     std::unique_ptr<IEMidiEditor> m_MidiEditor;

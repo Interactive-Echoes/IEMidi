@@ -11,10 +11,7 @@ IEMidi::IEMidi() :
     m_MidiProcessor(std::make_shared<IEMidiProcessor>()),
     m_MidiProfileManager(std::make_unique<IEMidiProfileManager>()),
     m_MidiEditor(std::make_unique<IEMidiEditor>(m_MidiProcessor))
-{
-    m_Renderer->AddOnWindowCloseCallbackFunc(OnAppWindowClosed, this);
-    m_Renderer->AddOnWindowRestoreCallbackFunc(OnAppWindowRestored, this);
-}
+{}
 
 IEAppState IEMidi::GetAppState() const
 {
@@ -25,6 +22,16 @@ void IEMidi::SetAppState(IEAppState AppState)
 {
     m_AppState = AppState;
     GetRenderer().PostEmptyEvent();
+}
+
+void IEMidi::PostRendererInitialized()
+{
+    if (m_Renderer)
+    {
+        const uint32_t AppWindowID = m_Renderer->GetAppWindowID();
+        m_Renderer->AddOnWindowCloseCallbackFunc(AppWindowID, std::bind(&IEMidi::OnAppWindowClosed, this, std::placeholders::_1));
+        m_Renderer->AddOnWindowRestoreCallbackFunc(AppWindowID, std::bind(&IEMidi::OnAppWindowRestored, this, std::placeholders::_1));
+    }
 }
 
 void IEMidi::OnPreFrameRender()
@@ -102,8 +109,16 @@ void IEMidi::DrawMidiDeviceSelectionWindow()
                     {
                         MidiProcessor.SendMidiOutputMessage(MidiMessage);
                     }
-                    
-                    GetRenderer().CloseAppWindow();
+
+                    IERenderer& Renderer = GetRenderer();
+                    if (Renderer.SupportsRunInBackground())
+                    {
+                        Renderer.CloseAppWindow();
+                    }
+                    else
+                    {
+                        Renderer.MinimizeAppWindow();
+                    }
                 }
             }
 
@@ -360,19 +375,13 @@ void IEMidi::DrawSideBar()
     ImGui::PopStyleColor();
 }
 
-void IEMidi::OnAppWindowClosed(uint32_t WindowID, void* UserData)
+void IEMidi::OnAppWindowClosed(uint32_t WindowID)
 {
-    if (IEMidi* const IEMidiApp = reinterpret_cast<IEMidi*>(UserData))
-    {
-        IEMidiApp->SetAppState(IEAppState::Background);
-    }
+    SetAppState(IEAppState::Background);
 }
 
-void IEMidi::OnAppWindowRestored(uint32_t WindowID, void* UserData)
+void IEMidi::OnAppWindowRestored(uint32_t WindowID)
 {
-    if (IEMidi* const IEMidiApp = reinterpret_cast<IEMidi*>(UserData))
-    {
-        IEMidiApp->GetMidiProcessor().DeactivateMidiDeviceProfile();
-        IEMidiApp->SetAppState(IEAppState::MidiDeviceSelection);
-    }
+    GetMidiProcessor().DeactivateMidiDeviceProfile();
+    SetAppState(IEAppState::MidiDeviceSelection);
 }

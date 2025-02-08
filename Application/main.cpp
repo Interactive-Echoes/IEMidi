@@ -10,8 +10,9 @@ int main()
     IEMidiApp.SetAppState(IEAppState::Loading);
 
     IERenderer& Renderer = IEMidiApp.GetRenderer();
-    if (Renderer.Initialize("IEMidi"))
+    if (Renderer.Initialize("IEMidi", true))
     {
+        IEMidiApp.PostRendererInitialized();
         if (ImGuiContext* const CreatedImGuiContext = ImGui::CreateContext())
         {
             ImGuiIO& IO = ImGui::GetIO();
