@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/mozahzah/IECore/raw/master/Resources/IE-Brand-Kit/IE-Logo-Alt-NoBg.png?">
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/mozahzah/IECore/raw/master/Resources/IE-Brand-Kit/IE-Logo-NoBg.png?">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Interactive-Echoes/IECore/raw/master/Resources/IE-Brand-Kit/IE-Logo-Alt-NoBg.png?">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Interactive-Echoes/IECore/raw/master/Resources/IE-Brand-Kit/IE-Logo-NoBg.png?">
   <img alt="IELogo" width="128">
   </picture>
 </div>
@@ -11,7 +11,7 @@
 **IEMidi** is a cross-platform MIDI editor that leverages RtMidi for its MIDI message handling and ImGui for its rendering backend.  
 The editor is designed to map any MIDI message to various actions such as volume control, mute, console commands or opening files. It also includes a MIDI logger for monitoring MIDI messages in real-time.
 <div align="center">
-<img src="Resources/Demos/IEMidi-Demo-Editor.png" alt="Demo" width="1920"> 
+<img src="https://github.com/Interactive-Echoes/IEMidi/raw/master/Resources/Demos/IEMidi-Demo-Editor.png" alt="Demo" width="1920"> 
 </div>
 
 ## Features
