@@ -92,7 +92,9 @@ void IEMidi::DrawMidiDeviceSelectionWindow()
 
             ImGui::PushFont(ImGui::IEStyle::GetSubtitleFont());
             ImGui::SetSmartCursorPosYRelative(0.2f);
+            ImGui::PushTextWrapPos();
             ImGui::CenteredText("%s", MidiDeviceName.c_str());
+            ImGui::PopTextWrapPos();
             ImGui::PopFont();
             ImGui::Separator();
 
