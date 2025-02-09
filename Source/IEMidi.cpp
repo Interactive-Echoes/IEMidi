@@ -120,6 +120,7 @@ void IEMidi::DrawMidiDeviceSelectionWindow()
                     else
                     {
                         Renderer.MinimizeAppWindow();
+                        Renderer.NotifyOSRunInBackground();
                     }
                 }
             }
