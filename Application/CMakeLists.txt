@@ -34,7 +34,6 @@ install(TARGETS ${PROJECT_NAME}
 
 include(InstallRequiredSystemLibraries)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/Resources" DESTINATION ".")
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/Requirements" DESTINATION ".")
 
 get_target_property(DEPENDENCIES ${PROJECT_NAME} LINK_LIBRARIES)
 foreach(DEPENDENCY ${DEPENDENCIES})
@@ -66,13 +65,15 @@ set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 set(CPACK_VERBATIM_VARIABLES TRUE)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_CHECKSUM SHA256)
+set(IE_LOGO_ICON_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/IECore/Resources/IE-Brand-Kit/IE-Logo-NoBg.png")
+set(CPACK_PACKAGE_ICON "${IE_LOGO_ICON_PATH}")
 
 if(WIN32)
-  set(IE_LOGO_ICON_PATH "${CMAKE_SOURCE_DIR}\\ThirdParty\\IECore\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico")
   set(CPACK_GENERATOR NSIS64)
-  set(CPACK_PACKAGE_ICON "${IE_LOGO_ICON_PATH}")
-  set(CPACK_NSIS_MUI_ICON "${IE_LOGO_ICON_PATH}")
-  set(CPACK_NSIS_MUI_UNIICON "${IE_LOGO_ICON_PATH}")
+  set(IE_LOGO_ICON_PATH_ICO "${CMAKE_SOURCE_DIR}\\ThirdParty\\IECore\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico")
+  set(CPACK_NSIS_MUI_ICON "${IE_LOGO_ICON_PATH_ICO}")
+  set(CPACK_NSIS_MUI_UNIICON "${IE_LOGO_ICON_PATH_ICO}")
   set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL TRUE)
   set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${CPACK_PACKAGE_NAME}.exe")
   set(CPACK_NSIS_DEFINES "RequestExecutionLevel admin")
@@ -89,10 +90,7 @@ if(WIN32)
     goto post_vulkanRT
     
     vulkanRT_not_found:
-    MessageBox MB_YESNO \"VulkanRT must be installed for IEMidi to work, do you want to install VulkanRT now?\" IDYES install_vulkanRT IDNO post_vulkanRT
-
-    install_vulkanRT:
-    ExecWait \"\$INSTDIR\\Requirements\\VulkanRT-1.3.290.0-Installer.exe\"
+    MessageBox MB_YESNO \"VulkanRT must be installed for IEMidi to work, please install VulkanRT.\" IDNO post_vulkanRT
 
     post_vulkanRT:
 
@@ -137,6 +135,13 @@ elseif(APPLE)
 
   install(TARGETS "${PROJECT_NAME}" DESTINATION "." COMPONENT Bundle)
   set(CPACK_COMPONENTS_ALL Bundle)
+elseif(LINUX)
+  set(CPACK_GENERATOR "RPM")
+  set(CPACK_RPM_PACKAGE_GROUP "Applications/Audio")
+  set(CPACK_RPM_PACKAGE_LICENSE "GPL-2.0-only")
+  set(CPACK_RPM_PACKAGE_AUTOREQ TRUE)
+  INSTALL(FILES "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.desktop" DESTINATION share/applications)
+  INSTALL(FILES "${IE_LOGO_ICON_PATH}" DESTINATION share/pixmaps)
 endif()
 
 include(CPack)

@@ -3,7 +3,7 @@
 # Author: mozahzah
 
 cmake_minimum_required(VERSION 3.20)
-project(IEMidi VERSION 1.2.0 LANGUAGES CXX)
+project(IEMidi VERSION 1.2.0 LANGUAGES CXX HOMEPAGE_URL "https://github.com/Interactive-Echoes/IEMidi")
 
 # BEGIN misc function definitions
 

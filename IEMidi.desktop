@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=IEMidi
+Comment=Midi Map Editor Tool
+Exec=/usr/bin/IEMidi
+Icon=IE-Logo-NoBg
+Terminal=false
+Type=Application
+StartupNotify=false
+StartupWMClass=IEMidi
+Categories=Utility;Application;Audio;

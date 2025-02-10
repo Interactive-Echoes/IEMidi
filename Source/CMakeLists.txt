@@ -28,7 +28,6 @@ install(TARGETS LIEMidi
 
 include(InstallRequiredSystemLibraries)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/Resources" DESTINATION ".")
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/Requirements" DESTINATION ".")
 
 get_target_property(DEPENDENCIES LIEMidi LINK_LIBRARIES)
 foreach(DEPENDENCY ${DEPENDENCIES})
