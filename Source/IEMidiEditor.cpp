@@ -182,7 +182,7 @@ void IEMidiEditor::DrawMidiDevicePropertyEditor(IEMidiDeviceProperty& MidiDevice
         if (m_MidiDeviceProcessor)
         {
             ImGui::GetWindowDrawList()->ChannelsSetCurrent(1);
-            if (ImGui::Selectable("Record Midi", MidiDeviceProperty.bIsRecording, ImGuiSelectableFlags_AllowOverlap, ImVec2(0.f, 0.f), true))
+            if (ImGui::Selectable("Record Midi", MidiDeviceProperty.bIsRecording, ImGuiSelectableFlags_AllowOverlap, ImVec2(0.f, 0.f)))
             {
                 MidiDeviceProperty.bIsRecording = true;
             }

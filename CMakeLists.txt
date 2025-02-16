@@ -29,6 +29,7 @@ begin_section_message("Working environment")
 message("System name: ${CMAKE_SYSTEM_NAME}")
 message("System version: ${CMAKE_SYSTEM_VERSION}")
 message("System processor: ${CMAKE_SYSTEM_PROCESSOR}")
+include(GNUInstallDirs)
 
 message("\n------------------------------------------------------------")
 message("Configuring ThirdParty Libraries")
