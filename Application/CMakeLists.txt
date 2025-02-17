@@ -13,17 +13,10 @@ elseif(LINUX)
   add_executable(${PROJECT_NAME} "./main.cpp")
 endif()
 
+message("Linking IEMidi App with LIEMidi")
 target_link_libraries(${PROJECT_NAME} PUBLIC LIEMidi)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/Resources"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Resources" "${CMAKE_BINARY_DIR}/Resources")
-
-set_target_properties(${PROJECT_NAME} PROPERTIES 
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
+message("Setting up install")
 message("Installation prefix: ${CMAKE_INSTALL_PREFIX}")
 install(TARGETS ${PROJECT_NAME} 
   BUNDLE DESTINATION .
@@ -31,28 +24,8 @@ install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
 include(InstallRequiredSystemLibraries)
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/Resources" DESTINATION ".")
-
-get_target_property(DEPENDENCIES ${PROJECT_NAME} LINK_LIBRARIES)
-foreach(DEPENDENCY ${DEPENDENCIES})
-  if(TARGET ${DEPENDENCY})
-    message("Setting up dependency: ${DEPENDENCY}")
-
-    set_target_properties(${DEPENDENCY} PROPERTIES 
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-    install(TARGETS ${DEPENDENCY}
-        EXPORT "${PROJECT_NAME}Targets"
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-  endif()
-endforeach()
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/Resources" DESTINATION "${CMAKE_INSTALL_PREFIX}/IE")
 
 begin_section_message("Setting packaging settings for IEMidi")
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
