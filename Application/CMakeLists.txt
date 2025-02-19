@@ -77,36 +77,6 @@ elseif(APPLE)
   set(CPACK_BUNDLE_NAME ${PROJECT_NAME})
   set(CPACK_BUNDLE_PLIST "${CMAKE_SOURCE_DIR}/info.plist")
   set(CPACK_BUNDLE_ICON "${CMAKE_SOURCE_DIR}/ThirdParty/IECore/Resources/IE-Brand-Kit/IE-Logo-NoBg-512.icns")
-  set(BUNDLE_PATH "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.app")
-
-  set_target_properties(${PROJECT_NAME} PROPERTIES
-    INSTALL_RPATH "@executable_path/../Frameworks"
-    BUILD_RPATH "@executable_path/../Frameworks"
-    MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
-    MACOSX_BUNDLE_GUI_IDENTIFIER "com.interactive-echoes.iemidi"
-    MACOSX_BUNDLE_ICON_FILE "IE-Brand-Kit/IE-Logo-NoBg-512.icns")
-
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/Resources" DESTINATION "${BUNDLE_PATH}/Contents" COMPONENT Bundle)
-
-  install(CODE "
-        include(BundleUtilities)
-        fixup_bundle(\"${BUNDLE_PATH}\" \"\" \"\")
-
-         # Now sign the bundle after fixup_bundle
-        execute_process(
-            COMMAND codesign --force --sign \"m\" --deep -s \"-\" $<TARGET_BUNDLE_DIR:${PROJECT_NAME}>
-            RESULT_VARIABLE _sign_result
-            OUTPUT_VARIABLE _sign_output
-            ERROR_VARIABLE _sign_error)
-        
-        # Check if the signing was successful
-        if(NOT _sign_result EQUAL 0)
-            message(FATAL_ERROR \"Code signing failed: ${_sign_error}\")
-        endif()
-
-        " COMPONENT Bundle)
-
-  install(TARGETS "${PROJECT_NAME}" DESTINATION "." COMPONENT Bundle)
   set(CPACK_COMPONENTS_ALL Bundle)
 elseif(LINUX)
   install(FILES "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.desktop" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications")
