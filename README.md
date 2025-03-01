@@ -14,6 +14,32 @@ The editor is designed to map any MIDI message to various actions such as volume
 <img src="https://github.com/Interactive-Echoes/IEMidi/raw/master/Resources/Demos/IEMidi-Demo-Editor.png" alt="Demo" width="1920"> 
 </div>
 
+## Installation
+
+## Windows 
+
+Download the win installer from:
+```sh
+https://interactive-echoes.github.io/Downloads/Win/IEMidi/x86_64/IEMidi-1.2.0-win64.zip
+```
+
+## Linux
+
+### RPM-Based Distributions (RHEL/CentOS/Fedora)
+
+```sh
+sudo wget -O /etc/yum.repos.d/IE.repo https://interactive-echoes.github.io/Downloads/Linux/RPM/IE.repo
+sudo dnf install iemidi
+```
+
+### DEB-Based Distributions (Debian/Ubuntu)
+
+```sh
+sudo wget -O /etc/apt/trusted.gpg.d/ie-public.gpg https://interactive-echoes.github.io/Downloads/ie-public.gpg
+sudo wget -O /etc/apt/sources.list.d/IE.list https://interactive-echoes.github.io/Downloads/Linux/DEB/IE.list
+sudo apt install iemidi
+```
+
 ## Features
 - **MIDI Map Editor**: Map MIDI messages to various actions like volume, mute, console commands, or opening files.
 - **MIDI Logger**: Monitor and log MIDI messages in real-time for debugging and analysis.
