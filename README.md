@@ -16,23 +16,23 @@ The editor is designed to map any MIDI message to various actions such as volume
 
 ## Installation
 
-## Windows 
+### Windows 
 
 Download the win installer from:
 ```sh
 https://interactive-echoes.github.io/Downloads/Win/IEMidi/x86_64/IEMidi-1.2.0-win64.zip
 ```
 
-## Linux
+### Linux
 
-### RPM-Based Distributions (RHEL/CentOS/Fedora)
+#### RPM-Based Distributions (RHEL/CentOS/Fedora)
 
 ```sh
 sudo wget -O /etc/yum.repos.d/IE.repo https://interactive-echoes.github.io/Downloads/Linux/RPM/IE.repo
 sudo dnf install iemidi
 ```
 
-### DEB-Based Distributions (Debian/Ubuntu)
+#### DEB-Based Distributions (Debian/Ubuntu)
 
 ```sh
 sudo wget -O /etc/apt/trusted.gpg.d/ie-public.gpg https://interactive-echoes.github.io/Downloads/ie-public.gpg
