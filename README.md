@@ -22,6 +22,7 @@ Download the win installer from:
 ```sh
 https://interactive-echoes.github.io/Downloads/Win/IEMidi/x86_64/IEMidi-1.2.0-win64.zip
 ```
+To ensure the integrity and authenticity of the IEMidi installer, you can run the Verify.bat file provided by the package.
 
 ### Linux
 
