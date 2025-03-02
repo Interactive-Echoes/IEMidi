@@ -37,6 +37,7 @@ sudo dnf install iemidi
 ```sh
 sudo wget -O /etc/apt/trusted.gpg.d/ie-public.gpg https://interactive-echoes.github.io/Downloads/ie-public.gpg
 sudo wget -O /etc/apt/sources.list.d/IE.list https://interactive-echoes.github.io/Downloads/Linux/DEB/IE.list
+sudo apt update
 sudo apt install iemidi
 ```
 
