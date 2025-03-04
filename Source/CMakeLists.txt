@@ -4,10 +4,19 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-file(GLOB IEMidi_SOURCE_FILES "./*.cpp")
+set(IEMidi_SOURCE_FILES 
+  "./IEMidi.cpp"
+  "./IEMidiEditor.cpp"
+  "./IEMidiEditor.h"
+  "./IEMidiProcessor.cpp"
+  "./IEMidiProcessor.h"
+  "./IEMidiProfileManager.cpp"
+  "./IEMidiProfileManager.h"
+  "./IEMiditypes.h"
+)
 add_library(LIEMidi STATIC ${IEMidi_SOURCE_FILES})
 target_include_directories(LIEMidi PUBLIC "./")
-file(GLOB IEMidi_HEADER_FILES "./*.h")
+set(IEMidi_HEADER_FILES "./IEMidi.h")
 set_property(TARGET LIEMidi PROPERTY PUBLIC_HEADER ${IEMidi_HEADER_FILES})
 
 message("Linking LIEMidi with required libraries")
