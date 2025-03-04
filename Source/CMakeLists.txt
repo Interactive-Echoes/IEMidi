@@ -12,7 +12,7 @@ set(IEMidi_SOURCE_FILES
   "./IEMidiProcessor.h"
   "./IEMidiProfileManager.cpp"
   "./IEMidiProfileManager.h"
-  "./IEMiditypes.h"
+  "./IEMidiTypes.h"
 )
 add_library(LIEMidi STATIC ${IEMidi_SOURCE_FILES})
 target_include_directories(LIEMidi PUBLIC "./")
