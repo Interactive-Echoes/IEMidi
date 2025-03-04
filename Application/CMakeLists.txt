@@ -68,8 +68,8 @@ if(WIN32)
 
     post_vulkanRT:
 
-    CreateShortCut \"$DESKTOP\\${CPACK_PACKAGE_NAME}.lnk\" \"$INSTDIR\\bin\\${CPACK_PACKAGE_NAME}.exe\" \"\" \"$INSTDIR\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico\" 0
-    CreateShortCut \"$SMPROGRAMS\\${CPACK_PACKAGE_NAME}.lnk\" \"$INSTDIR\\bin\\${CPACK_PACKAGE_NAME}.exe\" \"\" \"$INSTDIR\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico\" 0")
+    CreateShortCut \"$DESKTOP\\${CPACK_PACKAGE_NAME}.lnk\" \"$INSTDIR\\bin\\${CPACK_PACKAGE_NAME}.exe\" \"\" \"$INSTDIR\\IE\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico\" 0
+    CreateShortCut \"$SMPROGRAMS\\${CPACK_PACKAGE_NAME}.lnk\" \"$INSTDIR\\bin\\${CPACK_PACKAGE_NAME}.exe\" \"\" \"$INSTDIR\\IE\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico\" 0")
   set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
     Delete \"$DESKTOP\\${CPACK_PACKAGE_NAME}.lnk\"
     Delete \"$SMPROGRAMS\\${CPACK_PACKAGE_NAME}.lnk\"")
