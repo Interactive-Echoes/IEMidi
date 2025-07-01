@@ -30,13 +30,19 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     m_MainWindow->resize(960, 720);
     m_MainWindow->setAutoFillBackground(true);
     DrawMidiDeviceSelectionWindow();
-    //QPalette MainWindowPalette;
-    //MainWindowPalette.setColor(QPalette::Window, IEStyle::Colors::DefaultWindowBgColor);
-    //m_MainWindow->setPalette(MainWindowPalette);
-    // IEMidiMessageEditorWidget* Widget = new IEMidiMessageEditorWidget();
-    // m_MainWindow->layout()->addWidget(Widget);
 
-    
+    // Not thread safe
+    // GetMidiProcessor().AddOnMidiCallback([this](double TimeStamp, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage)
+    //     {
+    //         for (const auto& Widget : m_MidiDependentWidgets)
+    //         {
+    //             if (Widget)
+    //             {
+    //                 Widget->update();
+    //                 Widget->repaint();
+    //             }
+    //         }
+    //     });
 }
 
 IEAppState IEMidiApp::GetAppState() const
@@ -120,7 +126,7 @@ void IEMidiApp::DrawMidiDeviceSelectionWindow()
                                         MidiDeviceEntryLayout->addWidget(MidiDeviceEditButton);
                                         MidiDeviceEditButton->connect(MidiDeviceEditButton, &QPushButton::pressed, [this, MidiDeviceName]()
                                             {
-                                                this->OnMidiDeviceEditButtonPressed(MidiDeviceName);
+                                                OnMidiDeviceEditButtonPressed(MidiDeviceName);
                                             });
                                     }
 
@@ -130,7 +136,7 @@ void IEMidiApp::DrawMidiDeviceSelectionWindow()
                                         MidiDeviceEntryLayout->addWidget(MidiDeviceActivateButton);
                                         MidiDeviceActivateButton->connect(MidiDeviceActivateButton, &QPushButton::pressed, [this, MidiDeviceName]()
                                             {
-                                                this->OnMidiDeviceActivateButtonPressed(MidiDeviceName);
+                                                OnMidiDeviceActivateButtonPressed(MidiDeviceName);
                                             });
                                     }
                                 }
@@ -235,7 +241,7 @@ void IEMidiApp::DrawSelectedMidiDeviceEditorWindow()
 
                                     MidiDeviceInfoTableWidget->setItem(0, 0, CreateCenteredTableWidgetItem("Name:", true));
                                     MidiDeviceInfoTableWidget->setItem(0, 1, CreateCenteredTableWidgetItem(
-                                        ActiveMidiDeviceProfile.Name.c_str()));
+                                        ActiveMidiDeviceProfile.GetName().c_str()));
 
                                     MidiDeviceInfoTableWidget->setItem(1, 0, CreateCenteredTableWidgetItem("Input Port:", true));
                                     MidiDeviceInfoTableWidget->setItem(1, 1, CreateCenteredTableWidgetItem(
@@ -336,7 +342,7 @@ void IEMidiApp::DrawSelectedMidiDeviceEditorWindow()
                     SelectedMidiDeviceEditorLayout->setContentsMargins(60, 0, 60, 0);
 
                     const IEMidiProcessor& MidiProcessor = GetMidiProcessor();
-                    if (QLabel* const SelectedMidiDeviceLabel = new QLabel(MidiProcessor.GetActiveMidiDeviceProfile().Name.c_str(), SelectedMidiDeviceEditorFrameWidget))
+                    if (QLabel* const SelectedMidiDeviceLabel = new QLabel(MidiProcessor.GetActiveMidiDeviceProfile().GetName().c_str(), SelectedMidiDeviceEditorFrameWidget))
                     {
                         SelectedMidiDeviceLabel->setStyleSheet("font-size: 22px; font-weight: bold;");
                         SelectedMidiDeviceEditorLayout->addWidget(SelectedMidiDeviceLabel, 1);
@@ -354,6 +360,14 @@ void IEMidiApp::DrawSelectedMidiDeviceEditorWindow()
                             FooterLayout->addStretch(1);
                             if (QPushButton* const SaveProfileButton = new QPushButton("Save", Footer))
                             {
+                                SaveProfileButton->connect(SaveProfileButton, &QPushButton::pressed, [this]()
+                                    {
+                                        const IEMidiProcessor& MidiProcessor = GetMidiProcessor();
+                                        if (MidiProcessor.HasActiveMidiDeviceProfile())
+                                        {
+                                            GetMidiProfileManager().SaveProfile(MidiProcessor.GetActiveMidiDeviceProfile());
+                                        }
+                                    });
                                 FooterLayout->addWidget(SaveProfileButton);
                             }
                         }
@@ -365,43 +379,6 @@ void IEMidiApp::DrawSelectedMidiDeviceEditorWindow()
         }
     }
     m_MainWindow->show();
-
-    //m_MainWindow->update();
-    // static constexpr uint32_t WindowFlags = ImGuiWindowFlags_NoResize |
-    //                                         ImGuiWindowFlags_NoMove |
-    //                                         ImGuiWindowFlags_NoCollapse |
-    //                                         ImGuiWindowFlags_NoTitleBar;
-
-    // ImGuiViewport& MainViewport = *ImGui::GetMainViewport();
-    // const float WindowWidth = MainViewport.Size.x * 0.75f - m_WindowOffsetAbs * 0.5f;
-    // const float WindowHeight = MainViewport.Size.y - m_WindowOffsetAbs;
-    // const float WindowPosX = MainViewport.Pos.x + (MainViewport.Size.x - WindowWidth) - m_WindowOffsetAbs * 0.5f;
-    // const float WindowPosY = MainViewport.Pos.y + ((MainViewport.Size.y - WindowHeight) * 0.5f);
-    // ImGui::SetNextWindowSize(ImVec2(WindowWidth, WindowHeight), ImGuiCond_Always);
-    // ImGui::SetNextWindowPos(ImVec2(WindowPosX, WindowPosY));
-
-    // IEMidiProcessor& MidiProcessor = GetMidiProcessor();
-    // IEMidiDeviceProfile& ActiveMidiDeviceProfile = MidiProcessor.GetActiveMidiDeviceProfile();
-
-    // const std::string WindowLabel = std::format("Editing {}", ActiveMidiDeviceProfile.Name);
-
-    // ImGui::Begin(WindowLabel.c_str(), nullptr, WindowFlags);
-
-    // m_MidiEditor->DrawMidiDeviceProfileEditor(ActiveMidiDeviceProfile);
-
-    // static const char SaveAndClose[] = "Save & Close";
-    // const ImVec2 CloseSelectableSize = ImGui::CalcTextSize(SaveAndClose);
-    // ImGui::SetSmartCursorPos(ImVec2(WindowWidth - CloseSelectableSize.x - 40.0f, WindowHeight - CloseSelectableSize.y - 40.0f));
-    // if (ImGui::IEStyle::GreenButton(SaveAndClose))
-    // {
-    //     if (GetMidiProfileManager().SaveProfile(ActiveMidiDeviceProfile))
-    //     {
-    //         MidiProcessor.DeactivateMidiDeviceProfile();
-    //         SetAppState(IEAppState::MidiDeviceSelection);
-    //     }
-    // }
-
-    // ImGui::End();
 }
 
 void IEMidiApp::DrawSelectedMidiDeviceInputEditorFrameWidget(QWidget* Parent)
@@ -428,12 +405,11 @@ void IEMidiApp::DrawSelectedMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                     for (std::vector<IEMidiDeviceInputProperty>::iterator It = ActiveMidiDeviceProfile.InputProperties.begin(); 
                         It != ActiveMidiDeviceProfile.InputProperties.end(); It++)
                     {
-                        const IEMidiDeviceInputProperty& MidiDeviceOutputProperty = *It;
+                        IEMidiDeviceInputProperty& MidiDeviceOutputProperty = *It;
                         if (IEMidiInputEditorWidget* const MidiInputEditorWidget = new IEMidiInputEditorWidget(MidiDeviceOutputProperty, MidiInputEditorFrameWidget))
                         {
                             MidiInputEditorFrameLayout->addWidget(MidiInputEditorWidget);
-
-                            MidiInputEditorWidget->connect(MidiInputEditorWidget, &IEMidiInputEditorWidget::OnDelete, [this, It]()
+                            MidiInputEditorWidget->connect(MidiInputEditorWidget, &IEMidiInputEditorWidget::OnDeleted, [this, It]()
                                 {
                                     IEMidiProcessor& MidiProcessor = GetMidiProcessor();
                                     if (MidiProcessor.HasActiveMidiDeviceProfile())
@@ -442,6 +418,7 @@ void IEMidiApp::DrawSelectedMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                                         ActiveMidiDeviceProfile.InputProperties.erase(It);
                                     }
                                 });
+                            m_MidiDependentWidgets.emplace_back(MidiInputEditorWidget);
                         }
                     }
                 }
@@ -458,12 +435,13 @@ void IEMidiApp::DrawSelectedMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                             if (MidiProcessor.HasActiveMidiDeviceProfile())
                             {
                                 IEMidiDeviceProfile& ActiveMidiDeviceProfile = MidiProcessor.GetActiveMidiDeviceProfile();
-                                ActiveMidiDeviceProfile.InputProperties.emplace_back(ActiveMidiDeviceProfile.Name);
+                                IEMidiDeviceInputProperty& NewMidiDeviceInputProperty = ActiveMidiDeviceProfile.InputProperties.emplace_back(ActiveMidiDeviceProfile.GetName());
 
                                 if (IEMidiInputEditorWidget* const MidiInputEditorWidget = new IEMidiInputEditorWidget(
-                                    IEMidiDeviceInputProperty(ActiveMidiDeviceProfile.Name), MidiInputEditorFrameWidget))
+                                    NewMidiDeviceInputProperty, MidiInputEditorFrameWidget))
                                 {
                                     MidiInputEditorFrameLayout->insertWidget(MidiInputEditorFrameLayout->count() - 2, MidiInputEditorWidget);
+                                    m_MidiDependentWidgets.emplace_back(MidiInputEditorWidget);
                                 }
                             }
                         });
@@ -499,12 +477,15 @@ void IEMidiApp::DrawSelectedMidiDeviceOutputEditorFrameWidget(QWidget* Parent)
                     for (std::vector<IEMidiDeviceOutputProperty>::iterator It = ActiveMidiDeviceProfile.OutputProperties.begin(); 
                         It != ActiveMidiDeviceProfile.OutputProperties.end(); It++)
                     {
-                        const IEMidiDeviceOutputProperty& MidiDeviceOutputProperty = *It;
+                        IEMidiDeviceOutputProperty& MidiDeviceOutputProperty = *It;
                         if (IEMidiOutputEditorWidget* const MidiOutputEditorWidget = new IEMidiOutputEditorWidget(MidiDeviceOutputProperty, MidiOutputEditorFrameWidget))
                         {
                             MidiOutputEditorFrameLayout->addWidget(MidiOutputEditorWidget);
-
-                            MidiOutputEditorWidget->connect(MidiOutputEditorWidget, &IEMidiOutputEditorWidget::OnDelete, [this, It]()
+                            MidiOutputEditorWidget->connect(MidiOutputEditorWidget, &IEMidiOutputEditorWidget::OnMidiMessageSendRequested, [this, It]()
+                                {
+                                    GetMidiProcessor().SendMidiOutputMessage(It->MidiMessage);
+                                });
+                            MidiOutputEditorWidget->connect(MidiOutputEditorWidget, &IEMidiOutputEditorWidget::OnDeleted, [this, It]()
                                 {
                                     IEMidiProcessor& MidiProcessor = GetMidiProcessor();
                                     if (MidiProcessor.HasActiveMidiDeviceProfile())
@@ -530,10 +511,10 @@ void IEMidiApp::DrawSelectedMidiDeviceOutputEditorFrameWidget(QWidget* Parent)
                             if (MidiProcessor.HasActiveMidiDeviceProfile())
                             {
                                 IEMidiDeviceProfile& ActiveMidiDeviceProfile = MidiProcessor.GetActiveMidiDeviceProfile();
-                                ActiveMidiDeviceProfile.OutputProperties.emplace_back(ActiveMidiDeviceProfile.Name);
+                                IEMidiDeviceOutputProperty& NewMidiDeviceOutputProperty = ActiveMidiDeviceProfile.OutputProperties.emplace_back(ActiveMidiDeviceProfile.GetName());
 
                                 if (IEMidiOutputEditorWidget* const MidiOutputEditorWidget = new IEMidiOutputEditorWidget(
-                                    IEMidiDeviceOutputProperty(ActiveMidiDeviceProfile.Name), MidiOutputEditorFrameWidget))
+                                    NewMidiDeviceOutputProperty, MidiOutputEditorFrameWidget))
                                 {
                                     MidiOutputEditorFrameLayout->insertWidget(MidiOutputEditorFrameLayout->count() - 2, MidiOutputEditorWidget);
                                 }

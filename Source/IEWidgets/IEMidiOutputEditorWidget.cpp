@@ -9,29 +9,46 @@
 
 #include "IEMidiMessageEditorWidget.h"
 
-IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(const IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent) : QWidget(Parent) 
+IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent) :
+    QWidget(Parent),
+    m_MidiDeviceOutputProperty(MidiDeviceOutputProperty)
 {
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
     Layout->setSpacing(10);
 
-    m_SendButton = new QPushButton(this);
-    m_SendButton->setText("Send");
-    Layout->addWidget(m_SendButton);
+    m_SendButtonWidget = new QPushButton(this);
+    m_SendButtonWidget->setText("Send");
+    Layout->addWidget(m_SendButtonWidget);
 
-    m_MidiMessageEditor = new IEMidiMessageEditorWidget(MidiDeviceOutputProperty.MidiMessage, this);
-    Layout->addWidget(m_MidiMessageEditor);
+    m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(m_MidiDeviceOutputProperty.MidiMessage, this);
+    m_MidiMessageEditorWidget->SetValues(m_MidiDeviceOutputProperty.MidiMessage);
+    m_MidiMessageEditorWidget->connect(m_MidiMessageEditorWidget, &IEMidiMessageEditorWidget::OnMidiMessageCommitted, this, &IEMidiOutputEditorWidget::OnMidiMessageCommitted);
+    Layout->addWidget(m_MidiMessageEditorWidget);
 
     if (QPushButton* const DeleteButton = new QPushButton(this))
     {
         DeleteButton->setText("Delete");
         DeleteButton->connect(DeleteButton, &QPushButton::pressed, [this]()
             {
-                emit OnDelete();
-                this->deleteLater();
+                emit OnDeleted();
+                deleteLater();
             });
 
         Layout->addStretch(1);
         Layout->addWidget(DeleteButton);
     }
+}
+
+void IEMidiOutputEditorWidget::OnMidiMessageCommitted()
+{
+    if (m_MidiMessageEditorWidget)
+    {
+        m_MidiDeviceOutputProperty.MidiMessage = m_MidiMessageEditorWidget->GetValues();
+    }
+}
+
+void IEMidiOutputEditorWidget::OnSendButtonPressed()
+{
+    emit OnMidiMessageSendRequested();
 }

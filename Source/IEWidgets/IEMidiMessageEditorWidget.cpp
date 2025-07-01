@@ -19,27 +19,55 @@ IEMidiMessageEditorWidget::IEMidiMessageEditorWidget(const std::array<uint8_t, M
 
     for (int i = 0; i < MIDI_MESSAGE_BYTE_COUNT; i++)
     {
-        m_SpinBoxes[i] = new QSpinBox(this);
-        m_SpinBoxes[i]->setRange(0, 255);
-        m_SpinBoxes[i]->setValue(MidiMessage[i]);
-        Layout->addWidget(m_SpinBoxes[i]);
+        m_SpinBoxWidgets[i] = new QSpinBox(this);
+        if (i == 0)
+        {
+            m_SpinBoxWidgets[i]->setRange(0, 255);
+        }
+        else
+        {
+            m_SpinBoxWidgets[i]->setRange(0, 127);
+        }
+        m_SpinBoxWidgets[i]->setValue(MidiMessage[i]);
+        m_SpinBoxWidgets[i]->connect(m_SpinBoxWidgets[i], &QSpinBox::editingFinished, this, &IEMidiMessageEditorWidget::OnMidiByteCommitted);
+        Layout->addWidget(m_SpinBoxWidgets[i]);
     }
 }
 
-IEMidiMessageEditorWidget::IEMidiMessageEditorWidget(QWidget* Parent) : IEMidiMessageEditorWidget({0, 0, 0}, Parent)
-{}
-
 std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> IEMidiMessageEditorWidget::GetValues() const
 {
-    return  {   static_cast<uint8_t>(m_SpinBoxes[0]->value()),
-                static_cast<uint8_t>(m_SpinBoxes[1]->value()),
-                static_cast<uint8_t>(m_SpinBoxes[2]->value()) };
+    return  {   static_cast<uint8_t>(m_SpinBoxWidgets[0]->value()),
+                static_cast<uint8_t>(m_SpinBoxWidgets[1]->value()),
+                static_cast<uint8_t>(m_SpinBoxWidgets[2]->value()) };
 }
 
 void IEMidiMessageEditorWidget::SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
 {
-    for (int i = 0; i < m_SpinBoxes.size(); i++)
+    for (int i = 0; i < m_SpinBoxWidgets.size(); i++)
     {
-        m_SpinBoxes[i]->setValue(MidiMessage[i]);
+        m_SpinBoxWidgets[i]->setValue(MidiMessage[i]);
     }
+}
+
+void IEMidiMessageEditorWidget::ShowByteWidget(size_t Index)
+{
+    IEAssert(Index >= 0 && Index < MIDI_MESSAGE_BYTE_COUNT);
+    if (m_SpinBoxWidgets[Index])
+    {
+        m_SpinBoxWidgets[Index]->show();
+    }
+}
+
+void IEMidiMessageEditorWidget::HideByteWidget(size_t Index)
+{
+    IEAssert(Index >= 0 && Index < MIDI_MESSAGE_BYTE_COUNT);
+    if (m_SpinBoxWidgets[Index])
+    {
+        m_SpinBoxWidgets[Index]->hide();
+    }
+}
+
+void IEMidiMessageEditorWidget::OnMidiByteCommitted()
+{
+    emit OnMidiMessageCommitted();
 }

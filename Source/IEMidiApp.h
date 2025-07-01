@@ -6,10 +6,13 @@
 
 #include "QApplication.h"
 #include "QMainWindow.h"
+#include "QPointer.h"
 
 #include "IEMidiProcessor.h"
 #include "IEMidiProfileManager.h"
 #include "IEMidiTypes.h"
+
+class QWidget;
 
 enum class IEAppState : uint16_t
 {
@@ -45,7 +48,7 @@ private:
 
     void ResetMainWindowCentralWidget();
 
-private:
+private Q_SLOTS:
     void OnMidiDeviceEditButtonPressed(const std::string& MidiDeviceName);
     void OnMidiDeviceActivateButtonPressed(const std::string& MidiDeviceName);
 
@@ -53,6 +56,9 @@ private:
     const std::unique_ptr<QMainWindow> m_MainWindow;
     const std::shared_ptr<IEMidiProcessor> m_MidiProcessor;
     const std::unique_ptr<IEMidiProfileManager> m_MidiProfileManager;
+
+private:
+    std::vector<QPointer<QWidget>> m_MidiDependentWidgets;
 
 private:
     IEAppState m_AppState = IEAppState::None;

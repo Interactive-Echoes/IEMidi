@@ -5,15 +5,17 @@
 cmake_minimum_required(VERSION 3.20)
 
 set(IEMidi_WIDGET_FILES 
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEActionTypeDropDownWidget.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEActionTypeDropDownWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropDownWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropDownWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropDownWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropDownWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiOutputEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiOutputEditorWidget.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiTypeDropDownWidget.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiTypeDropDownWidget.h"
   PARENT_SCOPE
 )

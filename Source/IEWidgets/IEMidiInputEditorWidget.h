@@ -11,10 +11,12 @@
 
 #include "IEMidiTypes.h"
 
-class IEActionTypeDropdownWidget;
+class IEFileBrowserWidget;
+class IEMidiActionTypeDropdownWidget;
 class IEMidiMessageEditorWidget;
-class IEMidiTypeDropdownWidget;
+class IEMidiMessageTypeDropdownWidget;
 class QCheckBox;
+class QLineEdit;
 class QPushButton;
 
 class IEMidiInputEditorWidget : public QWidget
@@ -22,15 +24,32 @@ class IEMidiInputEditorWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit IEMidiInputEditorWidget(const IEMidiDeviceInputProperty& MidiDeviceInputProperty, QWidget* Parent = nullptr);
+    explicit IEMidiInputEditorWidget(IEMidiDeviceInputProperty& MidiDeviceInputProperty, QWidget* Parent = nullptr);
 
-signals:
-    void OnDelete();
+public:
+    bool IsRecording() const;
+
+Q_SIGNALS:
+    void OnDeleted();
+
+private Q_SLOTS:
+    void OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType);
+    void OnMidiToggleChanged(Qt::CheckState CheckState);
+    void OnMidiActionTypeChanged(IEMidiActionType OldMidiActionType, IEMidiActionType NewMidiActionType);
+    void OnOpenFilePathCommited();
+    void OnConsoleCommandTextCommited();
+    void OnRecordButtonToggled(bool bToggled);
+    void OnMidiMessageCommitted();
 
 private:
-    IEActionTypeDropdownWidget* m_ActionTypeDropdown;
-    IEMidiMessageEditorWidget* m_MidiMessageEditor;
-    IEMidiTypeDropdownWidget* m_MidiTypeDropdown;
-    QCheckBox* m_MidiToggleCheckbox;
-    QPushButton* m_RecordButton;
+    IEMidiDeviceInputProperty& m_MidiDeviceInputProperty;
+
+private:
+    IEFileBrowserWidget* m_OpenFileBrowserWidget;
+    IEMidiActionTypeDropdownWidget* m_MidiActionTypeDropdownWidget;
+    IEMidiMessageEditorWidget* m_MidiMessageEditorWidget;
+    IEMidiMessageTypeDropdownWidget* m_MidiMessageTypeDropdownWidget;
+    QCheckBox* m_MidiToggleCheckboxWidget;
+    QLineEdit* m_ConsoleCommandWidget;
+    QPushButton* m_RecordButtonWidget;
 };

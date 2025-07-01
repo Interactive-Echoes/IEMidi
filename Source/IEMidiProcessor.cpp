@@ -39,7 +39,7 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
 
                                 if (ActiveMidiDeviceProperty.MidiMessageType == IEMidiMessageType::NoteOnOff)
                                 {
-                                    if (ActiveMidiDeviceProperty.bToggle)
+                                    if (ActiveMidiDeviceProperty.bIsMidiToggle)
                                     {
                                         const bool bOn = static_cast<unsigned int>(MidiMessage[2]) != 0;
                                         if (bOn)
@@ -73,7 +73,7 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
                                 {
                                     case IEMidiMessageType::NoteOnOff:
                                     {
-                                        if (ActiveMidiDeviceProperty.bToggle)
+                                        if (ActiveMidiDeviceProperty.bIsMidiToggle)
                                         {
                                             const bool bOn = static_cast<unsigned int>(MidiMessage[2]) != 0;
                                             if (bOn)
@@ -263,6 +263,11 @@ bool IEMidiProcessor::HasActiveMidiDeviceProfile() const
     return m_ActiveMidiDeviceProfile.has_value();
 }
 
+void IEMidiProcessor::AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func)
+{
+    m_MidiCallbackFuncs.push_back(Func);
+}
+
 void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned char>* Message, void* UserData)
 {
     if (Message && UserData)
@@ -298,6 +303,11 @@ void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned ch
                 if (bIncludeProcess)
                 {
                     MidiProcessor->ProcessMidiInputMessage(MidiMessage);
+                }
+
+                for (const auto& Func : MidiProcessor->m_MidiCallbackFuncs)
+                {
+                    Func(TimeStamp, MidiMessage);
                 }
             }
         }

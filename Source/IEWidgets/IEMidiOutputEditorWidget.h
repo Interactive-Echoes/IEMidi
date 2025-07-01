@@ -19,12 +19,20 @@ class IEMidiOutputEditorWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit IEMidiOutputEditorWidget(const IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent = nullptr);
+    explicit IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent = nullptr);
 
-signals:
-    void OnDelete();
+Q_SIGNALS:
+    void OnMidiMessageSendRequested();
+    void OnDeleted();
+
+private Q_SLOTS:
+    void OnSendButtonPressed();
+    void OnMidiMessageCommitted();
 
 private:
-    IEMidiMessageEditorWidget* m_MidiMessageEditor;
-    QPushButton* m_SendButton;
+    IEMidiDeviceOutputProperty& m_MidiDeviceOutputProperty;
+
+private:
+    IEMidiMessageEditorWidget* m_MidiMessageEditorWidget;
+    QPushButton* m_SendButtonWidget;
 };

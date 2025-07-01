@@ -49,6 +49,9 @@ public:
     const IEMidiDeviceProfile& GetActiveMidiDeviceProfile() const;
     const std::deque<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetIncomingMidiMessages() const { return m_IncomingMidiMessages; }
 
+public:
+    void AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func);
+
 private:
     static void OnRtMidiCallback(double TimeStamp, std::vector<unsigned char>* Message, void* UserData);
     static void OnRtMidiErrorCallback(RtMidiError::Type RtMidiErrorType, const std::string& ErrorText, void* UserData);
@@ -63,6 +66,7 @@ private:
 private:
     std::optional<IEMidiDeviceProfile> m_ActiveMidiDeviceProfile;
     std::deque<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>> m_IncomingMidiMessages;
+    std::vector<std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)>> m_MidiCallbackFuncs;
 
 private:
     std::unique_ptr<IEAction_Volume> m_VolumeAction;

@@ -20,12 +20,19 @@ class IEMidiMessageEditorWidget : public QWidget
 
 public:
     explicit IEMidiMessageEditorWidget(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage, QWidget* Parent = nullptr);
-    explicit IEMidiMessageEditorWidget(QWidget* Parent = nullptr);
 
 public:
     std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> GetValues() const;
     void SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
+    void ShowByteWidget(size_t Index);
+    void HideByteWidget(size_t Index);
+    
+Q_SIGNALS:
+    void OnMidiMessageCommitted();
+
+private Q_SLOTS:
+    void OnMidiByteCommitted();
 
 private:
-    std::array<QSpinBox*, MIDI_MESSAGE_BYTE_COUNT> m_SpinBoxes;
+    std::array<QSpinBox*, MIDI_MESSAGE_BYTE_COUNT> m_SpinBoxWidgets;
 };
