@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include "IECore.h"
+#include <filesystem>
+
+#include "IELog.h"
 
 #include "IEMidiTypes.h"
 

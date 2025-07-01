@@ -4,10 +4,14 @@
 
 #pragma once
 
-#include "RtMidi.h"
+#include <deque>
+#include <memory>
+#include <optional>
+#include <vector>
 
+#include "IELog.h"
+#include "RtMidi.h"
 #include "IEActions.h"
-#include "IECore.h"
 
 #include "IEMidiTypes.h"
 
@@ -34,8 +38,8 @@ public:
     RtMidiOut& GetMidiOut() const { return *m_MidiOut; }
     
 public:
-    IEResult ProcessMidiInputMessage(const std::vector<unsigned char>& MidiMessage);
-    IEResult SendMidiOutputMessage(const std::vector<unsigned char>& MidiMessage);
+    IEResult ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
+    IEResult SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
 
     std::vector<std::string> GetAvailableMidiDevices() const;
     IEResult ActivateMidiDeviceProfile(const std::string& MidiDeviceName);
@@ -43,7 +47,7 @@ public:
     bool HasActiveMidiDeviceProfile() const;
     IEMidiDeviceProfile& GetActiveMidiDeviceProfile();
     const IEMidiDeviceProfile& GetActiveMidiDeviceProfile() const;
-    const std::deque<std::vector<unsigned char>>& GetIncomingMidiMessages() const { return m_IncomingMidiMessages; }
+    const std::deque<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetIncomingMidiMessages() const { return m_IncomingMidiMessages; }
 
 private:
     static void OnRtMidiCallback(double TimeStamp, std::vector<unsigned char>* Message, void* UserData);
@@ -58,7 +62,7 @@ private:
 
 private:
     std::optional<IEMidiDeviceProfile> m_ActiveMidiDeviceProfile;
-    std::deque<std::vector<unsigned char>> m_IncomingMidiMessages;
+    std::deque<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>> m_IncomingMidiMessages;
 
 private:
     std::unique_ptr<IEAction_Volume> m_VolumeAction;

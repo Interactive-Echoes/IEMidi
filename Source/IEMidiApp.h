@@ -4,12 +4,9 @@
 
 #pragma once
 
-#include "imgui.h"
-#include "Extensions/ie.imgui.h"
+#include "QApplication.h"
+#include "QMainWindow.h"
 
-#include "IECore.h"
-
-#include "IEMidiEditor.h"
 #include "IEMidiProcessor.h"
 #include "IEMidiProfileManager.h"
 #include "IEMidiTypes.h"
@@ -23,41 +20,40 @@ enum class IEAppState : uint16_t
     None
 };
 
-class IEMidi
+class IEMidiApp : public QApplication
 {
 public:
-    IEMidi();
+    IEMidiApp(int& Argc, char** Argv);
 
 public:
-    IERenderer& GetRenderer() const { return *m_Renderer; }
     IEMidiProcessor& GetMidiProcessor() const { return *m_MidiProcessor; }
     IEMidiProfileManager& GetMidiProfileManager() const { return *m_MidiProfileManager; }
-    IEMidiEditor& GetMidiEditor() const { return *m_MidiEditor; }
 
 public:
     IEAppState GetAppState() const;
     void SetAppState(IEAppState AppState);
 
-    void PostRendererInitialized();
-    void OnPreFrameRender();
-    void OnPostFrameRender();
+    void OnAppStateChanged();
 
 private:
     void DrawMidiDeviceSelectionWindow();
     void DrawSelectedMidiDeviceEditorWindow();
-    void DrawSideBar();
+
+    void DrawSelectedMidiDeviceInputEditorFrameWidget(QWidget* Parent);
+    void DrawSelectedMidiDeviceOutputEditorFrameWidget(QWidget* Parent);
+    void DrawSideBar(QWidget* Parent);
+
+    void ResetMainWindowCentralWidget();
 
 private:
-    void OnAppWindowClosed(uint32_t WindowID);
-    void OnAppWindowRestored(uint32_t WindowID);
+    void OnMidiDeviceEditButtonPressed(const std::string& MidiDeviceName);
+    void OnMidiDeviceActivateButtonPressed(const std::string& MidiDeviceName);
 
 private:
-    std::shared_ptr<IERenderer> m_Renderer;
-    std::shared_ptr<IEMidiProcessor> m_MidiProcessor;
-    std::unique_ptr<IEMidiProfileManager> m_MidiProfileManager;
-    std::unique_ptr<IEMidiEditor> m_MidiEditor;
+    const std::unique_ptr<QMainWindow> m_MainWindow;
+    const std::shared_ptr<IEMidiProcessor> m_MidiProcessor;
+    const std::unique_ptr<IEMidiProfileManager> m_MidiProfileManager;
 
 private:
     IEAppState m_AppState = IEAppState::None;
-    float m_WindowOffsetAbs = 30.0f;
 };

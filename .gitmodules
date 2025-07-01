@@ -1,7 +1,3 @@
-[submodule "ThirdParty/IECore"]
-	path = ThirdParty/IECore
-	url = https://github.com/Interactive-Echoes/IECore.git
-	branch = master
 [submodule "ThirdParty/IEActions"]
 	path = ThirdParty/IEActions
 	url = https://github.com/Interactive-Echoes/IEActions.git
@@ -14,3 +10,6 @@
 	path = ThirdParty/rapidyaml
 	url = https://github.com/biojppm/rapidyaml.git
 	branch = master
+[submodule "ThirdParty/IELog"]
+	path = ThirdParty/IELog
+	url = https://github.com/Interactive-Echoes/IELog.git

@@ -4,7 +4,10 @@
 
 #pragma once
 
-#include "IECore.h"
+#include <array>
+#include <string>
+#include <cstdint>
+#include <vector>
 
 static constexpr size_t MIDI_MESSAGE_BYTE_COUNT = 3;
 
@@ -28,19 +31,24 @@ enum class IEMidiActionType : uint8_t
     Count,
 };
 
-struct IEMidiDeviceProperty
+struct MidiDevicePropertyIDGenerator
 {
 private:
-    static uint32_t MidiDevicePropertyIDGenerator;
-
+    static uint32_t MidiDevicePropertyID;
+    
 public:
-    IEMidiDeviceProperty() = delete;
-    IEMidiDeviceProperty(const std::string& MidiDeviceNameID) :
+    static uint32_t Generate() { return MidiDevicePropertyID++; };
+};
+
+struct IEMidiDeviceInputProperty
+{
+public:
+    IEMidiDeviceInputProperty(const std::string& MidiDeviceNameID) :
         MidiDeviceName(MidiDeviceNameID),
-        RuntimeID(MidiDevicePropertyIDGenerator++)
+        RuntimeID(MidiDevicePropertyIDGenerator::Generate())
     {}
 
-    IEMidiDeviceProperty& operator=(const IEMidiDeviceProperty& Other)
+    IEMidiDeviceInputProperty& operator=(const IEMidiDeviceInputProperty& Other)
     {
         if (this != &Other)
         {
@@ -55,7 +63,7 @@ public:
         return *this;
     }
 
-    bool operator==(const IEMidiDeviceProperty& Other) const
+    bool operator==(const IEMidiDeviceInputProperty& Other) const
     {
         return RuntimeID == Other.RuntimeID;
     }
@@ -71,13 +79,44 @@ public:
     IEMidiActionType MidiActionType = IEMidiActionType::None;
     std::string ConsoleCommand = std::string();
     std::string OpenFilePath = std::string();
-    std::vector<unsigned char> MidiMessage = std::vector<unsigned char>(MIDI_MESSAGE_BYTE_COUNT);
+    std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage;
     bool bToggle = false;
+};
+
+struct IEMidiDeviceOutputProperty
+{
+public:
+    IEMidiDeviceOutputProperty(const std::string& MidiDeviceNameID) :
+            MidiDeviceName(MidiDeviceNameID),
+            RuntimeID(MidiDevicePropertyIDGenerator::Generate())
+    {}
+
+    IEMidiDeviceOutputProperty& operator=(const IEMidiDeviceOutputProperty& Other)
+    {
+        if (this != &Other)
+        {
+            MidiDeviceName = Other.MidiDeviceName;
+            MidiMessage = Other.MidiMessage;
+        }
+        return *this;
+    }
+
+    bool operator==(const IEMidiDeviceOutputProperty& Other) const
+    {
+        return RuntimeID == Other.RuntimeID;
+    }
+
+public:
+    const uint32_t RuntimeID;
+
+public:
+    std::string MidiDeviceName = std::string();
+    std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage;
 };
 
 struct IEMidiDevicePropertyHash
 {
-    size_t operator()(const IEMidiDeviceProperty& MidiDeviceProperty) const
+    size_t operator()(const IEMidiDeviceInputProperty& MidiDeviceProperty) const
     {
         return std::hash<uint32_t>()(MidiDeviceProperty.RuntimeID);
     }
@@ -99,9 +138,9 @@ public:
 
 public:
     std::string Name;
-    std::vector<std::vector<unsigned char>> InitialOutputMidiMessages;
-    std::vector<IEMidiDeviceProperty> Properties;
-
+    std::vector<IEMidiDeviceInputProperty> InputProperties;
+    std::vector<IEMidiDeviceOutputProperty> OutputProperties;
+    
 private:
     uint32_t m_InputPortNumber = -1;
     uint32_t m_OutputPortNumber = -1;

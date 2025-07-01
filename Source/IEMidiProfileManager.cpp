@@ -7,24 +7,47 @@
 #include "ryml.hpp"
 #include "ryml_std.hpp"
 
-uint32_t IEMidiDeviceProperty::MidiDevicePropertyIDGenerator = 0;
-
 static constexpr char IEMIDI_PROFILES_FILENAME[] = "profiles.yaml";
-static constexpr char MIDI_PROFILE_PROPERTIES_NODE_NAME[] = "Properties";
+static constexpr char MIDI_PROFILE_INPUT_PROPERTIES_NODE_NAME[] = "InputProperties";
+static constexpr char MIDI_PROFILE_OUTPUT_PROPERTIES_NODE_NAME[] = "OutputProperties";
+
 static constexpr char MIDI_MESSAGE_TYPE_KEY_NAME[] = "Midi Message Type";
-static constexpr char MIDI_TOGGLE_KEY_NAME[] = "Toogle";
+static constexpr char MIDI_TOGGLE_KEY_NAME[] = "Toggle";
 static constexpr char MIDI_ACTION_TYPE_KEY_NAME[] = "Midi Action Type";
 static constexpr char CONSOLE_COMMAND_KEY_NAME[] = "Console Command";
 static constexpr char OPEN_FILE_PATH_KEY_NAME[] = "Open File Path";
 static constexpr char MIDI_MESSAGE_KEY_NAME[] = "Midi Message";
-static constexpr char INITIAL_OUTPUT_MIDI_MESSAGES_KEY_NAME[] = "Initial Output Midi Messages";
 
 static constexpr uint32_t INITIAL_TREE_NODE_COUNT = 30;
 static constexpr uint32_t INITIAL_TREE_ARENA_CHAR_COUNT = 2048;
 
+template<typename T, std::size_t N>
+void operator>>(const ryml::ConstNodeRef& Node, std::array<T, N>& Array)
+{
+    if (!Node.is_seq() && Node.num_children() != N)
+    {
+        for (size_t i = 0; i < N; i++)
+        {
+            Node.at(i) >> Array[i];
+        }
+    }
+}
+
+template<typename T, std::size_t N>
+void operator<<(ryml::NodeRef Node, const std::array<T, N>& Array)
+{
+    Node.clear();
+    Node |= ryml::SEQ;
+
+    for (const T& Element : Array)
+    {
+        Node.append_child() << Element;
+    }
+}
+
 IEMidiProfileManager::IEMidiProfileManager()
 {
-    const std::filesystem::path IEMidiConfigFolderPath = IEUtils::GetIEConfigFolderPath();
+    const std::filesystem::path IEMidiConfigFolderPath; //= IEUtils::GetIEConfigFolderPath();
     if (!IEMidiConfigFolderPath.empty())
     {
         const std::filesystem::path MidiProfilesFilePath = IEMidiConfigFolderPath / IEMIDI_PROFILES_FILENAME;
@@ -43,7 +66,7 @@ IEMidiProfileManager::IEMidiProfileManager()
 std::filesystem::path IEMidiProfileManager::GetIEMidiProfilesFilePath() const
 {
     std::filesystem::path MidiDeviceProfilesFilePath;
-    const std::filesystem::path IEMidiConfigFolderPath = IEUtils::GetIEConfigFolderPath();
+    const std::filesystem::path IEMidiConfigFolderPath; // = IEUtils::GetIEConfigFolderPath();
     if (std::filesystem::exists(IEMidiConfigFolderPath))
     {
         const std::filesystem::path PotentialMidiDeviceProfilesFilePath = IEMidiConfigFolderPath / IEMIDI_PROFILES_FILENAME;
@@ -112,35 +135,46 @@ IEResult IEMidiProfileManager::SaveProfile(const IEMidiDeviceProfile& MidiDevice
                 MidiProfileNode |= ryml::MAP;
             }
 
-            ryml::NodeRef MidiProfilePropertiesNode = MidiProfileNode[MIDI_PROFILE_PROPERTIES_NODE_NAME];
-            if (MidiProfilePropertiesNode.is_seed())
+            // Input properties serialization
             {
-                MidiProfilePropertiesNode.create();
-                MidiProfilePropertiesNode |= ryml::SEQ;
-            }
-            MidiProfilePropertiesNode.clear_children();
-            for (const IEMidiDeviceProperty& MidiDeviceProperty : MidiDeviceProfile.Properties)
-            {
-                ryml::NodeRef MidiProfilePropertyNode = MidiProfilePropertiesNode.append_child();
-                MidiProfilePropertyNode.create();
-                MidiProfilePropertyNode |= ryml::MAP;
+                ryml::NodeRef MidiProfileInputPropertiesNode = MidiProfileNode[MIDI_PROFILE_INPUT_PROPERTIES_NODE_NAME];
+                if (MidiProfileInputPropertiesNode.is_seed())
+                {
+                    MidiProfileInputPropertiesNode.create();
+                    MidiProfileInputPropertiesNode |= ryml::SEQ;
+                }
+                MidiProfileInputPropertiesNode.clear_children();
+                for (const IEMidiDeviceInputProperty& MidiDeviceInputProperty : MidiDeviceProfile.InputProperties)
+                {
+                    ryml::NodeRef MidiProfileInputPropertyNode = MidiProfileInputPropertiesNode.append_child();
+                    MidiProfileInputPropertyNode.create();
+                    MidiProfileInputPropertyNode |= ryml::MAP;
 
-                MidiProfilePropertyNode[MIDI_MESSAGE_TYPE_KEY_NAME] << static_cast<uint8_t>(MidiDeviceProperty.MidiMessageType);
-                MidiProfilePropertyNode[MIDI_TOGGLE_KEY_NAME] << MidiDeviceProperty.bToggle;
-                MidiProfilePropertyNode[MIDI_ACTION_TYPE_KEY_NAME] << static_cast<uint8_t>(MidiDeviceProperty.MidiActionType);
-                MidiProfilePropertyNode[CONSOLE_COMMAND_KEY_NAME] << MidiDeviceProperty.ConsoleCommand;
-                MidiProfilePropertyNode[OPEN_FILE_PATH_KEY_NAME] << MidiDeviceProperty.OpenFilePath;
-                MidiProfilePropertyNode[MIDI_MESSAGE_KEY_NAME] << MidiDeviceProperty.MidiMessage;
+                    MidiProfileInputPropertyNode[MIDI_MESSAGE_TYPE_KEY_NAME] << static_cast<uint8_t>(MidiDeviceInputProperty.MidiMessageType);
+                    MidiProfileInputPropertyNode[MIDI_TOGGLE_KEY_NAME] << MidiDeviceInputProperty.bToggle;
+                    MidiProfileInputPropertyNode[MIDI_ACTION_TYPE_KEY_NAME] << static_cast<uint8_t>(MidiDeviceInputProperty.MidiActionType);
+                    MidiProfileInputPropertyNode[CONSOLE_COMMAND_KEY_NAME] << MidiDeviceInputProperty.ConsoleCommand;
+                    MidiProfileInputPropertyNode[OPEN_FILE_PATH_KEY_NAME] << MidiDeviceInputProperty.OpenFilePath;
+                    MidiProfileInputPropertyNode[MIDI_MESSAGE_KEY_NAME] << MidiDeviceInputProperty.MidiMessage;
+                    // Other input properties go here
+                }
             }
-            
-            ryml::NodeRef ProfileInitialOutputMidiMessagesNode = MidiProfileNode[INITIAL_OUTPUT_MIDI_MESSAGES_KEY_NAME];
-            if (ProfileInitialOutputMidiMessagesNode.is_seed())
+
+            // Output properties serialization
             {
-                ProfileInitialOutputMidiMessagesNode.create();
-                ProfileInitialOutputMidiMessagesNode |= ryml::SEQ;
+                ryml::NodeRef MidiProfileOutputPropertiesNode = MidiProfileNode[MIDI_PROFILE_OUTPUT_PROPERTIES_NODE_NAME];
+                if (MidiProfileOutputPropertiesNode.is_seed())
+                {
+                    MidiProfileOutputPropertiesNode.create();
+                    MidiProfileOutputPropertiesNode |= ryml::SEQ;
+                }
+                MidiProfileOutputPropertiesNode.clear_children();
+                for (const IEMidiDeviceOutputProperty& MidiDeviceOutputProperty : MidiDeviceProfile.OutputProperties)
+                {
+                    MidiProfileOutputPropertiesNode[MIDI_MESSAGE_KEY_NAME] << MidiDeviceOutputProperty.MidiMessage;
+                    // Other Output properties go here
+                }
             }
-            ProfileInitialOutputMidiMessagesNode.clear_children();
-            ProfileInitialOutputMidiMessagesNode << MidiDeviceProfile.InitialOutputMidiMessages;
 
             const size_t EmitSize = ryml::emit_yaml(MidiProfilesTree, ProfilesFile);
             if (EmitSize)
@@ -176,60 +210,77 @@ IEResult IEMidiProfileManager::LoadProfile(IEMidiDeviceProfile& MidiDeviceProfil
         if (Root.is_map() && Root.has_child(MidiDeviceProfile.Name.c_str()))
         {
             const ryml::ConstNodeRef MidiProfileNode = Root[MidiDeviceProfile.Name.c_str()];
-            const ryml::ConstNodeRef MidiProfilePropertiesNode = MidiProfileNode[MIDI_PROFILE_PROPERTIES_NODE_NAME];
-            MidiDeviceProfile.Properties.clear();
-            MidiDeviceProfile.Properties.reserve(MidiProfilePropertiesNode.num_children());
 
-            for (int ChildPos = 0; ChildPos < MidiProfilePropertiesNode.num_children(); ChildPos++)
+            // Input properties parsing
             {
-                const ryml::ConstNodeRef MidiProfilePropertyNode = MidiProfilePropertiesNode.at(ChildPos);
-                IEMidiDeviceProperty& MidiDeviceProperty = MidiDeviceProfile.Properties.emplace_back(MidiDeviceProfile.Name);
+                const ryml::ConstNodeRef MidiProfileInputPropertiesNode = MidiProfileNode[MIDI_PROFILE_INPUT_PROPERTIES_NODE_NAME];
+                MidiDeviceProfile.InputProperties.clear();
+                MidiDeviceProfile.InputProperties.reserve(MidiProfileInputPropertiesNode.num_children());
 
-                if (MidiProfilePropertyNode.has_child(MIDI_MESSAGE_TYPE_KEY_NAME))
+                for (int ChildPos = 0; ChildPos < MidiProfileInputPropertiesNode.num_children(); ChildPos++)
                 {
-                    uint8_t MidiMessageType = 0;
-                    MidiProfilePropertyNode[MIDI_MESSAGE_TYPE_KEY_NAME] >> MidiMessageType;
-                    MidiDeviceProperty.MidiMessageType = static_cast<IEMidiMessageType>(MidiMessageType);
-                }
+                    const ryml::ConstNodeRef MidiProfileInputPropertyNode = MidiProfileInputPropertiesNode.at(ChildPos);
+                    IEMidiDeviceInputProperty& MidiDeviceInputProperty = MidiDeviceProfile.InputProperties.emplace_back(MidiDeviceProfile.Name);
 
-                if (MidiProfilePropertyNode.has_child(MIDI_TOGGLE_KEY_NAME))
-                {
-                    MidiProfilePropertyNode[MIDI_TOGGLE_KEY_NAME] >> MidiDeviceProperty.bToggle;
-                }
-
-                if (MidiProfilePropertyNode.has_child(MIDI_ACTION_TYPE_KEY_NAME))
-                {
-                    uint8_t MidiActionType = 0;
-                    MidiProfilePropertyNode[MIDI_ACTION_TYPE_KEY_NAME] >> MidiActionType;
-                    MidiDeviceProperty.MidiActionType = static_cast<IEMidiActionType>(MidiActionType);
-                }
-
-                if (MidiProfilePropertyNode.has_child(CONSOLE_COMMAND_KEY_NAME))
-                {
-                    if (!MidiProfilePropertyNode[CONSOLE_COMMAND_KEY_NAME].val().empty())
+                    if (MidiProfileInputPropertyNode.has_child(MIDI_MESSAGE_TYPE_KEY_NAME))
                     {
-                        MidiProfilePropertyNode[CONSOLE_COMMAND_KEY_NAME] >> MidiDeviceProperty.ConsoleCommand;
+                        uint8_t MidiMessageType = 0;
+                        MidiProfileInputPropertyNode[MIDI_MESSAGE_TYPE_KEY_NAME] >> MidiMessageType;
+                        MidiDeviceInputProperty.MidiMessageType = static_cast<IEMidiMessageType>(MidiMessageType);
                     }
-                }
 
-                if (MidiProfilePropertyNode.has_child(OPEN_FILE_PATH_KEY_NAME))
-                {
-                    if (!MidiProfilePropertyNode[OPEN_FILE_PATH_KEY_NAME].val().empty())
+                    if (MidiProfileInputPropertyNode.has_child(MIDI_TOGGLE_KEY_NAME))
                     {
-                        MidiProfilePropertyNode[OPEN_FILE_PATH_KEY_NAME] >> MidiDeviceProperty.OpenFilePath;
+                        MidiProfileInputPropertyNode[MIDI_TOGGLE_KEY_NAME] >> MidiDeviceInputProperty.bToggle;
                     }
-                }
 
-                if (MidiProfilePropertyNode.has_child(MIDI_MESSAGE_KEY_NAME))
-                {
-                    MidiProfilePropertyNode[MIDI_MESSAGE_KEY_NAME] >> MidiDeviceProperty.MidiMessage;
+                    if (MidiProfileInputPropertyNode.has_child(MIDI_ACTION_TYPE_KEY_NAME))
+                    {
+                        uint8_t MidiActionType = 0;
+                        MidiProfileInputPropertyNode[MIDI_ACTION_TYPE_KEY_NAME] >> MidiActionType;
+                        MidiDeviceInputProperty.MidiActionType = static_cast<IEMidiActionType>(MidiActionType);
+                    }
+
+                    if (MidiProfileInputPropertyNode.has_child(CONSOLE_COMMAND_KEY_NAME))
+                    {
+                        if (!MidiProfileInputPropertyNode[CONSOLE_COMMAND_KEY_NAME].val().empty())
+                        {
+                            MidiProfileInputPropertyNode[CONSOLE_COMMAND_KEY_NAME] >> MidiDeviceInputProperty.ConsoleCommand;
+                        }
+                    }
+
+                    if (MidiProfileInputPropertyNode.has_child(OPEN_FILE_PATH_KEY_NAME))
+                    {
+                        if (!MidiProfileInputPropertyNode[OPEN_FILE_PATH_KEY_NAME].val().empty())
+                        {
+                            MidiProfileInputPropertyNode[OPEN_FILE_PATH_KEY_NAME] >> MidiDeviceInputProperty.OpenFilePath;
+                        }
+                    }
+
+                    if (MidiProfileInputPropertyNode.has_child(MIDI_MESSAGE_KEY_NAME))
+                    {
+                        MidiProfileInputPropertyNode[MIDI_MESSAGE_KEY_NAME] >> MidiDeviceInputProperty.MidiMessage;
+                    }
                 }
             }
 
-            if (MidiProfileNode.has_child(INITIAL_OUTPUT_MIDI_MESSAGES_KEY_NAME))
+            // Output properties parsing
             {
-                const ryml::ConstNodeRef ProfileInitialOutputMidiMessagesNode = MidiProfileNode[INITIAL_OUTPUT_MIDI_MESSAGES_KEY_NAME];
-                ProfileInitialOutputMidiMessagesNode >> MidiDeviceProfile.InitialOutputMidiMessages;
+                const ryml::ConstNodeRef MidiProfileOutputPropertiesNode = MidiProfileNode[MIDI_PROFILE_OUTPUT_PROPERTIES_NODE_NAME];
+                MidiDeviceProfile.OutputProperties.clear();
+                MidiDeviceProfile.OutputProperties.reserve(MidiProfileOutputPropertiesNode.num_children());
+
+                for (int ChildPos = 0; ChildPos < MidiProfileOutputPropertiesNode.num_children(); ChildPos++)
+                {
+                    const ryml::ConstNodeRef MidiProfileOutputPropertyNode = MidiProfileOutputPropertiesNode.at(ChildPos);
+                    IEMidiDeviceOutputProperty& MidiDeviceOutputProperty = MidiDeviceProfile.OutputProperties.emplace_back(MidiDeviceProfile.Name);
+
+                    if (MidiProfileOutputPropertyNode.has_child(MIDI_MESSAGE_KEY_NAME))
+                    {
+                        const ryml::ConstNodeRef ProfileInitialOutputMidiMessagesNode = MidiProfileNode[MIDI_MESSAGE_KEY_NAME];
+                        ProfileInitialOutputMidiMessagesNode >> MidiDeviceOutputProperty.MidiMessage;
+                    }
+                }
             }
 
             Result.Type = IEResult::Type::Success;
@@ -242,7 +293,7 @@ IEResult IEMidiProfileManager::LoadProfile(IEMidiDeviceProfile& MidiDeviceProfil
 IEResult IEMidiProfileManager::RemoveProfile(const IEMidiDeviceProfile& MidiDeviceProfile) const
 {
     IEResult Result(IEResult::Type::Fail, "Failed to remove profile");
-    const std::filesystem::path IEMidiConfigFolderPath = IEUtils::GetIEConfigFolderPath();
+    const std::filesystem::path IEMidiConfigFolderPath; // = IEUtils::GetIEConfigFolderPath();
     // TODO
     // if (!IEMidiConfigFolderPath.empty())
     // {

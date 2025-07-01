@@ -4,7 +4,7 @@
 
 #include "IEMidiProcessor.h"
 
-IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::vector<unsigned char>& MidiMessage)
+IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
 {
     IEResult Result(IEResult::Type::Fail, "Failed to process Midi");
 
@@ -12,7 +12,7 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::vector<unsigned cha
     {
         if (m_ActiveMidiDeviceProfile.has_value())
         {
-            for (IEMidiDeviceProperty& ActiveMidiDeviceProperty : m_ActiveMidiDeviceProfile->Properties)
+            for (IEMidiDeviceInputProperty& ActiveMidiDeviceProperty : m_ActiveMidiDeviceProfile->InputProperties)
             {
                 if (ActiveMidiDeviceProperty.MidiMessage.size() >= 3 &&
                     ActiveMidiDeviceProperty.MidiMessage[0] == MidiMessage[0] &&
@@ -143,18 +143,15 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::vector<unsigned cha
     return Result;
 }
 
-IEResult IEMidiProcessor::SendMidiOutputMessage(const std::vector<unsigned char>& MidiMessage)
+IEResult IEMidiProcessor::SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
 {
     IEResult Result(IEResult::Type::Fail, "Failed to send midi output message");
-    if (IEAssert(MidiMessage.size() >= 3))
+    if (m_ActiveMidiDeviceProfile)
     {
-        if (m_ActiveMidiDeviceProfile)
-        {
-            GetMidiOut().sendMessage(&MidiMessage);
+        GetMidiOut().sendMessage(MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
 
-            Result.Type = IEResult::Type::Success;
-            Result.Message = std::string("Successfully sent midi output message");
-        }
+        Result.Type = IEResult::Type::Success;
+        Result.Message = std::string("Successfully sent midi output message");
     }
     return Result;
 }
@@ -227,9 +224,9 @@ IEResult IEMidiProcessor::ActivateMidiDeviceProfile(const std::string& MidiDevic
                 }
                 MidiOut.openPort(m_ActiveMidiDeviceProfile->GetOutputPortNumber());
 
-                for (const std::vector<unsigned char>& MidiMessage : m_ActiveMidiDeviceProfile->InitialOutputMidiMessages)
+                for (const IEMidiDeviceOutputProperty& MidiDeviceOutputProperty : m_ActiveMidiDeviceProfile->OutputProperties)
                 {
-                    MidiOut.sendMessage(&MidiMessage);
+                    MidiOut.sendMessage(MidiDeviceOutputProperty.MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
                 }
 
                 Result.Type = IEResult::Type::Success;
@@ -270,33 +267,38 @@ void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned ch
 {
     if (Message && UserData)
     {
-        const std::vector<unsigned char>& MidiMessage = *Message;
-        if (IEMidiProcessor* const MidiProcessor = reinterpret_cast<IEMidiProcessor*>(UserData))
+        if (IEAssert(Message->size() >= MIDI_MESSAGE_BYTE_COUNT))
         {
-            bool bIncludeProcess = true;
-            if (MidiProcessor->m_ActiveMidiDeviceProfile)
+            std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage;
+            std::copy(Message->begin(), Message->begin() + MIDI_MESSAGE_BYTE_COUNT, MidiMessage.begin());
+
+            if (IEMidiProcessor* const MidiProcessor = reinterpret_cast<IEMidiProcessor*>(UserData))
             {
-                for (IEMidiDeviceProperty& MidiDeviceProperty : MidiProcessor->m_ActiveMidiDeviceProfile->Properties)
+                bool bIncludeProcess = true;
+                if (MidiProcessor->m_ActiveMidiDeviceProfile)
                 {
-                    if (MidiDeviceProperty.bIsRecording)
+                    for (IEMidiDeviceInputProperty& MidiDeviceProperty : MidiProcessor->m_ActiveMidiDeviceProfile->InputProperties)
                     {
-                        MidiDeviceProperty.MidiMessage = MidiMessage;
-                        MidiDeviceProperty.bIsRecording = false;
-                        bIncludeProcess = false;
+                        if (MidiDeviceProperty.bIsRecording)
+                        {
+                            MidiDeviceProperty.MidiMessage = MidiMessage;
+                            MidiDeviceProperty.bIsRecording = false;
+                            bIncludeProcess = false;
+                        }
                     }
                 }
-            }
 
-            if (MidiProcessor->m_IncomingMidiMessages.size() == INCOMING_MIDI_MESSAGES_SIZE)
-            {
-                MidiProcessor->m_IncomingMidiMessages.pop_back();
-            }
+                if (MidiProcessor->m_IncomingMidiMessages.size() == INCOMING_MIDI_MESSAGES_SIZE)
+                {
+                    MidiProcessor->m_IncomingMidiMessages.pop_back();
+                }
 
-            MidiProcessor->m_IncomingMidiMessages.push_front(MidiMessage);
+                MidiProcessor->m_IncomingMidiMessages.push_front(MidiMessage);
 
-            if (bIncludeProcess)
-            {
-                MidiProcessor->ProcessMidiInputMessage(MidiMessage);
+                if (bIncludeProcess)
+                {
+                    MidiProcessor->ProcessMidiInputMessage(MidiMessage);
+                }
             }
         }
     }

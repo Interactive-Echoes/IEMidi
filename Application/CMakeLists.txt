@@ -51,23 +51,7 @@ if(WIN32)
   set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL TRUE)
   set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${CPACK_PACKAGE_NAME}.exe")
   set(CPACK_NSIS_DEFINES "RequestExecutionLevel admin")
-  get_filename_component(VULKAN_FILE_NAME ${Vulkan_LIBRARY} NAME_WE)
-  set(VULKAN_RT_FILE_PATH "$ENV{WINDIR}\\System32\\${VULKAN_FILE_NAME}.dll")
-  message("Expected Vulkan RT ${VULKAN_RT_FILE_PATH}")
   set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-
-    DetailPrint \"${VULKAN_RT_FILE_PATH}\"
-    IfFileExists \"${VULKAN_RT_FILE_PATH}\" vulkanRT_found vulkanRT_not_found
-
-    vulkanRT_found:
-    DetailPrint \"VulkanRT found and installed.\"
-    goto post_vulkanRT
-    
-    vulkanRT_not_found:
-    MessageBox MB_YESNO \"VulkanRT must be installed for IEMidi to work, please install VulkanRT.\" IDNO post_vulkanRT
-
-    post_vulkanRT:
-
     CreateShortCut \"$DESKTOP\\${CPACK_PACKAGE_NAME}.lnk\" \"$INSTDIR\\bin\\${CPACK_PACKAGE_NAME}.exe\" \"\" \"$INSTDIR\\IE\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico\" 0
     CreateShortCut \"$SMPROGRAMS\\${CPACK_PACKAGE_NAME}.lnk\" \"$INSTDIR\\bin\\${CPACK_PACKAGE_NAME}.exe\" \"\" \"$INSTDIR\\IE\\Resources\\IE-Brand-Kit\\IE-Logo-NoBg.ico\" 0")
   set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "

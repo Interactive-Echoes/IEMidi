@@ -4,26 +4,29 @@
 
 cmake_minimum_required(VERSION 3.20)
 
+set(CMAKE_AUTOMOC ON)
 set(IEMidi_SOURCE_FILES 
-  "./IEMidi.cpp"
-  "./IEMidiEditor.cpp"
-  "./IEMidiEditor.h"
-  "./IEMidiProcessor.cpp"
-  "./IEMidiProcessor.h"
-  "./IEMidiProfileManager.cpp"
-  "./IEMidiProfileManager.h"
-  "./IEMidiTypes.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiApp.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiApp.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiProcessor.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiProcessor.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiProfileManager.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiProfileManager.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiTypes.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiTypes.h"
 )
-add_library(LIEMidi STATIC ${IEMidi_SOURCE_FILES})
+add_subdirectory(IEWidgets)
+add_library(LIEMidi STATIC ${IEMidi_SOURCE_FILES} ${IEMidi_WIDGET_FILES})
 target_include_directories(LIEMidi PUBLIC "./")
 set(IEMidi_HEADER_FILES "./IEMidi.h")
 set_property(TARGET LIEMidi PROPERTY PUBLIC_HEADER ${IEMidi_HEADER_FILES})
 
 message("Linking LIEMidi with required libraries")
-target_link_libraries(LIEMidi PUBLIC IECore)
 target_link_libraries(LIEMidi PUBLIC IEActions)
 target_link_libraries(LIEMidi PUBLIC rtmidi)
 target_link_libraries(LIEMidi PUBLIC ryml)
+target_link_libraries(LIEMidi PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
+target_link_libraries(LIEMidi PUBLIC IELog)
 
 install(TARGETS LIEMidi
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
