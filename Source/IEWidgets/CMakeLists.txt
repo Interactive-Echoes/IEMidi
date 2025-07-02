@@ -7,8 +7,8 @@ cmake_minimum_required(VERSION 3.20)
 set(IEMidi_WIDGET_FILES 
   "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropDownWidget.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropDownWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropdownWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropdownWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.cpp"
