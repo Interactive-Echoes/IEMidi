@@ -12,13 +12,14 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
     {
         if (m_ActiveMidiDeviceProfile.has_value())
         {
-            for (IEMidiDeviceInputProperty& ActiveMidiDeviceProperty : m_ActiveMidiDeviceProfile->InputProperties)
+            IEMidiDeviceInputProperty* ActiveMidiDeviceInputProperty = m_ActiveMidiDeviceProfile->InputPropertiesHead.get();
+            while (ActiveMidiDeviceInputProperty)
             {
-                if (ActiveMidiDeviceProperty.MidiMessage.size() >= 3 &&
-                    ActiveMidiDeviceProperty.MidiMessage[0] == MidiMessage[0] &&
-                    ActiveMidiDeviceProperty.MidiMessage[1] == MidiMessage[1])
+                if (ActiveMidiDeviceInputProperty->MidiMessage.size() >= 3 &&
+                    ActiveMidiDeviceInputProperty->MidiMessage[0] == MidiMessage[0] &&
+                    ActiveMidiDeviceInputProperty->MidiMessage[1] == MidiMessage[1])
                 {
-                    switch (ActiveMidiDeviceProperty.MidiActionType)
+                    switch (ActiveMidiDeviceInputProperty->MidiActionType)
                     {
                         case IEMidiActionType::Volume:
                         {
@@ -37,9 +38,9 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
                             {
                                 Result.Type = IEResult::Type::Success;
 
-                                if (ActiveMidiDeviceProperty.MidiMessageType == IEMidiMessageType::NoteOnOff)
+                                if (ActiveMidiDeviceInputProperty->MidiMessageType == IEMidiMessageType::NoteOnOff)
                                 {
-                                    if (ActiveMidiDeviceProperty.bIsMidiToggle)
+                                    if (ActiveMidiDeviceInputProperty->bIsMidiToggle)
                                     {
                                         const bool bOn = static_cast<unsigned int>(MidiMessage[2]) != 0;
                                         if (bOn)
@@ -69,37 +70,37 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
                             {
                                 Result.Type = IEResult::Type::Success;
 
-                                switch (ActiveMidiDeviceProperty.MidiMessageType)
+                                switch (ActiveMidiDeviceInputProperty->MidiMessageType)
                                 {
                                     case IEMidiMessageType::NoteOnOff:
                                     {
-                                        if (ActiveMidiDeviceProperty.bIsMidiToggle)
+                                        if (ActiveMidiDeviceInputProperty->bIsMidiToggle)
                                         {
                                             const bool bOn = static_cast<unsigned int>(MidiMessage[2]) != 0;
                                             if (bOn)
                                             {
-                                                if (ActiveMidiDeviceProperty.bIsConsoleCommandActive)
+                                                if (ActiveMidiDeviceInputProperty->bIsConsoleCommandActive)
                                                 {
-                                                    m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceProperty.ConsoleCommand, 0.0f);
-                                                    ActiveMidiDeviceProperty.bIsConsoleCommandActive = false;
+                                                    m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceInputProperty->ConsoleCommand, 0.0f);
+                                                    ActiveMidiDeviceInputProperty->bIsConsoleCommandActive = false;
                                                 }
                                                 else
                                                 {
-                                                    m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceProperty.ConsoleCommand, 1.0f);
-                                                    ActiveMidiDeviceProperty.bIsConsoleCommandActive = true;
+                                                    m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceInputProperty->ConsoleCommand, 1.0f);
+                                                    ActiveMidiDeviceInputProperty->bIsConsoleCommandActive = true;
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceProperty.ConsoleCommand, 1.0f);
+                                            m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceInputProperty->ConsoleCommand, 1.0f);
                                         }
                                         break;
                                     }
                                     case IEMidiMessageType::ControlChange:
                                     {
                                         const float Value = static_cast<float>(MidiMessage[2]);
-                                        m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceProperty.ConsoleCommand, Value);
+                                        m_ConsoleCommandAction->ExecuteConsoleCommand(ActiveMidiDeviceInputProperty->ConsoleCommand, Value);
                                         break;
                                     }
                                     default:
@@ -116,12 +117,12 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
                             {
                                 Result.Type = IEResult::Type::Success;
 
-                                if (ActiveMidiDeviceProperty.MidiMessageType == IEMidiMessageType::NoteOnOff)
+                                if (ActiveMidiDeviceInputProperty->MidiMessageType == IEMidiMessageType::NoteOnOff)
                                 {
                                     const bool bOn = static_cast<unsigned int>(MidiMessage[2]) != 0;
                                     if (bOn)
                                     {
-                                        m_OpenFileAction->OpenFile(ActiveMidiDeviceProperty.OpenFilePath);
+                                        m_OpenFileAction->OpenFile(ActiveMidiDeviceInputProperty->OpenFilePath);
                                     }
                                 }
                             }
@@ -133,6 +134,7 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
                         }
                     }
                 }
+                ActiveMidiDeviceInputProperty = ActiveMidiDeviceInputProperty->Next();
             }
         }
     }
@@ -146,10 +148,9 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
 IEResult IEMidiProcessor::SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
 {
     IEResult Result(IEResult::Type::Fail, "Failed to send midi output message");
-    if (m_ActiveMidiDeviceProfile)
+    if (m_MidiOut && m_ActiveMidiDeviceProfile)
     {
-        GetMidiOut().sendMessage(MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
-
+        m_MidiOut->sendMessage(MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
         Result.Type = IEResult::Type::Success;
         Result.Message = std::string("Successfully sent midi output message");
     }
@@ -159,14 +160,20 @@ IEResult IEMidiProcessor::SendMidiOutputMessage(const std::array<uint8_t, MIDI_M
 std::vector<std::string> IEMidiProcessor::GetAvailableMidiDevices() const
 {
     std::vector<std::string> AvailableMidiDevices;
-
-    RtMidiIn& MidiIn = GetMidiIn();
-    for (int InputPortNumber = 0; InputPortNumber < MidiIn.getPortCount(); InputPortNumber++)
+    if (m_MidiIn)
     {
-        const std::string MidiDeviceName = GetSanitizedMidiDeviceName(MidiIn.getPortName(InputPortNumber), InputPortNumber);
-        AvailableMidiDevices.emplace_back(MidiDeviceName);
+        for (int InputPortNumber = 0; InputPortNumber < m_MidiIn->getPortCount(); InputPortNumber++)
+        {
+            const std::string MidiDeviceName = GetSanitizedMidiDeviceName(m_MidiIn->getPortName(InputPortNumber), InputPortNumber);
+            AvailableMidiDevices.emplace_back(MidiDeviceName);
+        }
     }
     return AvailableMidiDevices;
+}
+
+std::string IEMidiProcessor::GetAPIName() const
+{
+    return RtMidiOut::getApiDisplayName(m_MidiOut->getCurrentApi());
 }
 
 IEMidiDeviceProfile& IEMidiProcessor::GetActiveMidiDeviceProfile()
@@ -176,7 +183,6 @@ IEMidiDeviceProfile& IEMidiProcessor::GetActiveMidiDeviceProfile()
         IELOG_ERROR("No active midi device profile");
         abort();
     }
-
     return m_ActiveMidiDeviceProfile.value();
 }
 
@@ -187,7 +193,6 @@ const IEMidiDeviceProfile& IEMidiProcessor::GetActiveMidiDeviceProfile() const
         IELOG_ERROR("No active midi device profile");
         abort();
     }
-
     return m_ActiveMidiDeviceProfile.value();
 }
 
@@ -196,63 +201,68 @@ IEResult IEMidiProcessor::ActivateMidiDeviceProfile(const std::string& MidiDevic
     IEResult Result(IEResult::Type::Fail);
     Result.Message = std::format("Failed to activate midi device profile {}", MidiDeviceName);
 
-    RtMidiIn& MidiIn = GetMidiIn();
-    for (int InputPortNumber = 0; InputPortNumber < MidiIn.getPortCount(); InputPortNumber++)
+    if (m_MidiIn && m_MidiOut)
     {
-        const std::string& MidiDeviceName = GetSanitizedMidiDeviceName(MidiIn.getPortName(InputPortNumber), InputPortNumber);
-
-        RtMidiOut& MidiOut = GetMidiOut();
-        for (int OutputPortNumber = 0; OutputPortNumber < MidiOut.getPortCount(); OutputPortNumber++)
+        for (int InputPortNumber = 0; InputPortNumber < m_MidiIn->getPortCount(); InputPortNumber++)
         {
-            const std::string& MidiDeviceNameOut = GetSanitizedMidiDeviceName(MidiOut.getPortName(OutputPortNumber), InputPortNumber);
-            if (MidiDeviceNameOut.find(MidiDeviceName) != std::string::npos)
+            const std::string& MidiDeviceName = GetSanitizedMidiDeviceName(m_MidiIn->getPortName(InputPortNumber), InputPortNumber);
+
+            for (int OutputPortNumber = 0; OutputPortNumber < m_MidiOut->getPortCount(); OutputPortNumber++)
             {
-                m_ActiveMidiDeviceProfile = IEMidiDeviceProfile(MidiDeviceName, InputPortNumber, OutputPortNumber);
-
-                if (MidiIn.isPortOpen())
+                const std::string& MidiDeviceNameOut = GetSanitizedMidiDeviceName(m_MidiOut->getPortName(OutputPortNumber), InputPortNumber);
+                if (MidiDeviceNameOut.find(MidiDeviceName) != std::string::npos)
                 {
-                    MidiIn.cancelCallback();
-                    MidiIn.closePort();
+                    m_ActiveMidiDeviceProfile.emplace(MidiDeviceName, InputPortNumber, OutputPortNumber);
+
+                    if (m_MidiIn->isPortOpen())
+                    {
+                        m_MidiIn->cancelCallback();
+                        m_MidiIn->closePort();
+                    }
+                    m_MidiIn->setCallback(&IEMidiProcessor::OnRtMidiCallback, this);
+                    m_MidiIn->openPort(m_ActiveMidiDeviceProfile->InputPortNumber);
+
+                    if (m_MidiOut->isPortOpen())
+                    {
+                        m_MidiOut->closePort();
+                    }
+                    m_MidiOut->openPort(m_ActiveMidiDeviceProfile->OutputPortNumber);
+
+                    IEMidiDeviceOutputProperty* MidiDeviceOutputProperty = GetActiveMidiDeviceProfile().OutputPropertiesHead.get();
+                    while (MidiDeviceOutputProperty)
+                    {
+                        m_MidiOut->sendMessage(MidiDeviceOutputProperty->MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
+                        MidiDeviceOutputProperty = MidiDeviceOutputProperty->Next();
+                    }
+
+                    Result.Type = IEResult::Type::Success;
+                    Result.Message = std::format("Successfully activated midi device profile {}", MidiDeviceName);
+                    break;
                 }
-                MidiIn.setCallback(&IEMidiProcessor::OnRtMidiCallback, this);
-                
-                MidiIn.openPort(m_ActiveMidiDeviceProfile->GetInputPortNumber());
-
-                if (MidiOut.isPortOpen())
-                {
-                    MidiOut.closePort();
-                }
-                MidiOut.openPort(m_ActiveMidiDeviceProfile->GetOutputPortNumber());
-
-                for (const IEMidiDeviceOutputProperty& MidiDeviceOutputProperty : m_ActiveMidiDeviceProfile->OutputProperties)
-                {
-                    MidiOut.sendMessage(MidiDeviceOutputProperty.MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
-                }
-
-                Result.Type = IEResult::Type::Success;
-                Result.Message = std::format("Successfully activated midi device profile {}", MidiDeviceName);
-
-                break;
             }
         }
     }
-    
+
     return Result;
 }
 
 void IEMidiProcessor::DeactivateMidiDeviceProfile()
 {
-    RtMidiIn& MidiIn = GetMidiIn();
-    if (MidiIn.isPortOpen())
+    if (m_MidiIn)
     {
-        MidiIn.closePort();
-        MidiIn.cancelCallback();
+        if (m_MidiIn->isPortOpen())
+        {
+            m_MidiIn->closePort();
+            m_MidiIn->cancelCallback();
+        }
     }
-    
-    RtMidiOut& MidiOut = GetMidiOut();
-    if (MidiOut.isPortOpen())
+
+    if (m_MidiOut)
     {
-        MidiOut.closePort();
+        if (m_MidiOut->isPortOpen())
+        {
+            m_MidiOut->closePort();
+        }
     }
 
     m_ActiveMidiDeviceProfile.reset();
@@ -282,14 +292,16 @@ void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned ch
                 bool bIncludeProcess = true;
                 if (MidiProcessor->m_ActiveMidiDeviceProfile)
                 {
-                    for (IEMidiDeviceInputProperty& MidiDeviceProperty : MidiProcessor->m_ActiveMidiDeviceProfile->InputProperties)
+                    IEMidiDeviceInputProperty* MidiDeviceInputProperty = MidiProcessor->m_ActiveMidiDeviceProfile->InputPropertiesHead.get();
+                    while (MidiDeviceInputProperty)
                     {
-                        if (MidiDeviceProperty.bIsRecording)
+                        if (MidiDeviceInputProperty->bIsRecording)
                         {
-                            MidiDeviceProperty.MidiMessage = MidiMessage;
-                            MidiDeviceProperty.bIsRecording = false;
+                            MidiDeviceInputProperty->MidiMessage = MidiMessage;
+                            MidiDeviceInputProperty->bIsRecording = false;
                             bIncludeProcess = false;
                         }
+                        MidiDeviceInputProperty = MidiDeviceInputProperty->Next();
                     }
                 }
 

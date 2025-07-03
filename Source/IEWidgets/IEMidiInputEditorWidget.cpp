@@ -4,9 +4,12 @@
 
 #include "IEMidiInputEditorWidget.h"
 
+#include "IELog.h"
 #include "QBoxLayout.h"
 #include "QCheckBox.h"
+#include "QCoreEvent.h"
 #include "QLineEdit.h"
+#include "QMetaObject.h"
 #include "QPushButton.h"
 
 #include "IEFileBrowserWidget.h"
@@ -33,9 +36,9 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
         m_MidiToggleCheckboxWidget->setChecked(m_MidiDeviceInputProperty.bIsMidiToggle);
         m_MidiToggleCheckboxWidget->hide(); // Start hidden
         m_MidiToggleCheckboxWidget->connect(m_MidiToggleCheckboxWidget, &QCheckBox::checkStateChanged, this, &IEMidiInputEditorWidget::OnMidiToggleChanged);
-        
+
         Layout->addWidget(m_MidiToggleCheckboxWidget);
-        
+
         m_MidiActionTypeDropdownWidget = new IEMidiActionTypeDropdownWidget(this);
         m_MidiActionTypeDropdownWidget->SetValue(m_MidiDeviceInputProperty.MidiActionType);
         m_MidiActionTypeDropdownWidget->connect(m_MidiActionTypeDropdownWidget, &IEMidiActionTypeDropdownWidget::OnMidiActionTypeChanged,
@@ -47,7 +50,7 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
         m_OpenFileBrowserWidget->hide(); // Start hidden
         m_OpenFileBrowserWidget->connect(m_OpenFileBrowserWidget, &IEFileBrowserWidget::OnFilePathCommitted, this, &IEMidiInputEditorWidget::OnOpenFilePathCommited);
         Layout->addWidget(m_OpenFileBrowserWidget);
-        
+
         m_ConsoleCommandWidget = new QLineEdit(this);
         m_ConsoleCommandWidget->setPlaceholderText("Command");
         m_ConsoleCommandWidget->setText(QString::fromStdString(m_MidiDeviceInputProperty.ConsoleCommand));
@@ -62,7 +65,7 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
         m_RecordButtonWidget->connect(m_RecordButtonWidget, &QPushButton::toggled, this, &IEMidiInputEditorWidget::OnRecordButtonToggled);
         Layout->addWidget(m_RecordButtonWidget);
 
-        m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(MidiDeviceInputProperty.MidiMessage, this);
+        m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(m_MidiDeviceInputProperty.MidiMessage, this);
         m_MidiMessageEditorWidget->SetValues(m_MidiDeviceInputProperty.MidiMessage);
         m_MidiMessageEditorWidget->HideByteWidget(2);
         m_MidiMessageEditorWidget->connect(m_MidiMessageEditorWidget, &IEMidiMessageEditorWidget::OnMidiMessageCommitted, this, &IEMidiInputEditorWidget::OnMidiMessageCommitted);
@@ -71,20 +74,16 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
         if (QPushButton* const DeleteButton = new QPushButton(this))
         {
             DeleteButton->setText("Delete");
-            DeleteButton->connect(DeleteButton, &QPushButton::pressed, [this]()
-                {
-                    emit OnDeleted();
-                    this->deleteLater();
-                });
+            DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiInputEditorWidget::OnDeleteButtonPressed);
 
             Layout->addStretch(1);
             Layout->addWidget(DeleteButton);
         }
-    }
 
-    OnMidiToggleChanged(m_MidiToggleCheckboxWidget->checkState());
-    OnMidiMessageTypeChanged(IEMidiMessageType::None, m_MidiMessageTypeDropdownWidget->GetValue());
-    OnMidiActionTypeChanged(IEMidiActionType::None, m_MidiActionTypeDropdownWidget->GetValue());
+        OnMidiToggleChanged(m_MidiToggleCheckboxWidget->checkState());
+        OnMidiMessageTypeChanged(IEMidiMessageType::None, m_MidiMessageTypeDropdownWidget->GetValue());
+        OnMidiActionTypeChanged(IEMidiActionType::None, m_MidiActionTypeDropdownWidget->GetValue());
+    }
 }
 
 bool IEMidiInputEditorWidget::IsRecording() const
@@ -100,7 +99,6 @@ bool IEMidiInputEditorWidget::IsRecording() const
 void IEMidiInputEditorWidget::OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType)
 {
     m_MidiDeviceInputProperty.MidiMessageType = NewMidiMessageType;
-
     if (m_MidiToggleCheckboxWidget)
     {
         if (NewMidiMessageType == IEMidiMessageType::NoteOnOff)
@@ -112,6 +110,24 @@ void IEMidiInputEditorWidget::OnMidiMessageTypeChanged(IEMidiMessageType OldMidi
             m_MidiToggleCheckboxWidget->hide();
         }
     }
+}
+
+void IEMidiInputEditorWidget::paintEvent(QPaintEvent* event)
+{
+    if (event)
+    {
+        if (m_RecordButtonWidget)
+        {
+            m_RecordButtonWidget->setChecked(m_MidiDeviceInputProperty.bIsRecording);
+        }
+
+        if (m_MidiMessageEditorWidget)
+        {
+            m_MidiMessageEditorWidget->SetValues(m_MidiDeviceInputProperty.MidiMessage);
+        }
+    }
+
+    QWidget::paintEvent(event);
 }
 
 void IEMidiInputEditorWidget::OnMidiToggleChanged(Qt::CheckState CheckState)
@@ -176,6 +192,7 @@ void IEMidiInputEditorWidget::OnConsoleCommandTextCommited()
 void IEMidiInputEditorWidget::OnRecordButtonToggled(bool bToggled)
 {
     m_MidiDeviceInputProperty.bIsRecording = bToggled;
+    emit OnRecording();
 }
 
 void IEMidiInputEditorWidget::OnMidiMessageCommitted()
@@ -184,4 +201,10 @@ void IEMidiInputEditorWidget::OnMidiMessageCommitted()
     {
         m_MidiDeviceInputProperty.MidiMessage = m_MidiMessageEditorWidget->GetValues();
     }
+}
+
+void IEMidiInputEditorWidget::OnDeleteButtonPressed()
+{
+    m_MidiDeviceInputProperty.Delete();
+    deleteLater();
 }

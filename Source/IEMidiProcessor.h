@@ -32,16 +32,13 @@ public:
         m_MidiOut->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
         m_IncomingMidiMessages.resize(INCOMING_MIDI_MESSAGES_SIZE);
     };
-
-public:
-    RtMidiIn& GetMidiIn() const { return *m_MidiIn; }
-    RtMidiOut& GetMidiOut() const { return *m_MidiOut; }
-    
+   
 public:
     IEResult ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
     IEResult SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
 
     std::vector<std::string> GetAvailableMidiDevices() const;
+    std::string GetAPIName() const;
     IEResult ActivateMidiDeviceProfile(const std::string& MidiDeviceName);
     void DeactivateMidiDeviceProfile();
     bool HasActiveMidiDeviceProfile() const;

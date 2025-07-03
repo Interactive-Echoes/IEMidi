@@ -19,6 +19,7 @@ IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& M
 
     m_SendButtonWidget = new QPushButton(this);
     m_SendButtonWidget->setText("Send");
+    m_SendButtonWidget->connect(m_SendButtonWidget, &QPushButton::pressed, this, &IEMidiOutputEditorWidget::OnSendButtonPressed);
     Layout->addWidget(m_SendButtonWidget);
 
     m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(m_MidiDeviceOutputProperty.MidiMessage, this);
@@ -29,11 +30,7 @@ IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& M
     if (QPushButton* const DeleteButton = new QPushButton(this))
     {
         DeleteButton->setText("Delete");
-        DeleteButton->connect(DeleteButton, &QPushButton::pressed, [this]()
-            {
-                emit OnDeleted();
-                deleteLater();
-            });
+        DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiOutputEditorWidget::OnDeleteButtonPressed);
 
         Layout->addStretch(1);
         Layout->addWidget(DeleteButton);
@@ -50,5 +47,11 @@ void IEMidiOutputEditorWidget::OnMidiMessageCommitted()
 
 void IEMidiOutputEditorWidget::OnSendButtonPressed()
 {
-    emit OnMidiMessageSendRequested();
+    emit OnSendMidiButtonPressed(m_MidiDeviceOutputProperty.MidiMessage);
+}
+
+void IEMidiOutputEditorWidget::OnDeleteButtonPressed()
+{
+    m_MidiDeviceOutputProperty.Delete();
+    deleteLater();
 }

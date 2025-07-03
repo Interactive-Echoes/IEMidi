@@ -30,7 +30,10 @@ public:
     bool IsRecording() const;
 
 Q_SIGNALS:
-    void OnDeleted();
+    void OnRecording();
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
 
 private Q_SLOTS:
     void OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType);
@@ -40,6 +43,7 @@ private Q_SLOTS:
     void OnConsoleCommandTextCommited();
     void OnRecordButtonToggled(bool bToggled);
     void OnMidiMessageCommitted();
+    void OnDeleteButtonPressed();
 
 private:
     IEMidiDeviceInputProperty& m_MidiDeviceInputProperty;

@@ -13,3 +13,7 @@
 [submodule "ThirdParty/IELog"]
 	path = ThirdParty/IELog
 	url = https://github.com/Interactive-Echoes/IELog.git
+[submodule "ThirdParty/IEConcurrency"]
+	path = ThirdParty/IEConcurrency
+	url = https://github.com/Interactive-Echoes/IEConcurrency.git
+	branch = release

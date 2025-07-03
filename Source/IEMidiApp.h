@@ -7,6 +7,7 @@
 #include "QApplication.h"
 #include "QMainWindow.h"
 #include "QPointer.h"
+#include "IEConcurrency.h"
 
 #include "IEMidiProcessor.h"
 #include "IEMidiProfileManager.h"
@@ -29,10 +30,6 @@ public:
     IEMidiApp(int& Argc, char** Argv);
 
 public:
-    IEMidiProcessor& GetMidiProcessor() const { return *m_MidiProcessor; }
-    IEMidiProfileManager& GetMidiProfileManager() const { return *m_MidiProfileManager; }
-
-public:
     IEAppState GetAppState() const;
     void SetAppState(IEAppState AppState);
 
@@ -40,25 +37,25 @@ public:
 
 private:
     void DrawMidiDeviceSelectionWindow();
-    void DrawSelectedMidiDeviceEditorWindow();
+    void DrawActiveMidiDeviceEditorWindow();
 
-    void DrawSelectedMidiDeviceInputEditorFrameWidget(QWidget* Parent);
-    void DrawSelectedMidiDeviceOutputEditorFrameWidget(QWidget* Parent);
-    void DrawSideBar(QWidget* Parent);
+    void DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent);
+    void DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent);
+    void DrawActiveMidiDeviceSideBar(QWidget* Parent);
 
     void ResetMainWindowCentralWidget();
 
-private Q_SLOTS:
-    void OnMidiDeviceEditButtonPressed(const std::string& MidiDeviceName);
-    void OnMidiDeviceActivateButtonPressed(const std::string& MidiDeviceName);
+private:
+    void ActivateMidiDeviceProfile(const std::string& MidiDeviceName);
+    void SaveActiveMidiDeviceProfile() const;
 
 private:
     const std::unique_ptr<QMainWindow> m_MainWindow;
-    const std::shared_ptr<IEMidiProcessor> m_MidiProcessor;
+    const std::unique_ptr<IEMidiProcessor> m_MidiProcessor;
     const std::unique_ptr<IEMidiProfileManager> m_MidiProfileManager;
 
 private:
-    std::vector<QPointer<QWidget>> m_MidiDependentWidgets;
+    IESPSCQueue<QPointer<QWidget>> m_MidiDependentActiveWidgets = IESPSCQueue<QPointer<QWidget>>(6);
 
 private:
     IEAppState m_AppState = IEAppState::None;

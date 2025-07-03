@@ -7,8 +7,11 @@
 #include <array>
 #include <cstdint>
 #include <filesystem>
+#include <memory>
+#include <set>
 #include <string>
-#include <vector>
+
+#include "IELog.h"
 
 static constexpr size_t MIDI_MESSAGE_BYTE_COUNT = 3;
 
@@ -32,32 +35,62 @@ enum class IEMidiActionType : uint8_t
     Count,
 };
 
-struct MidiDevicePropertyIDGenerator
-{
-private:
-    static uint32_t MidiDevicePropertyID;
+struct IEMidiDeviceInputProperty;
+struct IEMidiDeviceOutputProperty;
     
+struct IEMidiDeviceProfile
+{
 public:
-    static uint32_t Generate() { return MidiDevicePropertyID++; };
+    explicit IEMidiDeviceProfile(const std::string& _NameID, uint32_t _InputPortNumber, uint32_t _OutputPortNumer) :
+        NameID(_NameID),
+        InputPortNumber(_InputPortNumber),
+        OutputPortNumber(_OutputPortNumer)
+    {}
+    IEMidiDeviceProfile(const IEMidiDeviceProfile&) = delete;
+    IEMidiDeviceProfile& operator=(const IEMidiDeviceProfile&) = delete;
+    IEMidiDeviceProfile(IEMidiDeviceProfile&&) = delete;
+    IEMidiDeviceProfile& operator=(IEMidiDeviceProfile&&) = delete;
+
+    IEMidiDeviceInputProperty& MakeInputProperty();
+    IEMidiDeviceOutputProperty& MakeOutputProperty();
+
+public:
+    const std::string NameID;
+    const uint32_t InputPortNumber;
+    const uint32_t OutputPortNumber;
+
+public:
+    std::shared_ptr<IEMidiDeviceInputProperty> InputPropertiesHead;
+    std::shared_ptr<IEMidiDeviceOutputProperty> OutputPropertiesHead;
 };
 
 struct IEMidiDeviceInputProperty
 {
-public:
-    IEMidiDeviceInputProperty(const std::string& MidiDeviceNameID) :
-        MidiDeviceName(MidiDeviceNameID),
-        RuntimeID(MidiDevicePropertyIDGenerator::Generate())
+private:
+    IEMidiDeviceInputProperty(IEMidiDeviceProfile& _MidiDeviceProfile, const std::shared_ptr<IEMidiDeviceInputProperty>& PreviousProperty) :
+        MidiDeviceProfile(_MidiDeviceProfile),
+        m_PreviousProperty(PreviousProperty)
     {}
-
     IEMidiDeviceInputProperty(const IEMidiDeviceInputProperty&) = delete;
     IEMidiDeviceInputProperty& operator=(const IEMidiDeviceInputProperty&) = delete;
-    IEMidiDeviceInputProperty(IEMidiDeviceInputProperty&&) = default;
-    IEMidiDeviceInputProperty& operator=(IEMidiDeviceInputProperty&&) = default;
+    IEMidiDeviceInputProperty(IEMidiDeviceInputProperty&&) = delete;
+    IEMidiDeviceInputProperty& operator=(IEMidiDeviceInputProperty&&) = delete;
 
 public:
-    const std::string& GetMidiDeviceName() const { return MidiDeviceName; };
+    ~IEMidiDeviceInputProperty();
 
 public:
+    IEMidiDeviceInputProperty* Next() const;
+
+public:
+    void Delete();
+
+public:
+    IEMidiDeviceProfile& MidiDeviceProfile;
+    friend IEMidiDeviceInputProperty& IEMidiDeviceProfile::MakeInputProperty();
+
+public:
+    // Serialized variables
     IEMidiMessageType MidiMessageType = IEMidiMessageType::None;
     IEMidiActionType MidiActionType = IEMidiActionType::None;
     std::string ConsoleCommand = std::string();
@@ -66,65 +99,45 @@ public:
     bool bIsMidiToggle = false;
 
 public:
+    // Runtime
     bool bIsRecording = false;
     bool bIsConsoleCommandActive = false;
 
 private:
-    std::string MidiDeviceName = std::string();
-    uint32_t RuntimeID = -1;
+    std::weak_ptr<IEMidiDeviceInputProperty> m_PreviousProperty;
+    std::shared_ptr<IEMidiDeviceInputProperty> m_NextProperty;
 };
 
 struct IEMidiDeviceOutputProperty
 {
-public:
-    IEMidiDeviceOutputProperty(const std::string& MidiDeviceNameID) :
-        MidiDeviceName(MidiDeviceNameID),
-        RuntimeID(MidiDevicePropertyIDGenerator::Generate())
+private:
+    IEMidiDeviceOutputProperty(IEMidiDeviceProfile& _MidiDeviceProfile, const std::shared_ptr<IEMidiDeviceOutputProperty>& PreviousProperty) :
+        MidiDeviceProfile(_MidiDeviceProfile),
+        m_PreviousProperty(PreviousProperty)
     {}
     IEMidiDeviceOutputProperty(const IEMidiDeviceOutputProperty&) = delete;
     IEMidiDeviceOutputProperty& operator=(const IEMidiDeviceOutputProperty&) = delete;
-    IEMidiDeviceOutputProperty(IEMidiDeviceOutputProperty&&) = default;
-    IEMidiDeviceOutputProperty& operator=(IEMidiDeviceOutputProperty&&) = default;
-
-    bool operator==(const IEMidiDeviceOutputProperty& Other) const
-    {
-        return RuntimeID == Other.RuntimeID;
-    }
+    IEMidiDeviceOutputProperty(IEMidiDeviceOutputProperty&&) = delete;
+    IEMidiDeviceOutputProperty& operator=(IEMidiDeviceOutputProperty&&) = delete;
 
 public:
-    const std::string& GetMidiDeviceName() const { return MidiDeviceName; };
+    ~IEMidiDeviceOutputProperty();
 
 public:
-    std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage = {0, 0, 0};
+    IEMidiDeviceOutputProperty* Next() const;
+
+public:
+    void Delete();
+
+public:
+    IEMidiDeviceProfile& MidiDeviceProfile;
+    friend IEMidiDeviceOutputProperty& IEMidiDeviceProfile::MakeOutputProperty();
+
+public:
+    // Serialized variables
+    std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage = { 0, 0, 0 };
 
 private:
-    std::string MidiDeviceName = std::string();
-    uint32_t RuntimeID = -1;
-};
-
-struct IEMidiDeviceProfile
-{
-public:
-    IEMidiDeviceProfile() = default;
-    IEMidiDeviceProfile(const std::string& NameID, uint32_t InputPortNumber, uint32_t OutputPortNumer) :
-                        Name(NameID), m_InputPortNumber(InputPortNumber), m_OutputPortNumber(OutputPortNumer) {}
-    bool operator==(const IEMidiDeviceProfile& Other) const
-    {
-        return Name == Other.Name;
-    }
-
-public:
-    const std::string& GetName() const { return Name; };
-    uint32_t GetInputPortNumber() const { return m_InputPortNumber; }
-    uint32_t GetOutputPortNumber() const { return m_OutputPortNumber; }
-
-public:
-    
-    std::vector<IEMidiDeviceInputProperty> InputProperties;
-    std::vector<IEMidiDeviceOutputProperty> OutputProperties;
-    
-private:
-    std::string Name = std::string();
-    uint32_t m_InputPortNumber = -1;
-    uint32_t m_OutputPortNumber = -1;
+    std::weak_ptr<IEMidiDeviceOutputProperty> m_PreviousProperty;
+    std::shared_ptr<IEMidiDeviceOutputProperty> m_NextProperty;
 };

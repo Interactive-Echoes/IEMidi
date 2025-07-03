@@ -27,6 +27,7 @@ target_link_libraries(LIEMidi PUBLIC rtmidi)
 target_link_libraries(LIEMidi PUBLIC ryml)
 target_link_libraries(LIEMidi PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
 target_link_libraries(LIEMidi PUBLIC IELog)
+target_link_libraries(LIEMidi PUBLIC IEConcurrency)
 
 install(TARGETS LIEMidi
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
