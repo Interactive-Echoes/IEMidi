@@ -63,7 +63,7 @@ void IEFileBrowserWidget::OnBrowseButtonPressed()
     }
 }
 
-void IEFileBrowserWidget::OnTextCommitted()
+void IEFileBrowserWidget::OnTextCommitted() const
 {
     emit OnFilePathCommitted();
 }

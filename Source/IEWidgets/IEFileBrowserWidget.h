@@ -25,10 +25,10 @@ public:
     std::filesystem::path GetFilePath() const;
 
 Q_SIGNALS:
-    void OnFilePathCommitted();
+    void OnFilePathCommitted() const;
 
 private Q_SLOTS:
-    void OnTextCommitted();
+    void OnTextCommitted() const;
     void OnBrowseButtonPressed();
 
 private:

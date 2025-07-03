@@ -37,7 +37,7 @@ IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& M
     }
 }
 
-void IEMidiOutputEditorWidget::OnMidiMessageCommitted()
+void IEMidiOutputEditorWidget::OnMidiMessageCommitted() const
 {
     if (m_MidiMessageEditorWidget)
     {
@@ -45,7 +45,7 @@ void IEMidiOutputEditorWidget::OnMidiMessageCommitted()
     }
 }
 
-void IEMidiOutputEditorWidget::OnSendButtonPressed()
+void IEMidiOutputEditorWidget::OnSendButtonPressed()const
 {
     emit OnSendMidiButtonPressed(m_MidiDeviceOutputProperty.MidiMessage);
 }

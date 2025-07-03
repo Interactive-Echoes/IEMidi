@@ -96,7 +96,7 @@ bool IEMidiInputEditorWidget::IsRecording() const
     return bIsRecording;
 }
 
-void IEMidiInputEditorWidget::OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType)
+void IEMidiInputEditorWidget::OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType) const
 {
     m_MidiDeviceInputProperty.MidiMessageType = NewMidiMessageType;
     if (m_MidiToggleCheckboxWidget)
@@ -130,12 +130,12 @@ void IEMidiInputEditorWidget::paintEvent(QPaintEvent* event)
     QWidget::paintEvent(event);
 }
 
-void IEMidiInputEditorWidget::OnMidiToggleChanged(Qt::CheckState CheckState)
+void IEMidiInputEditorWidget::OnMidiToggleChanged(Qt::CheckState CheckState) const
 {
     m_MidiDeviceInputProperty.bIsMidiToggle = CheckState == Qt::CheckState::Checked;
 }
 
-void IEMidiInputEditorWidget::OnMidiActionTypeChanged(IEMidiActionType OldMidiActionType, IEMidiActionType NewMidiActionType)
+void IEMidiInputEditorWidget::OnMidiActionTypeChanged(IEMidiActionType OldMidiActionType, IEMidiActionType NewMidiActionType) const
 {
     m_MidiDeviceInputProperty.MidiActionType = NewMidiActionType;
 
@@ -173,7 +173,7 @@ void IEMidiInputEditorWidget::OnMidiActionTypeChanged(IEMidiActionType OldMidiAc
     }
 }
 
-void IEMidiInputEditorWidget::OnOpenFilePathCommited()
+void IEMidiInputEditorWidget::OnOpenFilePathCommited() const
 {
     if (m_OpenFileBrowserWidget)
     {
@@ -181,7 +181,7 @@ void IEMidiInputEditorWidget::OnOpenFilePathCommited()
     }
 }
 
-void IEMidiInputEditorWidget::OnConsoleCommandTextCommited()
+void IEMidiInputEditorWidget::OnConsoleCommandTextCommited() const
 {
     if (m_ConsoleCommandWidget)
     {
@@ -189,13 +189,13 @@ void IEMidiInputEditorWidget::OnConsoleCommandTextCommited()
     }
 }
 
-void IEMidiInputEditorWidget::OnRecordButtonToggled(bool bToggled)
+void IEMidiInputEditorWidget::OnRecordButtonToggled(bool bToggled) const
 {
     m_MidiDeviceInputProperty.bIsRecording = bToggled;
     emit OnRecording();
 }
 
-void IEMidiInputEditorWidget::OnMidiMessageCommitted()
+void IEMidiInputEditorWidget::OnMidiMessageCommitted() const
 {
     if (m_MidiMessageEditorWidget)
     {

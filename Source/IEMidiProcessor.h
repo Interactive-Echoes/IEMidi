@@ -32,8 +32,8 @@ public:
     };
    
 public:
-    IEResult ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
-    IEResult SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
+    IEResult ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const;
+    IEResult SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const;
 
     std::vector<std::string> GetAvailableMidiDevices() const;
     std::string GetAPIName() const;
@@ -64,7 +64,7 @@ private:
 
 private:
     std::optional<IEMidiDeviceProfile> m_ActiveMidiDeviceProfile;
-    IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>> m_MidiLogMessagesBuffer = IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>(10);
+    IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>> m_MidiLogMessagesBuffer = IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>(8);
     std::map<uint32_t, std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)>> m_MidiCallbackFuncs;
 
 private:

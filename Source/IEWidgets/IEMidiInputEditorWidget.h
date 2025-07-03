@@ -30,19 +30,19 @@ public:
     bool IsRecording() const;
 
 Q_SIGNALS:
-    void OnRecording();
+    void OnRecording() const;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
 
 private Q_SLOTS:
-    void OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType);
-    void OnMidiToggleChanged(Qt::CheckState CheckState);
-    void OnMidiActionTypeChanged(IEMidiActionType OldMidiActionType, IEMidiActionType NewMidiActionType);
-    void OnOpenFilePathCommited();
-    void OnConsoleCommandTextCommited();
-    void OnRecordButtonToggled(bool bToggled);
-    void OnMidiMessageCommitted();
+    void OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType) const;
+    void OnMidiToggleChanged(Qt::CheckState CheckState) const;
+    void OnMidiActionTypeChanged(IEMidiActionType OldMidiActionType, IEMidiActionType NewMidiActionType) const;
+    void OnOpenFilePathCommited() const;
+    void OnConsoleCommandTextCommited() const;
+    void OnRecordButtonToggled(bool bToggled) const;
+    void OnMidiMessageCommitted() const;
     void OnDeleteButtonPressed();
 
 private:

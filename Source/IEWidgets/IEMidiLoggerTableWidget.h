@@ -21,12 +21,11 @@ public:
 
 private:
     QTableWidgetItem* CreateCenteredTableWidgetItem(const QString& Text, bool bBold = false) const;
-    void FlushMidiMessagesToTable();
+    void FlushMidiMessagesToTable() const;
 
 private:
     IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& m_MidiLogMessagesBuffer;
 
 private:
     QTableWidget* m_MidiLoggerTableWidget;
-    int m_CurrentRow = 1;
 };

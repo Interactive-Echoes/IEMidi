@@ -23,15 +23,15 @@ public:
 
 public:
     std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> GetValues() const;
-    void SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
-    void ShowByteWidget(size_t Index);
-    void HideByteWidget(size_t Index);
+    void SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const;
+    void ShowByteWidget(size_t Index) const;
+    void HideByteWidget(size_t Index) const;
     
 Q_SIGNALS:
-    void OnMidiMessageCommitted();
+    void OnMidiMessageCommitted() const;
 
 private Q_SLOTS:
-    void OnMidiByteCommitted();
+    void OnMidiByteCommitted() const;
 
 private:
     std::array<QSpinBox*, MIDI_MESSAGE_BYTE_COUNT> m_SpinBoxWidgets;

@@ -4,7 +4,7 @@
 
 #include "IEMidiProcessor.h"
 
-IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
+IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const
 {
     IEResult Result(IEResult::Type::Fail, "Failed to process Midi");
 
@@ -145,7 +145,7 @@ IEResult IEMidiProcessor::ProcessMidiInputMessage(const std::array<uint8_t, MIDI
     return Result;
 }
 
-IEResult IEMidiProcessor::SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
+IEResult IEMidiProcessor::SendMidiOutputMessage(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const
 {
     IEResult Result(IEResult::Type::Fail, "Failed to send midi output message");
     if (m_MidiOut && m_ActiveMidiDeviceProfile)

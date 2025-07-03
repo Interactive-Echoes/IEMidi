@@ -22,11 +22,11 @@ public:
     explicit IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent = nullptr);
 
 Q_SIGNALS:
-    void OnSendMidiButtonPressed(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
+    void OnSendMidiButtonPressed(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const;
 
 private Q_SLOTS:
-    void OnSendButtonPressed();
-    void OnMidiMessageCommitted();
+    void OnSendButtonPressed() const;
+    void OnMidiMessageCommitted() const;
     void OnDeleteButtonPressed();
 
 private:

@@ -6,6 +6,7 @@
 
 #include "QBoxLayout.h"
 #include "QHeaderView.h"
+#include "QPainter.h"
 #include "QTimer.h"
 
 IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent) :
@@ -22,6 +23,8 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
         m_MidiLoggerTableWidget->setMouseTracking(false);
         m_MidiLoggerTableWidget->setAutoFillBackground(false);
         m_MidiLoggerTableWidget->setShowGrid(false);
+        m_MidiLoggerTableWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_MidiLoggerTableWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_MidiLoggerTableWidget->setStyleSheet(R"(
             QTableWidget 
             {
@@ -55,7 +58,7 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
     }
 }
 
-void IEMidiLoggerTableWidget::FlushMidiMessagesToTable()
+void IEMidiLoggerTableWidget::FlushMidiMessagesToTable() const
 {
     int Row = 1;
     while (!m_MidiLogMessagesBuffer.IsEmpty())
@@ -87,5 +90,6 @@ QTableWidgetItem* IEMidiLoggerTableWidget::CreateCenteredTableWidgetItem(const Q
     Font.setBold(bBold);
     TableWidgetItem->setFont(Font);
     TableWidgetItem->setBackground(Qt::NoBrush);
+    TableWidgetItem->setFlags(TableWidgetItem->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEditable);
     return TableWidgetItem;
 };
