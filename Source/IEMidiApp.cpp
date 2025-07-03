@@ -32,6 +32,8 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     m_MainWindow->setWindowTitle("IEMidi");
     m_MainWindow->resize(960, 720);
     m_MainWindow->setAutoFillBackground(true);
+    const std::string IconPath = std::format("{0}/IE-Brand-Kit/IE-Logo-NoBg.png", IEResources_Folder_Path); // compile time definition
+    m_MainWindow->setWindowIcon(QIcon(IconPath.c_str()));
     DrawMidiDeviceSelectionWindow();
 }
 

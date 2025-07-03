@@ -17,3 +17,6 @@
 	path = ThirdParty/IEConcurrency
 	url = https://github.com/Interactive-Echoes/IEConcurrency.git
 	branch = release
+[submodule "IEResources"]
+	path = IEResources
+	url = https://github.com/Interactive-Echoes/IEResources

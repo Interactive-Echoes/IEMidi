@@ -4,6 +4,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
+add_compile_definitions(IEResources_Folder_Path="${CMAKE_SOURCE_DIR}/IEResources")
 set(CMAKE_AUTOMOC ON)
 set(IEMidi_SOURCE_FILES 
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiApp.cpp"
