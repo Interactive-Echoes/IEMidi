@@ -4,18 +4,17 @@
 
 #pragma once
 
-#include <deque>
+#include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
+#include "IEActions.h"
+#include "IEConcurrency.h"
 #include "IELog.h"
 #include "RtMidi.h"
-#include "IEActions.h"
 
 #include "IEMidiTypes.h"
-
-static constexpr size_t INCOMING_MIDI_MESSAGES_SIZE = 20;
 
 class IEMidiProcessor
 {
@@ -30,7 +29,6 @@ public:
     {
         m_MidiIn->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
         m_MidiOut->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
-        m_IncomingMidiMessages.resize(INCOMING_MIDI_MESSAGES_SIZE);
     };
    
 public:
@@ -44,10 +42,14 @@ public:
     bool HasActiveMidiDeviceProfile() const;
     IEMidiDeviceProfile& GetActiveMidiDeviceProfile();
     const IEMidiDeviceProfile& GetActiveMidiDeviceProfile() const;
-    const std::deque<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetIncomingMidiMessages() const { return m_IncomingMidiMessages; }
+    IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetMidiLogMessagesBuffer() { return m_MidiLogMessagesBuffer; }
+    const IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetMidiLogMessagesBuffer() const { return m_MidiLogMessagesBuffer; }
 
 public:
-    void AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func);
+    [[nodiscard]] uint32_t AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func);
+    template<typename T>
+    [[nodiscard]] uint32_t AddOnMidiCallback(T* Object, void (T::*MemFunc)(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>));
+    void RemoveOnMidiCallback(uint32_t CallbackID);
 
 private:
     static void OnRtMidiCallback(double TimeStamp, std::vector<unsigned char>* Message, void* UserData);
@@ -62,8 +64,8 @@ private:
 
 private:
     std::optional<IEMidiDeviceProfile> m_ActiveMidiDeviceProfile;
-    std::deque<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>> m_IncomingMidiMessages;
-    std::vector<std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)>> m_MidiCallbackFuncs;
+    IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>> m_MidiLogMessagesBuffer = IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>(10);
+    std::map<uint32_t, std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)>> m_MidiCallbackFuncs;
 
 private:
     std::unique_ptr<IEAction_Volume> m_VolumeAction;
@@ -71,3 +73,15 @@ private:
     std::unique_ptr<IEAction_ConsoleCommand> m_ConsoleCommandAction;
     std::unique_ptr<IEAction_OpenFile> m_OpenFileAction;
 };
+
+template<typename T>
+inline uint32_t IEMidiProcessor::AddOnMidiCallback(T* Object, void(T::* MemFunc)(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>))
+{
+    return AddOnMidiCallback([Object, MemFunc](double Timestamp, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage)
+        {
+            if (Object)
+            {
+                (Object->*MemFunc)(Timestamp, MidiMessage);
+            }
+        });
+}

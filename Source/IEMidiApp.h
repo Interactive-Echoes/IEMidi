@@ -13,6 +13,7 @@
 #include "IEMidiProfileManager.h"
 #include "IEMidiTypes.h"
 
+class IEMidiLoggerTableWidget;
 class QWidget;
 
 enum class IEAppState : uint16_t
@@ -28,6 +29,7 @@ class IEMidiApp : public QApplication
 {
 public:
     IEMidiApp(int& Argc, char** Argv);
+    ~IEMidiApp();
 
 public:
     IEAppState GetAppState() const;
@@ -39,10 +41,11 @@ private:
     void DrawMidiDeviceSelectionWindow();
     void DrawActiveMidiDeviceEditorWindow();
 
+    void DrawActiveMidiDeviceSideBar(QWidget* Parent);
+    void DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent);
     void DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent);
     void DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent);
-    void DrawActiveMidiDeviceSideBar(QWidget* Parent);
-
+    
     void ResetMainWindowCentralWidget();
 
 private:
@@ -50,12 +53,17 @@ private:
     void SaveActiveMidiDeviceProfile() const;
 
 private:
+    void OnMidiCallback(double Timestamp, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage);
+
+private:
     const std::unique_ptr<QMainWindow> m_MainWindow;
     const std::unique_ptr<IEMidiProcessor> m_MidiProcessor;
     const std::unique_ptr<IEMidiProfileManager> m_MidiProfileManager;
 
 private:
-    IESPSCQueue<QPointer<QWidget>> m_MidiDependentActiveWidgets = IESPSCQueue<QPointer<QWidget>>(6);
+    IESPSCQueue<QPointer<QWidget>> m_MidiListeningWidgets = IESPSCQueue<QPointer<QWidget>>(6);
+    QPointer<IEMidiLoggerTableWidget> m_MidiLoggerTableWidget;
+    uint32_t m_OnMidiCallbackID = 0;
 
 private:
     IEAppState m_AppState = IEAppState::None;

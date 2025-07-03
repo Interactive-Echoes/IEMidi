@@ -273,9 +273,16 @@ bool IEMidiProcessor::HasActiveMidiDeviceProfile() const
     return m_ActiveMidiDeviceProfile.has_value();
 }
 
-void IEMidiProcessor::AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func)
+uint32_t IEMidiProcessor::AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func)
 {
-    m_MidiCallbackFuncs.push_back(Func);
+    static uint32_t CallbackIDGenerator = 0;
+    m_MidiCallbackFuncs.emplace(CallbackIDGenerator++, Func);
+    return CallbackIDGenerator;
+}
+
+void IEMidiProcessor::RemoveOnMidiCallback(uint32_t CallbackID)
+{
+    m_MidiCallbackFuncs.erase(CallbackID);
 }
 
 void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned char>* Message, void* UserData)
@@ -305,12 +312,11 @@ void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned ch
                     }
                 }
 
-                if (MidiProcessor->m_IncomingMidiMessages.size() == INCOMING_MIDI_MESSAGES_SIZE)
+                if (MidiProcessor->m_MidiLogMessagesBuffer.IsFull())
                 {
-                    MidiProcessor->m_IncomingMidiMessages.pop_back();
+                    MidiProcessor->m_MidiLogMessagesBuffer.Pop();
                 }
-
-                MidiProcessor->m_IncomingMidiMessages.push_front(MidiMessage);
+                MidiProcessor->m_MidiLogMessagesBuffer.Push(MidiMessage);
 
                 if (bIncludeProcess)
                 {
@@ -319,7 +325,7 @@ void IEMidiProcessor::OnRtMidiCallback(double TimeStamp, std::vector<unsigned ch
 
                 for (const auto& Func : MidiProcessor->m_MidiCallbackFuncs)
                 {
-                    Func(TimeStamp, MidiMessage);
+                    Func.second(TimeStamp, MidiMessage);
                 }
             }
         }

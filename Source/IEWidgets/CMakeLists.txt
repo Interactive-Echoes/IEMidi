@@ -11,6 +11,8 @@ set(IEMidi_WIDGET_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropdownWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiLoggerTableWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiLoggerTableWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropDownWidget.cpp"
