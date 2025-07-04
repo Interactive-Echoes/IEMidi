@@ -84,8 +84,16 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
                 m_RecordButtonWidget->setText("Record");
                 m_RecordButtonWidget->setCheckable(true);
                 m_RecordButtonWidget->setStyleSheet(R"(
+                    QPushButton {
+                        background-color: rgb(100, 70, 10);
+                    }
+
+                    QPushButton:hover {
+                        background-color: rgb(60, 2, 2);
+                    }
+                    
                     QPushButton:checked {
-                        background-color: rgb(75, 3, 3);
+                        background-color: rgb(60, 2, 2);
                     }
                 )");
                     m_RecordButtonWidget->connect(m_RecordButtonWidget, &QPushButton::toggled, this, &IEMidiInputEditorWidget::OnRecordButtonToggled);

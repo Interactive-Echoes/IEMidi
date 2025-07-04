@@ -19,7 +19,6 @@ IEMidiMessageEditorWidget::IEMidiMessageEditorWidget(const std::array<uint8_t, M
 
     QString SpinBoxStyle = R"(
         QSpinBox {
-            border: 1px solid #ccc;
             border-radius: 6px;
             padding: 4px 8px;
             background: rgb(10, 10, 10);
@@ -36,13 +35,11 @@ IEMidiMessageEditorWidget::IEMidiMessageEditorWidget(const std::array<uint8_t, M
         
         QSpinBox::up-button {
             subcontrol-position: right top;
-            image: url(:/icons/up-arrow.svg); /* Replace with your icon */
             margin: 1px;
         }
         
         QSpinBox::down-button {
             subcontrol-position: right bottom;
-            image: url(:/icons/down-arrow.svg); /* Replace with your icon */
             margin: 1px;
         }
         

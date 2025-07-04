@@ -55,23 +55,7 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
         m_TrayIcon->show();
     }
 
-    const std::string& MainFontPath = std::format("{0}/Fonts/Fonts/Montserrat/Montserrat-VariableFont_wght.ttf", IEResources_Folder_Path); // compile time definition
-    int MainFontId = QFontDatabase::addApplicationFont(MainFontPath.c_str());
-    if (MainFontId != -1)
-    {
-        QString MainFontFamily = QFontDatabase::applicationFontFamilies(MainFontId).at(0);
-        QFont MainFont(MainFontFamily, 13);
-        MainFont.setWeight(QFont::Weight::Medium);
-        setFont(MainFont);
-    }
-
-    //m_MainWindow->setStyleSheet("background-color: rgb(30, 30, 30);");
-    // setStyleSheet(R"(
-    //     QPushButton{ font - family: 'Montserrat'; font - size: 12pt; font - weight: DemiBold }
-        
-    //     )");
-
-    setStyleSheet(R"(
+    QApplication::setStyleSheet(R"(
 
         QMainWindow > QWidget {
             background-color: rgb(10, 10, 10);
@@ -86,28 +70,34 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
         }
 
         QPushButton {
-            background-color:rgb(45, 45, 48);
-            border: 1px solid #3c3c3c;
-            padding: 4px 8px;
+            background-color: rgb(30, 30, 40);
+            border: 1px solid rgb(35, 35, 45);
+            padding: 2px 8px;
             border-radius: 4px;
         }
     
         QPushButton:hover {
-            background-color: #3e3e42;
+            background-color: rgb(45, 45, 55);
         }
     
-        QLineEdit, QTextEdit {
-            background-color: #252526;
-            border: 1px solid #3c3c3c;
-            padding: 4px;
-        }
-
         QComboBox {
-            background-color: #252526;
+            background-color:rgb(30, 30, 35);
             border-radius: 5px;
             padding: 4px 28px 4px 8px;
         }
-       
+
+        QComboBox:drop-down {
+            background-color:rgb(45, 45, 50);
+        }
+
+        QCheckBox {
+            background-color: transparent;
+        }
+
+        QCheckBox::indicator:checked {
+            background-color: gray;
+            border-radius: 4px;
+        }
     )");
    
     DrawMidiDeviceSelectionWindow();
@@ -377,7 +367,7 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
     {
         if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
         {
-            ParentLayout->addWidget(SelectedMidiDeviceEditorFrameWidget, 5);
+            ParentLayout->addWidget(SelectedMidiDeviceEditorFrameWidget, 6);
 
             if (QVBoxLayout* const SelectedMidiDeviceEditorLayout = new QVBoxLayout(SelectedMidiDeviceEditorFrameWidget))
             {
@@ -410,6 +400,15 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
                                 FooterLayout->addWidget(SaveProfileButton);
 
                                 SaveProfileButton->connect(SaveProfileButton, &QPushButton::pressed, this, &IEMidiApp::SaveActiveMidiDeviceProfile);
+                                SaveProfileButton->setStyleSheet(R"(
+                                        QPushButton {
+                                            background-color: rgb(15, 90, 20);
+                                        }
+
+                                        QPushButton:hover {
+                                            background-color: rgb(30, 105, 35);
+                                        }
+                                    )");
                             }
 
                             if (QPushButton* const ActivateProfileButton = new QPushButton("Activate", Footer))
@@ -443,6 +442,11 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                 MidiInputEditorFrameLayout->setContentsMargins(0, 0, 0, 0);
                 MidiInputEditorFrameLayout->setSpacing(10);
 
+                QLabel* const InputPropertiesLabel = new QLabel("Inputs", MidiInputEditorFrameWidget);
+                InputPropertiesLabel->setStyleSheet("font-size: 16px; font-weight: bold;");
+                MidiInputEditorFrameLayout->addWidget(InputPropertiesLabel);
+                MidiInputEditorFrameLayout->addSpacing(20);
+
                 // Input For Loop
                 if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
                 {
@@ -462,6 +466,7 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                 }
                 // End For loop
 
+                MidiInputEditorFrameLayout->addSpacing(10);
                 if (QPushButton* const AddInputPropertyButton = new QPushButton("Add Property", MidiInputEditorFrameWidget))
                 {
                     MidiInputEditorFrameLayout->addWidget(AddInputPropertyButton);
@@ -477,7 +482,7 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                                 if (IEMidiInputEditorWidget* const MidiInputEditorWidget = new IEMidiInputEditorWidget(
                                     NewMidiDeviceInputProperty, MidiInputEditorFrameWidget))
                                 {
-                                    MidiInputEditorFrameLayout->insertWidget(MidiInputEditorFrameLayout->count() - 2, MidiInputEditorWidget);
+                                    MidiInputEditorFrameLayout->insertWidget(MidiInputEditorFrameLayout->count() - 3, MidiInputEditorWidget);
 
                                     MidiInputEditorWidget->connect(MidiInputEditorWidget, &IEMidiInputEditorWidget::OnRecording, [this, MidiInputEditorWidget]()
                                     {
@@ -506,6 +511,11 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
                 MidiOutputEditorFrameLayout->setContentsMargins(0, 0, 0, 0);
                 MidiOutputEditorFrameLayout->setSpacing(10);
 
+                QLabel* const OutputPropertiesLabel = new QLabel("Outputs", MidiOutputEditorFrameWidget);
+                OutputPropertiesLabel->setStyleSheet("font-size: 16px; font-weight: bold;");
+                MidiOutputEditorFrameLayout->addWidget(OutputPropertiesLabel);
+                MidiOutputEditorFrameLayout->addSpacing(20);
+
                 // Output for loop
                 if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
                 {
@@ -530,6 +540,7 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
                 }
                 // End For loop
 
+                MidiOutputEditorFrameLayout->addSpacing(10);
                 if (QPushButton* const AddOutputPropertyButton = new QPushButton("Add Property", MidiOutputEditorFrameWidget))
                 {
                     MidiOutputEditorFrameLayout->addWidget(AddOutputPropertyButton);
@@ -545,7 +556,7 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
                                 if (IEMidiOutputEditorWidget* const MidiOutputEditorWidget = new IEMidiOutputEditorWidget(
                                     NewMidiDeviceOutputProperty, MidiOutputEditorFrameWidget))
                                 {
-                                    MidiOutputEditorFrameLayout->insertWidget(MidiOutputEditorFrameLayout->count() - 2, MidiOutputEditorWidget);
+                                    MidiOutputEditorFrameLayout->insertWidget(MidiOutputEditorFrameLayout->count() - 3, MidiOutputEditorWidget);
                                 }
                             }
                         });
