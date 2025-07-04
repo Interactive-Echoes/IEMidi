@@ -4,8 +4,8 @@
 
 #include "IEMidiMessageTypeDropdownWidget.h"
 
-#include "QBoxLayout.h"
-#include "QComboBox.h"
+#include "qboxlayout.h"
+#include "qcombobox.h"
 
 #include "IELog.h"
 

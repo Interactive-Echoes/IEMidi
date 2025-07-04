@@ -4,8 +4,8 @@
 
 #include "IEMidiOutputEditorWidget.h"
 
-#include "QBoxLayout.h"
-#include "QPushButton.h"
+#include "qboxlayout.h"
+#include "qpushbutton.h"
 
 #include "IEMidiMessageEditorWidget.h"
 

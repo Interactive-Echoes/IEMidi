@@ -5,12 +5,12 @@
 #include "IEMidiInputEditorWidget.h"
 
 #include "IELog.h"
-#include "QBoxLayout.h"
-#include "QCheckBox.h"
-#include "QCoreEvent.h"
-#include "QLineEdit.h"
-#include "QMetaObject.h"
-#include "QPushButton.h"
+#include "qboxlayout.h"
+#include "qcheckbox.h"
+#include "qcoreevent.h"
+#include "qlineedit.h"
+#include "qmetaobject.h"
+#include "qpushbutton.h"
 
 #include "IEFileBrowserWidget.h"
 #include "IEMidiActionTypeDropdownWidget.h"

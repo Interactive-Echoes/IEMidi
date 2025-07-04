@@ -15,8 +15,8 @@ set(IEMidi_WIDGET_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiLoggerTableWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageEditorWidget.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropDownWidget.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropDownWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropdownWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiMessageTypeDropdownWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiOutputEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiOutputEditorWidget.h"
   PARENT_SCOPE

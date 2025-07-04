@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "QApplication.h"
-#include "QPointer.h"
+#include "qapplication.h"
+#include "qpointer.h"
 #include "IEConcurrency.h"
 
 #include "IEMidiProcessor.h"

@@ -4,7 +4,7 @@
 
 #include "IEMidiProfileManager.h"
 
-#include "QStandardPaths.h"
+#include "qstandardpaths.h"
 #include "ryml.hpp"
 #include "ryml_std.hpp"
 

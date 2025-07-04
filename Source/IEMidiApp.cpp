@@ -6,18 +6,18 @@
 
 #include <string>
 
-#include "QBoxLayout.h"
-#include "QFontDatabase.h"
-#include "QFrame.h"
-#include "QHeaderView.h"
-#include "QLabel.h"
-#include "QMainWindow.h"
-#include "QMenu.h"
-#include "QObject.h"
-#include "QPushButton.h"
-#include "QSizePolicy.h"
-#include "QSystemTrayIcon.h"
-#include "QTableWidget.h"
+#include "qboxlayout.h"
+#include "qfontdatabase.h"
+#include "qframe.h"
+#include "qheaderview.h"
+#include "qlabel.h"
+#include "qmainwindow.h"
+#include "qmenu.h"
+#include "qobject.h"
+#include "qpushbutton.h"
+#include "qsizepolicy.h"
+#include "qsystemtrayicon.h"
+#include "qtablewidget.h"
 
 #include "IELog.h"
 

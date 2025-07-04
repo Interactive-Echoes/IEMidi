@@ -4,10 +4,10 @@
 
 #include "IEFileBrowserWidget.h"
 
-#include "QBoxLayout.h"
-#include "QFileDialog.h"
-#include "QLineEdit.h"
-#include "QPushButton.h"
+#include "qboxlayout.h"
+#include "qfiledialog.h"
+#include "qlineedit.h"
+#include "qpushbutton.h"
 
 IEFileBrowserWidget::IEFileBrowserWidget(QWidget* Parent)
 {

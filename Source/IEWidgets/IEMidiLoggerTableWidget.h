@@ -6,8 +6,8 @@
 
 #include <array>
 
-#include "QTableWidget.h"
-#include "QWidget.h"
+#include "qtablewidget.h"
+#include "qwidget.h"
 
 #include "IEConcurrency.h"
 #include "IEMidiTypes.h"

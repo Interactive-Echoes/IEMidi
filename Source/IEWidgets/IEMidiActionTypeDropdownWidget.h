@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "QWidget.h"
+#include "qwidget.h"
 
 #include "IEMidiTypes.h"
 

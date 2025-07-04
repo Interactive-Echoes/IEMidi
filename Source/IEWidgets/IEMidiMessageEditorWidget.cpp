@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "QBoxLayout.h"
-#include "QSpinBox.h"
+#include "qboxlayout.h"
+#include "qspinbox.h"
 
 #include "IELog.h"
 

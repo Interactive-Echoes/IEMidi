@@ -4,10 +4,10 @@
 
 #include "IEMidiLoggerTableWidget.h"
 
-#include "QBoxLayout.h"
-#include "QHeaderView.h"
-#include "QPainter.h"
-#include "QTimer.h"
+#include "qboxlayout.h"
+#include "qheaderview.h"
+#include "qpainter.h"
+#include "qtimer.h"
 
 IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent) :
     QWidget(Parent),

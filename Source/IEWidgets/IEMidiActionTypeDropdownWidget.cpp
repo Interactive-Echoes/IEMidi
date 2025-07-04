@@ -4,8 +4,8 @@
 
 #include "IEMidiActionTypeDropdownWidget.h"
 
-#include "QBoxLayout.h"
-#include "QComboBox.h"
+#include "qboxlayout.h"
+#include "qcombobox.h"
 
 IEMidiActionTypeDropdownWidget::IEMidiActionTypeDropdownWidget(QWidget* Parent) : QWidget(Parent)
 {

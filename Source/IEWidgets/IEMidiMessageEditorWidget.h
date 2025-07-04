@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "QWidget.h"
+#include "qwidget.h"
 
 #include "IEMidiTypes.h"
 
