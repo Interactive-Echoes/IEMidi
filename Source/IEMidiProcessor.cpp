@@ -347,5 +347,12 @@ std::string IEMidiProcessor::GetSanitizedMidiDeviceName(const std::string& MidiD
     {
         SanitizedMidiDeviceName.erase(NumericSuffixIndex - 1, NumericSuffix.length() + 1);
     }
+
+    const size_t ColonSuffixIndex = MidiDeviceName.find(":");
+    if (ColonSuffixIndex != std::string::npos)
+    {
+        SanitizedMidiDeviceName.erase(ColonSuffixIndex, SanitizedMidiDeviceName.length() - ColonSuffixIndex);
+    }
+
     return SanitizedMidiDeviceName;
 }
