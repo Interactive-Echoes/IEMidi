@@ -12,6 +12,7 @@ IEMidiActionTypeDropdownWidget::IEMidiActionTypeDropdownWidget(QWidget* Parent) 
     if (QHBoxLayout* const Layout = new QHBoxLayout(this))
     {
         m_ComboBoxWidget = new QComboBox(this);
+        m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_ComboBoxWidget->addItem("-Action Type-");
         m_ComboBoxWidget->addItem("Volume");
         m_ComboBoxWidget->addItem("Mute");

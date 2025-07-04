@@ -72,13 +72,19 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     //     )");
 
     setStyleSheet(R"(
+
+        QMainWindow > QWidget {
+            background-color: rgb(10, 10, 10);
+        }
+
         QWidget {
             background-color: rgb(20, 20, 20);
             color: #d4d4d4;
             font-family: 'Segoe UI', sans-serif;
             font-size: 12pt;
+            border-radius: 10px;
         }
-    
+
         QPushButton {
             background-color:rgb(45, 45, 48);
             border: 1px solid #3c3c3c;
@@ -96,6 +102,11 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
             padding: 4px;
         }
 
+        QComboBox {
+            background-color: #252526;
+            border-radius: 5px;
+            padding: 4px 28px 4px 8px;
+        }
        
     )");
    
@@ -238,12 +249,6 @@ void IEMidiApp::DrawActiveMidiDeviceEditorWindow()
             CentralWidget->setLayout(CentralLayout);
 
             DrawActiveMidiDeviceSideBar(CentralWidget);
-
-            QFrame* Divider = new QFrame(CentralWidget);
-            Divider->setFrameShape(QFrame::VLine);
-            Divider->setLineWidth(2);
-            CentralLayout->addWidget(Divider);
-
             DrawActiveMidiDeviceEditorFrameWidget(CentralWidget);
         }
     }
@@ -569,8 +574,8 @@ void IEMidiApp::RunInBackground() const
     if (m_TrayIcon)
     {
         m_TrayIcon->showMessage(
-            "App Running",                  
-            "IEMidi is running in the background",
+            "IEMidi",                  
+            "App is running in the background",
             QSystemTrayIcon::Information,
             5000
         );

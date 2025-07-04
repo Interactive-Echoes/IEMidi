@@ -14,6 +14,7 @@ IEMidiMessageTypeDropdownWidget::IEMidiMessageTypeDropdownWidget(QWidget* Parent
     if (QHBoxLayout* const Layout = new QHBoxLayout(this))
     {
         m_ComboBoxWidget = new QComboBox(this);
+        m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_ComboBoxWidget->addItem("-Message Type-");
         m_ComboBoxWidget->addItem("NoteOnOff");
         m_ComboBoxWidget->addItem("ControlChange");
