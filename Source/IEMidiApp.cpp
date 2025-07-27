@@ -524,7 +524,30 @@ void IEMidiApp::SaveActiveMidiDeviceProfile() const
     {
         if (m_MidiProcessor->HasActiveMidiDeviceProfile())
         {
-            m_MidiProfileManager->SaveProfile(m_MidiProcessor->GetActiveMidiDeviceProfile());
+            if (m_MidiProfileManager->SaveProfile(m_MidiProcessor->GetActiveMidiDeviceProfile()))
+            {
+                if (m_SystemTrayIcon)
+                {
+                    m_SystemTrayIcon->showMessage(
+                        "IEMidi",                  
+                        "Successfully saved profile",
+                        QSystemTrayIcon::MessageIcon::NoIcon,
+                        2000
+                    );
+                }
+            }
+            else
+            {
+                if (m_SystemTrayIcon)
+                {
+                    m_SystemTrayIcon->showMessage(
+                        "IEMidi",                  
+                        "Failed to save profile",
+                        QSystemTrayIcon::MessageIcon::Critical,
+                        5000
+                    );
+                }
+            }
         }
     }
 }
