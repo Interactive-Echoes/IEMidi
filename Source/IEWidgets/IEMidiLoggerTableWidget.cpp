@@ -6,56 +6,63 @@
 
 #include "qboxlayout.h"
 #include "qheaderview.h"
-#include "qpainter.h"
+#include "qlabel.h"
 #include "qtimer.h"
 
 IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent) :
     QWidget(Parent),
     m_MidiLogMessagesBuffer(IncomingMidiMessages)
 {
-    if (QVBoxLayout* const Layout = new QVBoxLayout(this))
+    QLabel* const MidiLoggerLabel = new QLabel("Midi Logger", this);
+    MidiLoggerLabel->setAlignment(Qt::AlignCenter);
+    MidiLoggerLabel->setStyleSheet(R"(
+        QLabel 
+        {
+            background: transparent;
+            border: none;
+        }
+    )");
+
+    m_MidiLoggerTableWidget = new QTableWidget(IncomingMidiMessages.GetCapacity(), 3, this);
+    m_MidiLoggerTableWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    m_MidiLoggerTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_MidiLoggerTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    m_MidiLoggerTableWidget->setFocusPolicy(Qt::NoFocus);
+    m_MidiLoggerTableWidget->setMouseTracking(false);
+    m_MidiLoggerTableWidget->setAutoFillBackground(false);
+    m_MidiLoggerTableWidget->setShowGrid(false);
+    m_MidiLoggerTableWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_MidiLoggerTableWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_MidiLoggerTableWidget->setStyleSheet(R"(
+        QTableWidget 
+        {
+            background: transparent;
+            border: none;
+        }
+    )");
+
+    if (QHeaderView* const HHeader = m_MidiLoggerTableWidget->horizontalHeader())
     {
-        m_MidiLoggerTableWidget = new QTableWidget(IncomingMidiMessages.GetCapacity(), 3, Parent);
-        m_MidiLoggerTableWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        m_MidiLoggerTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        m_MidiLoggerTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
-        m_MidiLoggerTableWidget->setFocusPolicy(Qt::NoFocus);
-        m_MidiLoggerTableWidget->setMouseTracking(false);
-        m_MidiLoggerTableWidget->setAutoFillBackground(false);
-        m_MidiLoggerTableWidget->setShowGrid(false);
-        m_MidiLoggerTableWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_MidiLoggerTableWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_MidiLoggerTableWidget->setStyleSheet(R"(
-            QTableWidget 
-            {
-                background: transparent;
-                border: none;
-            }
-        )");
-
-        if (QHeaderView* const HHeader = m_MidiLoggerTableWidget->horizontalHeader())
-        {
-            HHeader->setVisible(false);
-            HHeader->setSectionResizeMode(QHeaderView::Stretch);
-        }
-        if (QHeaderView* const VHeader = m_MidiLoggerTableWidget->verticalHeader())
-        {
-            VHeader->setVisible(false);
-            VHeader->setSectionResizeMode(QHeaderView::Stretch);
-        }
-
-        m_MidiLoggerTableWidget->setItem(0, 0, CreateCenteredTableWidgetItem("Status", true));
-        m_MidiLoggerTableWidget->setItem(0, 1, CreateCenteredTableWidgetItem("Data 1", true));
-        m_MidiLoggerTableWidget->setItem(0, 2, CreateCenteredTableWidgetItem("Data 2", true));
-
-        if (QTimer* const UpdateTimer = new QTimer(this))
-        {
-            connect(UpdateTimer, &QTimer::timeout, this, &IEMidiLoggerTableWidget::FlushMidiMessagesToTable);
-            UpdateTimer->start(25);
-        }
-
-        Layout->addWidget(m_MidiLoggerTableWidget);
+        HHeader->setVisible(false);
+        HHeader->setSectionResizeMode(QHeaderView::Stretch);
     }
+    if (QHeaderView* const VHeader = m_MidiLoggerTableWidget->verticalHeader())
+    {
+        VHeader->setVisible(false);
+        VHeader->setSectionResizeMode(QHeaderView::Stretch);
+    }
+
+    m_MidiLoggerTableWidget->setItem(0, 0, CreateCenteredTableWidgetItem("Status", true));
+    m_MidiLoggerTableWidget->setItem(0, 1, CreateCenteredTableWidgetItem("Data 1", true));
+    m_MidiLoggerTableWidget->setItem(0, 2, CreateCenteredTableWidgetItem("Data 2", true));
+
+    QTimer* const UpdateTimer = new QTimer(this);
+    connect(UpdateTimer, &QTimer::timeout, this, &IEMidiLoggerTableWidget::FlushMidiMessagesToTable);
+    UpdateTimer->start(25);
+    
+    QVBoxLayout* const Layout = new QVBoxLayout(this);
+    Layout->addWidget(MidiLoggerLabel);
+    Layout->addWidget(m_MidiLoggerTableWidget, 1);
 }
 
 void IEMidiLoggerTableWidget::FlushMidiMessagesToTable() const

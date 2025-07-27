@@ -13,28 +13,26 @@ IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& M
     QWidget(Parent),
     m_MidiDeviceOutputProperty(MidiDeviceOutputProperty)
 {
-    QHBoxLayout* const Layout = new QHBoxLayout(this);
-    Layout->setContentsMargins(0, 0, 0, 0);
-    Layout->setSpacing(10);
-
     m_SendButtonWidget = new QPushButton(this);
     m_SendButtonWidget->setText("Send");
     m_SendButtonWidget->connect(m_SendButtonWidget, &QPushButton::pressed, this, &IEMidiOutputEditorWidget::OnSendButtonPressed);
-    Layout->addWidget(m_SendButtonWidget);
-
+    
     m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(m_MidiDeviceOutputProperty.MidiMessage, this);
     m_MidiMessageEditorWidget->SetValues(m_MidiDeviceOutputProperty.MidiMessage);
     m_MidiMessageEditorWidget->connect(m_MidiMessageEditorWidget, &IEMidiMessageEditorWidget::OnMidiMessageCommitted, this, &IEMidiOutputEditorWidget::OnMidiMessageCommitted);
+    
+    QPushButton* const DeleteButton = new QPushButton(this);
+    DeleteButton->setText("Delete");
+    DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiOutputEditorWidget::OnDeleteButtonPressed);
+
+    QHBoxLayout* const Layout = new QHBoxLayout(this);
+    Layout->setContentsMargins(0, 0, 0, 0);
+    Layout->setSpacing(10);
+    Layout->addWidget(m_SendButtonWidget);
     Layout->addWidget(m_MidiMessageEditorWidget);
+    Layout->addStretch(1);
+    Layout->addWidget(DeleteButton);
 
-    if (QPushButton* const DeleteButton = new QPushButton(this))
-    {
-        DeleteButton->setText("Delete");
-        DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiOutputEditorWidget::OnDeleteButtonPressed);
-
-        Layout->addStretch(1);
-        Layout->addWidget(DeleteButton);
-    }
 }
 
 void IEMidiOutputEditorWidget::OnMidiMessageCommitted() const

@@ -9,19 +9,19 @@
 
 #include "IELog.h"
 
-IEMidiMessageTypeDropdownWidget::IEMidiMessageTypeDropdownWidget(QWidget* Parent) : QWidget(Parent)
+IEMidiMessageTypeDropdownWidget::IEMidiMessageTypeDropdownWidget(QWidget* Parent) :
+    QWidget(Parent)
 {
-    if (QHBoxLayout* const Layout = new QHBoxLayout(this))
-    {
-        m_ComboBoxWidget = new QComboBox(this);
-        m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_ComboBoxWidget->addItem("-Message Type-");
-        m_ComboBoxWidget->addItem("NoteOnOff");
-        m_ComboBoxWidget->addItem("ControlChange");
-        m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdownWidget::OnComboBoxIndexChanged);
-        Layout->setContentsMargins(0, 0, 0, 0);
-        Layout->addWidget(m_ComboBoxWidget);
-    }
+    m_ComboBoxWidget = new QComboBox(this);
+    m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_ComboBoxWidget->addItem("-Message Type-");
+    m_ComboBoxWidget->addItem("NoteOnOff");
+    m_ComboBoxWidget->addItem("ControlChange");
+    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdownWidget::OnComboBoxIndexChanged);
+
+    QHBoxLayout* const Layout = new QHBoxLayout(this);
+    Layout->setContentsMargins(0, 0, 0, 0);
+    Layout->addWidget(m_ComboBoxWidget);
 }
 
 void IEMidiMessageTypeDropdownWidget::SetValue(IEMidiMessageType MidiMessageType)

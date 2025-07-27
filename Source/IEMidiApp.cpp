@@ -9,6 +9,7 @@
 #include "qboxlayout.h"
 #include "qfontdatabase.h"
 #include "qframe.h"
+#include "qfile.h"
 #include "qheaderview.h"
 #include "qlabel.h"
 #include "qmainwindow.h"
@@ -21,86 +22,32 @@
 
 #include "IELog.h"
 
+#include "IEWidgets/IEMidiDeviceInfoWidget.h"
 #include "IEWidgets/IEMidiInputEditorWidget.h"
 #include "IEWidgets/IEMidiLoggerTableWidget.h"
 #include "IEWidgets/IEMidiOutputEditorWidget.h"
 
 IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QApplication(Argc, Argv),
-    m_MainWindow(std::make_unique<QMainWindow>()),
+    m_MainWindow(new QMainWindow()),
+    m_SystemTrayIcon(new QSystemTrayIcon(m_MainWindow)),
     m_MidiProcessor(std::make_unique<IEMidiProcessor>()),
     m_MidiProfileManager(std::make_unique<IEMidiProfileManager>())
 {
     m_OnMidiCallbackID = m_MidiProcessor->AddOnMidiCallback(this, &IEMidiApp::OnMidiCallback);
 
-    m_MainWindow->setWindowTitle("IEMidi");
-    m_MainWindow->resize(960, 720);
-    m_MainWindow->setAutoFillBackground(true);
-    const std::string& IconPath = std::format("{0}/IE-Brand-Kit/IE-Logo-NoBg.png", IEResources_Folder_Path); // compile time definition
-    m_MainWindow->setWindowIcon(QIcon(IconPath.c_str()));
-
-    m_TrayIcon = new QSystemTrayIcon(m_MainWindow.get());
-    m_TrayIcon->setIcon(QIcon(IconPath.c_str()));
-    if (QMenu* const TrayMenu = new QMenu(m_MainWindow.get()))
+    const std::string& AppStylePath = std::format("{0}/Styles/App.qss", Resources_Folder_Path);
+    QFile AppStyle(AppStylePath.c_str());
+    if (AppStyle.open(QFile::ReadOnly))
     {
-        QAction* const ShowAction = new QAction("Show", TrayMenu);
-        m_MainWindow->connect(ShowAction, &QAction::triggered, m_MainWindow.get(), &QMainWindow::show);
-        TrayMenu->addAction(ShowAction);
-
-        QAction* const QuitAction = new QAction("Quit", TrayMenu);
-        connect(QuitAction, &QAction::triggered, this, &QCoreApplication::quit);
-        TrayMenu->addAction(QuitAction);
-
-        m_TrayIcon->setContextMenu(TrayMenu);
-        m_TrayIcon->show();
+        QString StyleSheet = QLatin1String(AppStyle.readAll());
+        setStyleSheet(StyleSheet);
     }
 
-    QApplication::setStyleSheet(R"(
+    SetupMainWindow();
+    SetupTrayIcon();
 
-        QMainWindow > QWidget {
-            background-color: rgb(10, 10, 10);
-        }
-
-        QWidget {
-            background-color: rgb(20, 20, 20);
-            color: #d4d4d4;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 12pt;
-            border-radius: 10px;
-        }
-
-        QPushButton {
-            background-color: rgb(30, 30, 40);
-            border: 1px solid rgb(35, 35, 45);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-    
-        QPushButton:hover {
-            background-color: rgb(45, 45, 55);
-        }
-    
-        QComboBox {
-            background-color:rgb(30, 30, 35);
-            border-radius: 5px;
-            padding: 4px 28px 4px 8px;
-        }
-
-        QComboBox:drop-down {
-            background-color:rgb(45, 45, 50);
-        }
-
-        QCheckBox {
-            background-color: transparent;
-        }
-
-        QCheckBox::indicator:checked {
-            background-color: gray;
-            border-radius: 4px;
-        }
-    )");
-   
-    DrawMidiDeviceSelectionWindow();
+    DrawMidiDeviceSelection();
 }
 
 IEMidiApp::~IEMidiApp()
@@ -111,28 +58,45 @@ IEMidiApp::~IEMidiApp()
     }
 }
 
-IEAppState IEMidiApp::GetAppState() const
+void IEMidiApp::SetupMainWindow() const
 {
-    return m_AppState;
-}
-
-void IEMidiApp::SetAppState(IEAppState AppState)
-{
-    if (m_AppState != AppState)
+    if (m_MainWindow)
     {
-        m_AppState = AppState;
-        OnAppStateChanged();
+        m_MainWindow->setWindowTitle("IEMidi");
+        m_MainWindow->resize(1080, 960);
+        m_MainWindow->setAutoFillBackground(true);
+        m_MainWindow->setWindowIcon(QIcon(m_IEIconPath.c_str()));
     }
 }
 
-void IEMidiApp::OnAppStateChanged()
+void IEMidiApp::SetupTrayIcon()
 {
-    ResetMainWindowCentralWidget();
+    if (m_MainWindow && m_SystemTrayIcon)
+    {
+        m_SystemTrayIcon->setIcon(QIcon(m_IEIconPath.c_str()));
+        if (QMenu* const SystemTrayMenu = new QMenu(m_MainWindow))
+        {
+            QAction* const ShowAction = new QAction("Show", SystemTrayMenu);
+            m_MainWindow->connect(ShowAction, &QAction::triggered, [this]()
+                {
+                    m_MainWindow->show();
+                    DrawActiveMidiDeviceEditor();
+                });
+            SystemTrayMenu->addAction(ShowAction);
+
+            QAction* const QuitAction = new QAction("Quit", SystemTrayMenu);
+            connect(QuitAction, &QAction::triggered, this, &QCoreApplication::quit);
+            SystemTrayMenu->addAction(QuitAction);
+
+            m_SystemTrayIcon->setContextMenu(SystemTrayMenu);
+            m_SystemTrayIcon->show();
+        }
+    }
 }
 
-void IEMidiApp::DrawMidiDeviceSelectionWindow()
+void IEMidiApp::DrawMidiDeviceSelection()
 {
-    if (QWidget* const CentralWidget = new QWidget(m_MainWindow.get()))
+    if (QWidget* const CentralWidget = new QWidget(m_MainWindow))
     {
         m_MainWindow->setCentralWidget(CentralWidget);
 
@@ -192,7 +156,7 @@ void IEMidiApp::DrawMidiDeviceSelectionWindow()
                                             MidiDeviceEditButton->connect(MidiDeviceEditButton, &QPushButton::pressed, [this, MidiDeviceName]()
                                                 {
                                                     ActivateMidiDeviceProfile(MidiDeviceName);
-                                                    DrawActiveMidiDeviceEditorWindow();
+                                                    DrawActiveMidiDeviceEditor();
                                                 });
                                         }
 
@@ -228,27 +192,30 @@ void IEMidiApp::DrawMidiDeviceSelectionWindow()
     m_MainWindow->show();
 }
 
-void IEMidiApp::DrawActiveMidiDeviceEditorWindow()
+void IEMidiApp::DrawActiveMidiDeviceEditor()
 {
-    if (QWidget* const CentralWidget = new QWidget(m_MainWindow.get()))
+    if (QWidget* const CentralWidget = new QWidget(m_MainWindow))
     {
         m_MainWindow->setCentralWidget(CentralWidget);
 
         if (QHBoxLayout* const CentralLayout = new QHBoxLayout(CentralWidget))
         {
             CentralWidget->setLayout(CentralLayout);
+            CentralLayout->setSpacing(9);
 
-            DrawActiveMidiDeviceSideBar(CentralWidget);
+            DrawActiveMidiDeviceSideBarFrameWidget(CentralWidget);
             DrawActiveMidiDeviceEditorFrameWidget(CentralWidget);
         }
     }
     m_MainWindow->show();
 }
 
-void IEMidiApp::DrawActiveMidiDeviceSideBar(QWidget* Parent)
+void IEMidiApp::DrawActiveMidiDeviceSideBarFrameWidget(QWidget* Parent)
 {
-    if (QFrame* const SideBarFrameWidget = new QFrame(Parent))
+    QFrame* const SideBarFrameWidget = new QFrame(Parent);
     {
+        SideBarFrameWidget->setObjectName("SidebarFrameWidget");
+
         if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
         {
             ParentLayout->addWidget(SideBarFrameWidget, 2);
@@ -256,103 +223,49 @@ void IEMidiApp::DrawActiveMidiDeviceSideBar(QWidget* Parent)
             if (QVBoxLayout* const SideBarLayout = new QVBoxLayout(SideBarFrameWidget))
             {
                 SideBarFrameWidget->setLayout(SideBarLayout);
+                SideBarLayout->setContentsMargins(0, 0, 0, 0);
 
-                if (QFrame* const MidiDeviceInfoFrameWidget = new QFrame(SideBarFrameWidget))
+                if (m_MidiProcessor)
                 {
-                    SideBarLayout->addWidget(MidiDeviceInfoFrameWidget);
-
-                    if (QVBoxLayout* const MidiDeviceInfoLayout = new QVBoxLayout(MidiDeviceInfoFrameWidget))
+                    if (m_MidiProcessor->HasActiveMidiDeviceProfile())
                     {
-                        MidiDeviceInfoFrameWidget->setLayout(MidiDeviceInfoLayout);
+                        const IEMidiDeviceProfile& ActiveMidiDeviceProfile = m_MidiProcessor->GetActiveMidiDeviceProfile();
 
-                        if (QTableWidget* const MidiDeviceInfoTableWidget = new QTableWidget(6, 2, MidiDeviceInfoFrameWidget))
+                        if (QFrame* const MidiDeviceInfoFrameWidget = new QFrame(SideBarFrameWidget))
                         {
-                            MidiDeviceInfoLayout->addWidget(MidiDeviceInfoTableWidget);
+                            SideBarLayout->addWidget(MidiDeviceInfoFrameWidget);
+                            MidiDeviceInfoFrameWidget->setObjectName("MidiDeviceInfoFrameWidget");
 
-                            MidiDeviceInfoTableWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-                            MidiDeviceInfoTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-                            MidiDeviceInfoTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
-                            MidiDeviceInfoTableWidget->setFocusPolicy(Qt::NoFocus);
-                            MidiDeviceInfoTableWidget->setMouseTracking(false);
-                            MidiDeviceInfoTableWidget->setAutoFillBackground(false);
-                            MidiDeviceInfoTableWidget->setShowGrid(false);
-                            MidiDeviceInfoTableWidget->setStyleSheet(R"(
-                                    QTableWidget 
-                                    {
-                                        background: transparent;
-                                        border: none;
-                                    }
-                                )");
-
-                            if (QHeaderView* const HHeader = MidiDeviceInfoTableWidget->horizontalHeader())
+                            if (QVBoxLayout* const MidiDeviceInfoLayout = new QVBoxLayout(MidiDeviceInfoFrameWidget))
                             {
-                                HHeader->setVisible(false);
-                                HHeader->setSectionResizeMode(QHeaderView::Stretch);
-                            }
-                            if (QHeaderView* const VHeader = MidiDeviceInfoTableWidget->verticalHeader())
-                            {
-                                VHeader->setVisible(false);
-                                VHeader->setSectionResizeMode(QHeaderView::Stretch);
-                            }
+                                MidiDeviceInfoFrameWidget->setLayout(MidiDeviceInfoLayout);
 
-                            const auto CreateCenteredTableWidgetItem = [](const QString& Text, bool bBold = false)
+                                if (IEMidiDeviceInfoWidget* const MidiDeviceInfoWidget = new IEMidiDeviceInfoWidget(*m_MidiProcessor,
+                                    MidiDeviceInfoFrameWidget))
                                 {
-                                    QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
-                                    TableWidgetItem->setTextAlignment(Qt::AlignCenter);
-                                    QFont Font = TableWidgetItem->font();
-                                    Font.setPointSize(10);
-                                    Font.setBold(bBold);
-                                    TableWidgetItem->setFont(Font);
-                                    TableWidgetItem->setBackground(Qt::NoBrush);
-                                    return TableWidgetItem;
-                                };
-
-                            if (m_MidiProcessor)
-                            {
-                                if (m_MidiProcessor->HasActiveMidiDeviceProfile())
-                                {
-                                    const IEMidiDeviceProfile& ActiveMidiDeviceProfile = m_MidiProcessor->GetActiveMidiDeviceProfile();
-
-                                    MidiDeviceInfoTableWidget->setItem(0, 0, CreateCenteredTableWidgetItem("Name:", true));
-                                    MidiDeviceInfoTableWidget->setItem(0, 1, CreateCenteredTableWidgetItem(
-                                        ActiveMidiDeviceProfile.NameID.c_str()));
-
-                                    MidiDeviceInfoTableWidget->setItem(1, 0, CreateCenteredTableWidgetItem("Input Port:", true));
-                                    MidiDeviceInfoTableWidget->setItem(1, 1, CreateCenteredTableWidgetItem(
-                                        std::to_string(ActiveMidiDeviceProfile.InputPortNumber).c_str()));
-
-                                    MidiDeviceInfoTableWidget->setItem(2, 0, CreateCenteredTableWidgetItem("Output Port:", true));
-                                    MidiDeviceInfoTableWidget->setItem(2, 1, CreateCenteredTableWidgetItem(
-                                        std::to_string(ActiveMidiDeviceProfile.OutputPortNumber).c_str()));
-
-                                    MidiDeviceInfoTableWidget->setItem(3, 0, CreateCenteredTableWidgetItem("Current API:", true));
-                                    MidiDeviceInfoTableWidget->setItem(3, 1, CreateCenteredTableWidgetItem(m_MidiProcessor->GetAPIName().c_str()));
-
-                                    MidiDeviceInfoTableWidget->setItem(4, 0, CreateCenteredTableWidgetItem("IEMidi Version:", true));
-                                    MidiDeviceInfoTableWidget->setItem(4, 1, CreateCenteredTableWidgetItem("1"));
-
-                                    MidiDeviceInfoTableWidget->setItem(5, 0, CreateCenteredTableWidgetItem("Save File:", true));
-                                    MidiDeviceInfoTableWidget->setItem(5, 1, CreateCenteredTableWidgetItem(m_MidiProfileManager ?
-                                        m_MidiProfileManager->GetIEMidiProfilesFilePath().string().c_str() : "Invalid Path"));
+                                    MidiDeviceInfoLayout->addWidget(MidiDeviceInfoWidget, 3);
                                 }
                             }
                         }
-                    }
-                }
+                    
+                        //SideBarLayout->addSpacing(3);
 
-                if (QFrame* const MidiLoggerFrameWidget = new QFrame(SideBarFrameWidget))
-                {
-                    SideBarLayout->addWidget(MidiLoggerFrameWidget);
-
-                    if (QVBoxLayout* const MidiLoggerLayout = new QVBoxLayout(MidiLoggerFrameWidget))
-                    {
-                        MidiLoggerFrameWidget->setLayout(MidiLoggerLayout);
-
-                        if (IEMidiLoggerTableWidget* const MidiLoggerTableWidget = new IEMidiLoggerTableWidget(m_MidiProcessor->GetMidiLogMessagesBuffer(),
-                            MidiLoggerFrameWidget))
+                        if (QFrame* const MidiLoggerFrameWidget = new QFrame(SideBarFrameWidget))
                         {
-                            m_MidiLoggerTableWidget = MidiLoggerTableWidget;
-                            MidiLoggerLayout->addWidget(MidiLoggerTableWidget);
+                            SideBarLayout->addWidget(MidiLoggerFrameWidget);
+                            MidiLoggerFrameWidget->setObjectName("MidiLoggerFrameWidget");
+
+                            if (QVBoxLayout* const MidiLoggerLayout = new QVBoxLayout(MidiLoggerFrameWidget))
+                            {
+                                MidiLoggerFrameWidget->setLayout(MidiLoggerLayout);
+
+                                if (IEMidiLoggerTableWidget* const MidiLoggerTableWidget = new IEMidiLoggerTableWidget(m_MidiProcessor->GetMidiLogMessagesBuffer(),
+                                    MidiLoggerFrameWidget))
+                                {
+                                    m_MidiLoggerTableWidget = MidiLoggerTableWidget;
+                                    MidiLoggerLayout->addWidget(MidiLoggerTableWidget, 3);
+                                }
+                            }
                         }
                     }
                 }
@@ -399,16 +312,8 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
                             {
                                 FooterLayout->addWidget(SaveProfileButton);
 
+                                SaveProfileButton->setObjectName("SaveProfileButton");
                                 SaveProfileButton->connect(SaveProfileButton, &QPushButton::pressed, this, &IEMidiApp::SaveActiveMidiDeviceProfile);
-                                SaveProfileButton->setStyleSheet(R"(
-                                        QPushButton {
-                                            background-color: rgb(15, 90, 20);
-                                        }
-
-                                        QPushButton:hover {
-                                            background-color: rgb(30, 105, 35);
-                                        }
-                                    )");
                             }
 
                             if (QPushButton* const ActivateProfileButton = new QPushButton("Activate", Footer))
@@ -568,29 +473,33 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
     }
 }
 
-void IEMidiApp::ResetMainWindowCentralWidget() const
+void IEMidiApp::RunInBackground()
 {
-    if (m_MainWindow)
+    if (m_SystemTrayIcon)
     {
-        if (QWidget* const CentralWidget = m_MainWindow->centralWidget())
-        {
-            CentralWidget->hide();
-            CentralWidget->deleteLater();
-        }
-    }
-}
-
-void IEMidiApp::RunInBackground() const
-{
-    if (m_TrayIcon)
-    {
-        m_TrayIcon->showMessage(
+        m_SystemTrayIcon->showMessage(
             "IEMidi",                  
             "App is running in the background",
-            QSystemTrayIcon::Information,
+            QSystemTrayIcon::MessageIcon::NoIcon,
             5000
         );
     }
+
+    while (!m_MidiListeningWidgets.IsEmpty())
+    {
+        m_MidiListeningWidgets.Pop();
+    }
+
+    if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
+    {
+        IEMidiDeviceInputProperty* MidiDeviceInputProperty = m_MidiProcessor->GetActiveMidiDeviceProfile().InputPropertiesHead.get();
+        while (MidiDeviceInputProperty)
+        {
+            MidiDeviceInputProperty->bIsRecording = false;
+            MidiDeviceInputProperty = MidiDeviceInputProperty->Next();
+        }
+    }
+
     m_MainWindow->hide();
 }
 

@@ -9,23 +9,22 @@
 #include "qlineedit.h"
 #include "qpushbutton.h"
 
-IEFileBrowserWidget::IEFileBrowserWidget(QWidget* Parent)
+IEFileBrowserWidget::IEFileBrowserWidget(QWidget* Parent) :
+    QWidget(Parent)
 {
-    if (QHBoxLayout* const Layout = new QHBoxLayout(this))
-    {
-        Layout->setContentsMargins(0, 0, 0, 0);
-        Layout->setSpacing(0);
-
-        m_FilePathTextWidget = new QLineEdit(this);
-        m_FilePathTextWidget->setPlaceholderText("File");
-        m_FilePathTextWidget->connect(m_FilePathTextWidget, &QLineEdit::editingFinished, this, &IEFileBrowserWidget::OnTextCommitted);
-        Layout->addWidget(m_FilePathTextWidget);
-
-        m_BrowseButtonWidget = new QPushButton("...", this);
-        m_BrowseButtonWidget->setMaximumWidth(30);
-        m_BrowseButtonWidget->connect(m_BrowseButtonWidget, &QPushButton::pressed, this, &IEFileBrowserWidget::OnBrowseButtonPressed);
-        Layout->addWidget(m_BrowseButtonWidget);
-    }
+    m_FilePathTextWidget = new QLineEdit(this);
+    m_FilePathTextWidget->setPlaceholderText("File");
+    m_FilePathTextWidget->connect(m_FilePathTextWidget, &QLineEdit::editingFinished, this, &IEFileBrowserWidget::OnTextCommitted);
+    
+    m_BrowseButtonWidget = new QPushButton("...", this);
+    m_BrowseButtonWidget->setMaximumWidth(30);
+    m_BrowseButtonWidget->connect(m_BrowseButtonWidget, &QPushButton::pressed, this, &IEFileBrowserWidget::OnBrowseButtonPressed);
+    
+    QHBoxLayout* const Layout = new QHBoxLayout(this);
+    Layout->setContentsMargins(0, 0, 0, 0);
+    Layout->setSpacing(0);
+    Layout->addWidget(m_FilePathTextWidget);
+    Layout->addWidget(m_BrowseButtonWidget);
 }
 
 void IEFileBrowserWidget::SetFilePath(const std::filesystem::path& FilePath) const

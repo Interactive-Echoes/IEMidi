@@ -7,21 +7,21 @@
 #include "qboxlayout.h"
 #include "qcombobox.h"
 
-IEMidiActionTypeDropdownWidget::IEMidiActionTypeDropdownWidget(QWidget* Parent) : QWidget(Parent)
+IEMidiActionTypeDropdownWidget::IEMidiActionTypeDropdownWidget(QWidget* Parent) :
+    QWidget(Parent)
 {
-    if (QHBoxLayout* const Layout = new QHBoxLayout(this))
-    {
-        m_ComboBoxWidget = new QComboBox(this);
-        m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_ComboBoxWidget->addItem("-Action Type-");
-        m_ComboBoxWidget->addItem("Volume");
-        m_ComboBoxWidget->addItem("Mute");
-        m_ComboBoxWidget->addItem("ConsoleCommand");
-        m_ComboBoxWidget->addItem("OpenFile");
-        m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdownWidget::OnComboBoxIndexChanged);
-        Layout->setContentsMargins(0, 0, 0, 0);
-        Layout->addWidget(m_ComboBoxWidget);
-    }
+    m_ComboBoxWidget = new QComboBox(this);
+    m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_ComboBoxWidget->addItem("-Action Type-");
+    m_ComboBoxWidget->addItem("Volume");
+    m_ComboBoxWidget->addItem("Mute");
+    m_ComboBoxWidget->addItem("ConsoleCommand");
+    m_ComboBoxWidget->addItem("OpenFile");
+    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdownWidget::OnComboBoxIndexChanged);
+
+    QHBoxLayout* const Layout = new QHBoxLayout(this);
+    Layout->setContentsMargins(0, 0, 0, 0);
+    Layout->addWidget(m_ComboBoxWidget);
 }
 
 void IEMidiActionTypeDropdownWidget::SetValue(IEMidiActionType MidiActionType)

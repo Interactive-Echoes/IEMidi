@@ -9,6 +9,8 @@ set(IEMidi_WIDGET_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropdownWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropdownWidget.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiDeviceInfoWidget.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiDeviceInfoWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiInputEditorWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiLoggerTableWidget.cpp"

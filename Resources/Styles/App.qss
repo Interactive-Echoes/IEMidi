@@ -1,0 +1,103 @@
+/*
+SPDX-License-Identifier: GPL-2.0-only
+Copyright © Interactive Echoes. All rights reserved.
+Author: mozahzah
+*/
+
+QMainWindow > QWidget 
+{
+    background-color: rgb(10, 10, 10);
+}
+
+QWidget 
+{
+    background-color: rgb(20, 20, 20);
+    color: #d4d4d4;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12pt;
+    border-radius: 10px;
+}
+
+#SidebarFrameWidget
+{
+    background-color: transparent;
+}
+
+#MidiDeviceInfoFrameWidget, #MidiLoggerFrameWidget
+{
+    background-color: rgb(15, 15, 15);
+}
+
+/* Menu (System Tray) */
+
+QMenu::item
+{
+    padding: 5px 25px;
+    border-radius: 10px;
+}
+
+QMenu::item:selected 
+{
+    background-color: rgb(30, 30, 35);
+}
+
+/* ComboBox */
+
+QComboBox 
+{
+    background-color: rgb(30, 30, 35);
+    border-radius: 5px;
+    padding: 4px 28px 4px 8px;
+}
+
+QComboBox:drop-down 
+{
+    background-color: rgb(45, 45, 50);
+    border-radius: 5px;
+}
+
+/* CheckBox */
+
+QCheckBox 
+{
+    background-color: transparent;
+}
+
+QCheckBox::indicator:checked 
+{
+    background-color: gray;
+    border-radius: 4px;
+}
+
+/* TableWidget */
+
+QTableWidget 
+{
+    background: transparent;
+}
+
+/* PushButton */
+
+QPushButton 
+{
+    background-color: rgb(30, 30, 40);
+    border: 1px solid rgb(35, 35, 45);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+QPushButton:hover 
+{
+    background-color: rgb(45, 45, 55);
+    border-radius: 4px;
+}
+
+QPushButton#SaveProfileButton
+{
+    background-color: rgb(15, 90, 20);
+}
+
+QPushButton#SaveProfileButton:hover 
+{
+    background-color: rgb(30, 105, 35);
+}

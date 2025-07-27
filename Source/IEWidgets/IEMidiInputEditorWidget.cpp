@@ -21,106 +21,90 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
     QWidget(Parent),
     m_MidiDeviceInputProperty(MidiDeviceInputProperty)
 {
-    if (QHBoxLayout* const Layout = new QHBoxLayout(this))
-    {
-        Layout->setContentsMargins(0, 0, 0, 0);
-        Layout->setSpacing(10);
+    QWidget* const SubWidget1 = new QWidget(this);
 
-        if (QWidget* const SubWidget = new QWidget(this))
-        {
-            Layout->addWidget(SubWidget, 2);
-            if (QHBoxLayout* const SubLayout = new QHBoxLayout(SubWidget))
-            {
-                SubWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-                SubLayout->setContentsMargins(0, 0, 0, 0);
-                SubLayout->setSpacing(10);
+    m_MidiMessageTypeDropdownWidget = new IEMidiMessageTypeDropdownWidget(SubWidget1);
+    m_MidiMessageTypeDropdownWidget->SetValue(m_MidiDeviceInputProperty.MidiMessageType);
+    m_MidiMessageTypeDropdownWidget->connect(m_MidiMessageTypeDropdownWidget, &IEMidiMessageTypeDropdownWidget::OnMidiMessageTypeChanged,
+        this, &IEMidiInputEditorWidget::OnMidiMessageTypeChanged);
 
-                m_MidiMessageTypeDropdownWidget = new IEMidiMessageTypeDropdownWidget(SubWidget);
-                m_MidiMessageTypeDropdownWidget->SetValue(m_MidiDeviceInputProperty.MidiMessageType);
-                m_MidiMessageTypeDropdownWidget->connect(m_MidiMessageTypeDropdownWidget, &IEMidiMessageTypeDropdownWidget::OnMidiMessageTypeChanged,
-                    this, &IEMidiInputEditorWidget::OnMidiMessageTypeChanged);
-                SubLayout->addWidget(m_MidiMessageTypeDropdownWidget);
+    m_MidiToggleCheckboxWidget = new QCheckBox("Toggle", SubWidget1);
+    m_MidiToggleCheckboxWidget->setChecked(m_MidiDeviceInputProperty.bIsMidiToggle);
+    m_MidiToggleCheckboxWidget->hide(); // Start hidden
+    m_MidiToggleCheckboxWidget->connect(m_MidiToggleCheckboxWidget, &QCheckBox::checkStateChanged, this, &IEMidiInputEditorWidget::OnMidiToggleChanged);
 
-                m_MidiToggleCheckboxWidget = new QCheckBox("Toggle", SubWidget);
-                m_MidiToggleCheckboxWidget->setChecked(m_MidiDeviceInputProperty.bIsMidiToggle);
-                m_MidiToggleCheckboxWidget->hide(); // Start hidden
-                m_MidiToggleCheckboxWidget->connect(m_MidiToggleCheckboxWidget, &QCheckBox::checkStateChanged, this, &IEMidiInputEditorWidget::OnMidiToggleChanged);
-                SubLayout->addWidget(m_MidiToggleCheckboxWidget);
+    m_MidiActionTypeDropdownWidget = new IEMidiActionTypeDropdownWidget(SubWidget1);
+    m_MidiActionTypeDropdownWidget->SetValue(m_MidiDeviceInputProperty.MidiActionType);
+    m_MidiActionTypeDropdownWidget->connect(m_MidiActionTypeDropdownWidget, &IEMidiActionTypeDropdownWidget::OnMidiActionTypeChanged,
+        this, &IEMidiInputEditorWidget::OnMidiActionTypeChanged);
 
-                m_MidiActionTypeDropdownWidget = new IEMidiActionTypeDropdownWidget(SubWidget);
-                m_MidiActionTypeDropdownWidget->SetValue(m_MidiDeviceInputProperty.MidiActionType);
-                m_MidiActionTypeDropdownWidget->connect(m_MidiActionTypeDropdownWidget, &IEMidiActionTypeDropdownWidget::OnMidiActionTypeChanged,
-                    this, &IEMidiInputEditorWidget::OnMidiActionTypeChanged);
-                SubLayout->addWidget(m_MidiActionTypeDropdownWidget);
+    m_OpenFileBrowserWidget = new IEFileBrowserWidget(SubWidget1);
+    m_OpenFileBrowserWidget->SetFilePath(m_MidiDeviceInputProperty.OpenFilePath);
+    m_OpenFileBrowserWidget->hide(); // Start hidden
+    m_OpenFileBrowserWidget->connect(m_OpenFileBrowserWidget, &IEFileBrowserWidget::OnFilePathCommitted, this, &IEMidiInputEditorWidget::OnOpenFilePathCommited);
 
-                m_OpenFileBrowserWidget = new IEFileBrowserWidget(SubWidget);
-                m_OpenFileBrowserWidget->SetFilePath(m_MidiDeviceInputProperty.OpenFilePath);
-                m_OpenFileBrowserWidget->hide(); // Start hidden
-                m_OpenFileBrowserWidget->connect(m_OpenFileBrowserWidget, &IEFileBrowserWidget::OnFilePathCommitted, this, &IEMidiInputEditorWidget::OnOpenFilePathCommited);
-                SubLayout->addWidget(m_OpenFileBrowserWidget);
+    m_ConsoleCommandWidget = new QLineEdit(SubWidget1);
+    m_ConsoleCommandWidget->setPlaceholderText("Command");
+    m_ConsoleCommandWidget->setText(QString::fromStdString(m_MidiDeviceInputProperty.ConsoleCommand));
+    m_ConsoleCommandWidget->hide(); // Start hidden
+    m_ConsoleCommandWidget->connect(m_ConsoleCommandWidget, &QLineEdit::editingFinished, this, &IEMidiInputEditorWidget::OnConsoleCommandTextCommited);
 
-                m_ConsoleCommandWidget = new QLineEdit(SubWidget);
-                m_ConsoleCommandWidget->setPlaceholderText("Command");
-                m_ConsoleCommandWidget->setText(QString::fromStdString(m_MidiDeviceInputProperty.ConsoleCommand));
-                m_ConsoleCommandWidget->hide(); // Start hidden
-                m_ConsoleCommandWidget->connect(m_ConsoleCommandWidget, &QLineEdit::editingFinished, this, &IEMidiInputEditorWidget::OnConsoleCommandTextCommited);
-                SubLayout->addWidget(m_ConsoleCommandWidget);
-            }
+    QHBoxLayout* const SubLayout1 = new QHBoxLayout(SubWidget1);
+    SubLayout1->setContentsMargins(0, 0, 0, 0);
+    SubLayout1->setSpacing(10);
+    SubLayout1->addWidget(m_MidiMessageTypeDropdownWidget);
+    SubLayout1->addWidget(m_MidiToggleCheckboxWidget);
+    SubLayout1->addWidget(m_MidiActionTypeDropdownWidget);
+    SubLayout1->addWidget(m_OpenFileBrowserWidget);
+    SubLayout1->addWidget(m_ConsoleCommandWidget);
+    SubLayout1->addStretch(1);
+
+    QWidget* const SubWidget2 = new QWidget(this);
+    SubWidget2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    m_MidiDeviceInputProperty.bIsRecording = false;
+    m_RecordButtonWidget = new QPushButton("Record", SubWidget2);
+    m_RecordButtonWidget->setCheckable(true);
+    m_RecordButtonWidget->setChecked(false);
+    m_RecordButtonWidget->connect(m_RecordButtonWidget, &QPushButton::toggled, this, &IEMidiInputEditorWidget::OnRecordButtonToggled);
+    m_RecordButtonWidget->setStyleSheet(R"(
+        QPushButton {
+            background-color: rgb(100, 70, 10);
         }
 
-        Layout->addStretch(1);
-
-        if (QWidget* const SubWidget = new QWidget(this))
-        {
-            Layout->addWidget(SubWidget, 2);
-            if (QHBoxLayout* const SubLayout = new QHBoxLayout(SubWidget))
-            {
-                SubWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-                SubLayout->setContentsMargins(0, 0, 0, 0);
-                SubLayout->setSpacing(10);
-
-                m_RecordButtonWidget = new QPushButton(SubWidget);
-                m_MidiDeviceInputProperty.bIsRecording = false;
-                m_RecordButtonWidget->setText("Record");
-                m_RecordButtonWidget->setCheckable(true);
-                m_RecordButtonWidget->setStyleSheet(R"(
-                    QPushButton {
-                        background-color: rgb(100, 70, 10);
-                    }
-
-                    QPushButton:hover {
-                        background-color: rgb(60, 2, 2);
-                    }
-                    
-                    QPushButton:checked {
-                        background-color: rgb(60, 2, 2);
-                    }
-                )");
-                    m_RecordButtonWidget->connect(m_RecordButtonWidget, &QPushButton::toggled, this, &IEMidiInputEditorWidget::OnRecordButtonToggled);
-                SubLayout->addWidget(m_RecordButtonWidget, 1);
-
-                m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(m_MidiDeviceInputProperty.MidiMessage, SubWidget);
-                m_MidiMessageEditorWidget->SetValues(m_MidiDeviceInputProperty.MidiMessage);
-                m_MidiMessageEditorWidget->HideByteWidget(2);
-                m_MidiMessageEditorWidget->connect(m_MidiMessageEditorWidget, &IEMidiMessageEditorWidget::OnMidiMessageCommitted, this, &IEMidiInputEditorWidget::OnMidiMessageCommitted);
-                SubLayout->addWidget(m_MidiMessageEditorWidget, 1);
-
-                if (QPushButton* const DeleteButton = new QPushButton(SubWidget))
-                {
-                    DeleteButton->setText("Delete");
-                    DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiInputEditorWidget::OnDeleteButtonPressed);
-
-                    SubLayout->addStretch(2);
-                    SubLayout->addSpacing(200);
-                    SubLayout->addWidget(DeleteButton);
-                }
-            }
+        QPushButton:hover {
+            background-color: rgb(60, 2, 2);
         }
+        
+        QPushButton:checked {
+            background-color: rgb(60, 2, 2);
+        }
+    )");
 
-        OnMidiToggleChanged(m_MidiToggleCheckboxWidget->checkState());
-        OnMidiMessageTypeChanged(IEMidiMessageType::None, m_MidiMessageTypeDropdownWidget->GetValue());
-        OnMidiActionTypeChanged(IEMidiActionType::None, m_MidiActionTypeDropdownWidget->GetValue());
-    }
+    m_MidiMessageEditorWidget = new IEMidiMessageEditorWidget(m_MidiDeviceInputProperty.MidiMessage, SubWidget2);
+    m_MidiMessageEditorWidget->SetValues(m_MidiDeviceInputProperty.MidiMessage);
+    m_MidiMessageEditorWidget->HideByteWidget(2);
+    m_MidiMessageEditorWidget->connect(m_MidiMessageEditorWidget, &IEMidiMessageEditorWidget::OnMidiMessageCommitted, this, &IEMidiInputEditorWidget::OnMidiMessageCommitted);
+
+    QHBoxLayout* const SubLayout2 = new QHBoxLayout(SubWidget2);
+    SubLayout2->setContentsMargins(0, 0, 0, 0);
+    SubLayout2->setSpacing(10);
+    SubLayout2->addWidget(m_RecordButtonWidget);
+    SubLayout2->addWidget(m_MidiMessageEditorWidget);
+
+    QPushButton* const DeleteButton = new QPushButton("Delete", this);
+    DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiInputEditorWidget::OnDeleteButtonPressed);
+
+    QHBoxLayout* const Layout = new QHBoxLayout(this);
+    Layout->setContentsMargins(0, 0, 0, 0);
+    Layout->addWidget(SubWidget1, 2);
+    Layout->addWidget(SubWidget2, 2);
+    Layout->addStretch(1);
+    Layout->addWidget(DeleteButton);
+
+    OnMidiToggleChanged(m_MidiToggleCheckboxWidget->checkState());
+    OnMidiMessageTypeChanged(IEMidiMessageType::None, m_MidiMessageTypeDropdownWidget->GetValue());
+    OnMidiActionTypeChanged(IEMidiActionType::None, m_MidiActionTypeDropdownWidget->GetValue());
 }
 
 bool IEMidiInputEditorWidget::IsRecording() const
