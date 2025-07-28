@@ -179,7 +179,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
                             if (QLabel* const SelectMIDIDeviceLabel = new QLabel("No Midi Device Available", MidiDeviceSelectionWidget))
                             {
                                 SelectMIDIDeviceLabel->setAlignment(Qt::AlignCenter);
-                                SelectMIDIDeviceLabel->setStyleSheet("font-size: 24px; font-weight: bold; color: rgb(255, 0, 0);");
+                                SelectMIDIDeviceLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: rgb(255, 65, 65);");
 
                                 MidiDeviceSelectionLayout->addWidget(SelectMIDIDeviceLabel);
                             }

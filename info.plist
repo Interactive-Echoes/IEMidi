@@ -5,6 +5,6 @@
     <key>CFBundleExecutable</key>
     <string>IEMidi</string>
     <key>CFBundleIconFile</key>
-    <string>IE-Brand-Kit/IE-Logo-NoBg-512.icns</string>
+    <string>IE-Logo-NoBg-512</string>
 </dict>
 </plist>
