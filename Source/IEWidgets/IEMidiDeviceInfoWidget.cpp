@@ -19,6 +19,8 @@ IEMidiDeviceInfoWidget::IEMidiDeviceInfoWidget(const IEMidiProcessor& MidiProces
         MidiDeviceInfoLabel->setStyleSheet(R"(
             QLabel 
             {
+                font-size: 16px; 
+                font-weight: bold;
                 background: transparent;
                 border: none;
             }
@@ -75,7 +77,9 @@ IEMidiDeviceInfoWidget::IEMidiDeviceInfoWidget(const IEMidiProcessor& MidiProces
         MidiDeviceInfoTableWidget->setItem(4, 1, CreateCenteredTableWidgetItem("1"));
 
         QVBoxLayout* const Layout = new QVBoxLayout(this);
+        Layout->setContentsMargins(15, 15, 15, 15);
         Layout->addWidget(MidiDeviceInfoLabel);
+        Layout->addSpacing(10);
         Layout->addWidget(MidiDeviceInfoTableWidget, 1);
     }
 }

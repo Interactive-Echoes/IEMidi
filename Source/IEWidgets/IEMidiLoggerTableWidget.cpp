@@ -18,6 +18,8 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
     MidiLoggerLabel->setStyleSheet(R"(
         QLabel 
         {
+            font-size: 16px; 
+            font-weight: bold;
             background: transparent;
             border: none;
         }
@@ -46,6 +48,7 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
         HHeader->setVisible(false);
         HHeader->setSectionResizeMode(QHeaderView::Stretch);
     }
+
     if (QHeaderView* const VHeader = m_MidiLoggerTableWidget->verticalHeader())
     {
         VHeader->setVisible(false);
@@ -61,7 +64,9 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
     UpdateTimer->start(25);
     
     QVBoxLayout* const Layout = new QVBoxLayout(this);
+    Layout->setContentsMargins(15, 15, 15, 15);
     Layout->addWidget(MidiLoggerLabel);
+    Layout->addSpacing(10);
     Layout->addWidget(m_MidiLoggerTableWidget, 1);
 }
 
