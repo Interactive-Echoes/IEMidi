@@ -31,7 +31,7 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QApplication(Argc, Argv),
     m_MainWindow(new QMainWindow()),
     m_SystemTrayIcon(new QSystemTrayIcon(m_MainWindow)),
-    m_MidiProcessor(std::make_unique<IEMidiProcessor>()),
+    m_MidiProcessor(std::make_unique<IEMidiProcessor>(true)),
     m_MidiProfileManager(std::make_unique<IEMidiProfileManager>())
 {
     m_OnMidiCallbackID = m_MidiProcessor->AddOnMidiCallback(this, &IEMidiApp::OnMidiCallback);
@@ -120,7 +120,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
 
         if (m_MidiProcessor)
         {
-            const std::vector<std::string> AvailableMidiDevices = m_MidiProcessor->GetAvailableMidiDevices();
+            const std::vector<std::string>& AvailableMidiDevices = m_MidiProcessor->GetAvailableMidiDevices();
             if (!AvailableMidiDevices.empty())
             {
                 for (const std::string& MidiDeviceName : AvailableMidiDevices)
@@ -135,6 +135,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
 
                     QLabel* const MidiDeviceEntryLabel = new QLabel(MidiDeviceName.c_str(), MidiDeviceEntryWidget);
                     MidiDeviceEntryLayout->addWidget(MidiDeviceEntryLabel);
+                    MidiDeviceEntryLayout->addStretch();
                     MidiDeviceEntryLabel->setStyleSheet("font-size: 18px; font-weight: bold;");
 
                     QPushButton* const MidiDeviceEditButton = new QPushButton(MidiDeviceEntryWidget);

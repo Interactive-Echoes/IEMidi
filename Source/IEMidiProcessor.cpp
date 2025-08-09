@@ -160,7 +160,12 @@ IEResult IEMidiProcessor::SendMidiOutputMessage(const std::array<uint8_t, MIDI_M
 std::vector<std::string> IEMidiProcessor::GetAvailableMidiDevices() const
 {
     std::vector<std::string> AvailableMidiDevices;
-    if (m_MidiIn)
+    if (m_bTestMode)
+    {
+        AvailableMidiDevices.emplace_back(std::string("Test"));
+        AvailableMidiDevices.emplace_back(std::string("Test 2"));
+    }
+    else if (m_MidiIn)
     {
         for (int InputPortNumber = 0; InputPortNumber < m_MidiIn->getPortCount(); InputPortNumber++)
         {
@@ -199,50 +204,57 @@ const IEMidiDeviceProfile& IEMidiProcessor::GetActiveMidiDeviceProfile() const
 IEResult IEMidiProcessor::ActivateMidiDeviceProfile(const std::string& MidiDeviceName)
 {
     IEResult Result(IEResult::Type::Fail);
-    Result.Message = std::format("Failed to activate midi device profile {}", MidiDeviceName);
+    Result.Message = std::format("Failed to activate midi device profile {}.", MidiDeviceName);
 
-    if (m_MidiIn && m_MidiOut)
+    if (m_bTestMode)
+    {
+        m_ActiveMidiDeviceProfile.emplace(MidiDeviceName, -1, -1);
+        Result.Type = IEResult::Type::Success;
+        Result.Message = std::format("Successfully activated test midi device profile {}", MidiDeviceName);
+    }
+    else if (m_MidiIn && m_MidiOut)
     {
         for (int InputPortNumber = 0; InputPortNumber < m_MidiIn->getPortCount(); InputPortNumber++)
         {
-            const std::string& MidiDeviceName = GetSanitizedMidiDeviceName(m_MidiIn->getPortName(InputPortNumber), InputPortNumber);
-
-            for (int OutputPortNumber = 0; OutputPortNumber < m_MidiOut->getPortCount(); OutputPortNumber++)
+            const std::string& MidiDeviceNameIn = GetSanitizedMidiDeviceName(m_MidiIn->getPortName(InputPortNumber), InputPortNumber);
+            if (MidiDeviceNameIn.find(MidiDeviceName) != std::string::npos)
             {
-                const std::string& MidiDeviceNameOut = GetSanitizedMidiDeviceName(m_MidiOut->getPortName(OutputPortNumber), InputPortNumber);
-                if (MidiDeviceNameOut.find(MidiDeviceName) != std::string::npos)
+                for (int OutputPortNumber = 0; OutputPortNumber < m_MidiOut->getPortCount(); OutputPortNumber++)
                 {
-                    m_ActiveMidiDeviceProfile.emplace(MidiDeviceName, InputPortNumber, OutputPortNumber);
-
-                    if (m_MidiIn->isPortOpen())
+                    const std::string& MidiDeviceNameOut = GetSanitizedMidiDeviceName(m_MidiOut->getPortName(OutputPortNumber), InputPortNumber);
+                    if (MidiDeviceNameOut.find(MidiDeviceName) != std::string::npos)
                     {
-                        m_MidiIn->cancelCallback();
-                        m_MidiIn->closePort();
-                    }
-                    m_MidiIn->setCallback(&IEMidiProcessor::OnRtMidiCallback, this);
-                    m_MidiIn->openPort(m_ActiveMidiDeviceProfile->InputPortNumber);
+                        m_ActiveMidiDeviceProfile.emplace(MidiDeviceName, InputPortNumber, OutputPortNumber);
 
-                    if (m_MidiOut->isPortOpen())
-                    {
-                        m_MidiOut->closePort();
-                    }
-                    m_MidiOut->openPort(m_ActiveMidiDeviceProfile->OutputPortNumber);
+                        if (m_MidiIn->isPortOpen())
+                        {
+                            m_MidiIn->cancelCallback();
+                            m_MidiIn->closePort();
+                        }
+                        m_MidiIn->setCallback(&IEMidiProcessor::OnRtMidiCallback, this);
+                        m_MidiIn->openPort(m_ActiveMidiDeviceProfile->InputPortNumber);
 
-                    IEMidiDeviceOutputProperty* MidiDeviceOutputProperty = GetActiveMidiDeviceProfile().OutputPropertiesHead.get();
-                    while (MidiDeviceOutputProperty)
-                    {
-                        m_MidiOut->sendMessage(MidiDeviceOutputProperty->MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
-                        MidiDeviceOutputProperty = MidiDeviceOutputProperty->Next();
-                    }
+                        if (m_MidiOut->isPortOpen())
+                        {
+                            m_MidiOut->closePort();
+                        }
+                        m_MidiOut->openPort(m_ActiveMidiDeviceProfile->OutputPortNumber);
 
-                    Result.Type = IEResult::Type::Success;
-                    Result.Message = std::format("Successfully activated midi device profile {}", MidiDeviceName);
-                    break;
+                        IEMidiDeviceOutputProperty* MidiDeviceOutputProperty = GetActiveMidiDeviceProfile().OutputPropertiesHead.get();
+                        while (MidiDeviceOutputProperty)
+                        {
+                            m_MidiOut->sendMessage(MidiDeviceOutputProperty->MidiMessage.data(), MIDI_MESSAGE_BYTE_COUNT);
+                            MidiDeviceOutputProperty = MidiDeviceOutputProperty->Next();
+                        }
+
+                        Result.Type = IEResult::Type::Success;
+                        Result.Message = std::format("Successfully activated midi device profile {}", MidiDeviceName);
+                    }
                 }
             }
         }
     }
-
+    
     return Result;
 }
 

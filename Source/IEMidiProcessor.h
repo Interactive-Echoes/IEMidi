@@ -19,13 +19,14 @@
 class IEMidiProcessor
 {
 public:
-    IEMidiProcessor() :
+    IEMidiProcessor(bool bTestMode = false) :
         m_MidiIn(std::make_unique<RtMidiIn>()),
         m_MidiOut(std::make_unique<RtMidiOut>()),
         m_VolumeAction(IEAction::GetVolumeAction()),
         m_MuteAction(IEAction::GetMuteAction()),
         m_ConsoleCommandAction(IEAction::GetConsoleCommandAction()),
-        m_OpenFileAction(IEAction::GetOpenFileAction())
+        m_OpenFileAction(IEAction::GetOpenFileAction()),
+        m_bTestMode(bTestMode)
     {
         m_MidiIn->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
         m_MidiOut->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
@@ -72,6 +73,7 @@ private:
     std::unique_ptr<IEAction_Mute> m_MuteAction;
     std::unique_ptr<IEAction_ConsoleCommand> m_ConsoleCommandAction;
     std::unique_ptr<IEAction_OpenFile> m_OpenFileAction;
+    bool m_bTestMode = false;
 };
 
 template<typename T>
