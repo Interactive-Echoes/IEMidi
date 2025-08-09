@@ -161,7 +161,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
                 QLabel* const SelectMIDIDeviceLabel = new QLabel("No Midi Device Available", MidiDeviceSelectionWidget);
                 MidiDeviceSelectionLayout->addWidget(SelectMIDIDeviceLabel);
                 SelectMIDIDeviceLabel->setAlignment(Qt::AlignCenter);
-                SelectMIDIDeviceLabel->setStyleSheet("font-size: 24px; font-weight: bold; color: rgb(255, 0, 0);");
+                SelectMIDIDeviceLabel->setStyleSheet("font-size: 24px; font-weight: bold; color: rgba(175, 55, 55, 1);");
             }
         }
         m_MainWindow->show();
@@ -256,7 +256,7 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
         SelectedMidiDeviceEditorLayout->setContentsMargins(0, 0, 0, 0);
         SelectedMidiDeviceEditorLayout->setSpacing(0);
 
-        if (m_MidiProcessor)
+        if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
         {
             const std::string ActiveMidiDeviceName = m_MidiProcessor->GetActiveMidiDeviceProfile().NameID;
 
