@@ -170,18 +170,29 @@ void IEMidiApp::DrawMidiDeviceSelection()
 
 void IEMidiApp::DrawActiveMidiDeviceEditor()
 {
-    if (m_MainWindow)
+    if (m_MainWindow && m_MidiProcessor)
     {
         QWidget* const CentralWidget = new QWidget(m_MainWindow);
         m_MainWindow->setCentralWidget(CentralWidget);
-        CentralWidget->setObjectName("ActiveMidiDeviceEditorCentralWidget");
+        CentralWidget->setObjectName("CentralWidget");
 
-        QHBoxLayout* const CentralLayout = new QHBoxLayout(CentralWidget);
-        CentralWidget->setLayout(CentralLayout);
-        CentralLayout->setSpacing(9);
+        QVBoxLayout* const VCentralLayout = new QVBoxLayout(CentralWidget);
+        CentralWidget->setLayout(VCentralLayout);
+        VCentralLayout->setContentsMargins(0, 0, 0, 0);
+        VCentralLayout->setSpacing(0);
 
-        DrawActiveMidiDeviceSideBarFrameWidget(CentralWidget);
-        DrawActiveMidiDeviceEditorFrameWidget(CentralWidget);
+        
+
+        QWidget* const CentralWidget2 = new QWidget(CentralWidget);
+        VCentralLayout->addWidget(CentralWidget2, 14);
+        CentralWidget2->setObjectName("CentralWidget2");
+
+        QHBoxLayout* const CentralLayout2 = new QHBoxLayout(CentralWidget);
+        CentralWidget2->setLayout(CentralLayout2);
+        CentralLayout2->setSpacing(9);
+
+        DrawActiveMidiDeviceSideBarFrameWidget(CentralWidget2);
+        DrawActiveMidiDeviceEditorFrameWidget(CentralWidget2);
 
         m_MainWindow->show();
     }
@@ -203,6 +214,11 @@ void IEMidiApp::DrawActiveMidiDeviceSideBarFrameWidget(QWidget* Parent)
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
         {
             const IEMidiDeviceProfile& ActiveMidiDeviceProfile = m_MidiProcessor->GetActiveMidiDeviceProfile();
+
+            QLabel* const SelectedMidiDeviceLabel = new QLabel(ActiveMidiDeviceProfile.NameID.c_str(), SideBarFrameWidget);
+            SideBarLayout->addWidget(SelectedMidiDeviceLabel, 1);
+            SelectedMidiDeviceLabel->setAlignment(Qt::AlignCenter);
+            SelectedMidiDeviceLabel->setObjectName("SelectedMidiDeviceLabel");
 
             QFrame* const MidiDeviceInfoFrameWidget = new QFrame(SideBarFrameWidget);
             SideBarLayout->addWidget(MidiDeviceInfoFrameWidget);
@@ -243,10 +259,6 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
         if (m_MidiProcessor)
         {
             const std::string ActiveMidiDeviceName = m_MidiProcessor->GetActiveMidiDeviceProfile().NameID;
-            QLabel* const SelectedMidiDeviceLabel = new QLabel(ActiveMidiDeviceName.c_str(), SelectedMidiDeviceEditorFrameWidget);
-            SelectedMidiDeviceEditorLayout->addWidget(SelectedMidiDeviceLabel, 1);
-            SelectedMidiDeviceLabel->setAlignment(Qt::AlignLeft);
-            SelectedMidiDeviceLabel->setObjectName("SelectedMidiDeviceLabel");
 
             DrawActiveMidiDeviceInputEditorFrameWidget(SelectedMidiDeviceEditorFrameWidget);
             SelectedMidiDeviceEditorLayout->addSpacing(9);
@@ -285,7 +297,7 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
         MidiInputEditorFrameWidget->setObjectName("MidiInputEditorFrameWidget");
 
         QVBoxLayout* const MidiInputEditorFrameLayout = new QVBoxLayout(MidiInputEditorFrameWidget);
-        MidiInputEditorFrameLayout->setContentsMargins(60, 10, 60, 10);
+        MidiInputEditorFrameLayout->setContentsMargins(60, 30, 60, 10);
         MidiInputEditorFrameLayout->setSpacing(10);
 
         QLabel* const InputPropertiesLabel = new QLabel("Inputs", MidiInputEditorFrameWidget);
@@ -341,7 +353,7 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
         QFrame* const MidiOutputEditorFrameWidget = new QFrame(Parent);
-        ParentLayout->addWidget(MidiOutputEditorFrameWidget, 4);
+        ParentLayout->addWidget(MidiOutputEditorFrameWidget, 3);
         MidiOutputEditorFrameWidget->setObjectName("MidiOutputEditorFrameWidget");
 
         QVBoxLayout* const MidiOutputEditorFrameLayout = new QVBoxLayout(MidiOutputEditorFrameWidget);

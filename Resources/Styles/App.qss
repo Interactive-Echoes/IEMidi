@@ -11,12 +11,14 @@ QMainWindow
 
 QMainWindow > QWidget 
 {
-    background-color: rgb(10, 10, 10);
+    /* background-color: rgb(10, 10, 10); */
+    background-color: rgb(0, 0, 0);
 }
 
 QWidget 
 {
-    background-color: rgb(20, 20, 20);
+    /* background-color: rgb(20, 20, 20); */
+    background-color: rgb(0, 0, 0);
     color: #d4d4d4;
     font-family: 'Segoe UI', sans-serif;
     font-size: 12pt;
@@ -25,7 +27,7 @@ QWidget
 
 #SidebarFrameWidget
 {
-    background-color: transparent;
+    
 }
 
 #MidiDeviceInfoFrameWidget, #MidiLoggerFrameWidget
@@ -33,29 +35,19 @@ QWidget
     background-color: rgb(15, 15, 15);
 }
 
+#CentralWidget2
+{
+}
+
 #SelectedMidiDeviceEditorFrameWidget
 {
-    background-color: transparent;
 }
 
 #SelectedMidiDeviceLabel
 {
-    font-size: 22px; 
+    font-size: 32px;
+    padding-left: 100px;
     font-weight: bold;
-
-    padding-top: 20px;
-    padding-left: 55px;
-    
-    border-bottom-left-radius: 0px; 
-    border-bottom-right-radius: 0px;
-
-    /* background-color: "red"; */
-}
-
-#MidiInputEditorFrameWidget
-{
-    border-top-left-radius: 0px; 
-    border-top-right-radius: 0px;
 }
 
 #MidiOutputEditorFrameWidget
