@@ -80,6 +80,11 @@ std::filesystem::path IEMidiProfileManager::GetIEMidiProfilesFilePath() const
 {
     std::filesystem::path MidiDeviceProfilesFilePath;
     const std::filesystem::path IEMidiConfigFolderPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
+    if (!std::filesystem::exists(IEMidiConfigFolderPath))
+    {
+        std::filesystem::create_directories(IEMidiConfigFolderPath);
+    }
+
     if (std::filesystem::exists(IEMidiConfigFolderPath))
     {
         const std::filesystem::path PotentialMidiDeviceProfilesFilePath = IEMidiConfigFolderPath / IEMIDI_PROFILES_FILENAME;
