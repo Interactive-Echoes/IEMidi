@@ -11,7 +11,8 @@ QMainWindow
 
 QWidget 
 {
-    background-color: rgb(10, 10, 10);
+    /* background-color: rgb(10, 10, 10); */
+    background-color: none;
     color: #d4d4d4;
     font-family: 'Segoe UI', sans-serif;
     font-size: 13pt;
@@ -24,24 +25,27 @@ QLabel
 }
 
 #MidiDeviceSelectionWidget, 
-#MidiDeviceEntryWidget,
+#MidiDeviceEntryWidget
+{
+    background-color: rgb(20, 20, 25);
+}
+
 #MidiDeviceInfoFrameWidget, 
 #MidiLoggerFrameWidget
 {
-    background-color: rgb(20, 20, 20);
-}
-
-#Separator
-{
-    background-color: rgb(30,30,40);
+    background-color: rgb(15, 15, 20);
 }
 
 #SelectedMidiDeviceLabel
 {
-    font-size: 32px;
-    padding-left: 100px;
+    font-size: 30px;
     font-weight: bold;
     padding: 0;
+}
+
+#SelectedMidiDeviceEditorFrameWidget
+{
+    background-color: rgb(20, 20, 25);
 }
 
 /* Menu (System Tray) */
@@ -94,6 +98,16 @@ QPushButton:hover
 {
     background-color: rgb(45, 45, 70);
     border-radius: 6px;
+}
+
+QPushButton#DeleteButton
+{
+    background-color: rgb(40, 20, 20);
+}
+
+QPushButton#DeleteButton:hover 
+{
+    background-color: rgb(55, 35, 35);
 }
 
 QPushButton#SaveProfileButton

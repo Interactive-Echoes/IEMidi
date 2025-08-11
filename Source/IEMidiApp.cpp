@@ -44,6 +44,10 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
         setStyleSheet(StyleSheet);
     }
 
+    QPalette Palette = QApplication::palette();
+    Palette.setColor(QPalette::Window, Qt::black);
+    QApplication::setPalette(Palette);
+
     SetupMainWindow();
     SetupTrayIcon();
 
@@ -176,7 +180,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
 
 void IEMidiApp::DrawActiveMidiDeviceEditor()
 {
-    if (m_MainWindow && m_MidiProcessor)
+    if (m_MainWindow && m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
     {
         QWidget* const CentralWidget = new QWidget(m_MainWindow);
         m_MainWindow->setCentralWidget(CentralWidget);
@@ -187,12 +191,6 @@ void IEMidiApp::DrawActiveMidiDeviceEditor()
         CentralLayout->setSpacing(9);
 
         DrawActiveMidiDeviceSideBarFrameWidget(CentralWidget);
-
-        QFrame* const Separator = new QFrame(CentralWidget);
-        Separator->setFrameStyle(QFrame::VLine);
-        Separator->setObjectName("Separator");
-        CentralLayout->addWidget(Separator);
-
         DrawActiveMidiDeviceEditorFrameWidget(CentralWidget);
 
         m_MainWindow->show();
@@ -214,13 +212,6 @@ void IEMidiApp::DrawActiveMidiDeviceSideBarFrameWidget(QWidget* Parent)
 
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
         {
-            const IEMidiDeviceProfile& ActiveMidiDeviceProfile = m_MidiProcessor->GetActiveMidiDeviceProfile();
-
-            QLabel* const SelectedMidiDeviceLabel = new QLabel(ActiveMidiDeviceProfile.NameID.c_str(), SideBarFrameWidget);
-            SideBarLayout->addWidget(SelectedMidiDeviceLabel, 1);
-            SelectedMidiDeviceLabel->setAlignment(Qt::AlignCenter);
-            SelectedMidiDeviceLabel->setObjectName("SelectedMidiDeviceLabel");
-
             IEMidiDeviceInfoFrameWidget* const MidiDeviceInfoFrameWidget = new IEMidiDeviceInfoFrameWidget(*m_MidiProcessor, SideBarFrameWidget);
             SideBarLayout->addWidget(MidiDeviceInfoFrameWidget, 2);
             MidiDeviceInfoFrameWidget->setObjectName("MidiDeviceInfoFrameWidget");
@@ -249,13 +240,12 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
         {
             const std::string ActiveMidiDeviceName = m_MidiProcessor->GetActiveMidiDeviceProfile().NameID;
 
+            QLabel* const SelectedMidiDeviceLabel = new QLabel(ActiveMidiDeviceName.c_str(), SelectedMidiDeviceEditorFrameWidget);
+            SelectedMidiDeviceEditorLayout->addWidget(SelectedMidiDeviceLabel, 1);
+            SelectedMidiDeviceLabel->setAlignment(Qt::AlignCenter);
+            SelectedMidiDeviceLabel->setObjectName("SelectedMidiDeviceLabel");
+
             DrawActiveMidiDeviceInputEditorFrameWidget(SelectedMidiDeviceEditorFrameWidget);
-
-            QFrame* const Separator = new QFrame(SelectedMidiDeviceEditorFrameWidget);
-            Separator->setFrameStyle(QFrame::HLine);
-            Separator->setObjectName("Separator");
-            SelectedMidiDeviceEditorLayout->addWidget(Separator);
-
             DrawActiveMidiDeviceOutputEditorFrameWidget(SelectedMidiDeviceEditorFrameWidget);
 
             QWidget* const SelectedMidiDeviceEditorFooter = new QWidget(SelectedMidiDeviceEditorFrameWidget);
@@ -287,7 +277,7 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
         QFrame* const MidiInputEditorFrameWidget = new QFrame(Parent);
-        ParentLayout->addWidget(MidiInputEditorFrameWidget, 4);
+        ParentLayout->addWidget(MidiInputEditorFrameWidget, 3);
         MidiInputEditorFrameWidget->setObjectName("MidiInputEditorFrameWidget");
 
         QVBoxLayout* const MidiInputEditorFrameLayout = new QVBoxLayout(MidiInputEditorFrameWidget);

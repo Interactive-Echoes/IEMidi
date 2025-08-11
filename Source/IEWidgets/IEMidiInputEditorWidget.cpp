@@ -68,16 +68,19 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
     m_RecordButtonWidget->setChecked(false);
     m_RecordButtonWidget->connect(m_RecordButtonWidget, &QPushButton::toggled, this, &IEMidiInputEditorWidget::OnRecordButtonToggled);
     m_RecordButtonWidget->setStyleSheet(R"(
-        QPushButton {
-            background-color: rgb(100, 70, 10);
+        QPushButton 
+        {
+            background-color: rgb(90, 70, 10);
         }
 
-        QPushButton:hover {
-            background-color: rgb(60, 2, 2);
+        QPushButton:hover 
+        {
+            background-color: rgb(45, 20, 20);
         }
         
-        QPushButton:checked {
-            background-color: rgb(60, 2, 2);
+        QPushButton:checked 
+        {
+            background-color: rgb(45, 20, 20);
         }
     )");
 
@@ -94,6 +97,17 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
 
     QPushButton* const DeleteButton = new QPushButton("Delete", this);
     DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiInputEditorWidget::OnDeleteButtonPressed);
+    DeleteButton->setStyleSheet(R"(
+        QPushButton
+        {
+            background-color: rgb(45, 20, 20);
+        }
+
+        QPushButton:hover 
+        {
+            background-color: rgb(60, 35, 35);
+        }
+    )");
 
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);

@@ -21,9 +21,19 @@ IEMidiOutputEditorWidget::IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& M
     m_MidiMessageEditorWidget->SetValues(m_MidiDeviceOutputProperty.MidiMessage);
     m_MidiMessageEditorWidget->connect(m_MidiMessageEditorWidget, &IEMidiMessageEditorWidget::OnMidiMessageCommitted, this, &IEMidiOutputEditorWidget::OnMidiMessageCommitted);
     
-    QPushButton* const DeleteButton = new QPushButton(this);
-    DeleteButton->setText("Delete");
+    QPushButton* const DeleteButton = new QPushButton("Delete", this);
     DeleteButton->connect(DeleteButton, &QPushButton::pressed, this, &IEMidiOutputEditorWidget::OnDeleteButtonPressed);
+    DeleteButton->setStyleSheet(R"(
+        QPushButton
+        {
+            background-color: rgb(45, 20, 20);
+        }
+
+        QPushButton:hover 
+        {
+            background-color: rgb(60, 35, 35);
+        }
+    )");
 
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
