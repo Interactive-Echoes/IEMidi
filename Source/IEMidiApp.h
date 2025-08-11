@@ -12,7 +12,7 @@
 #include "IEMidiProfileManager.h"
 #include "IEMidiTypes.h"
 
-class IEMidiLoggerTableWidget;
+class IEMidiLoggerTableFrameWidget;
 class QMainWindow;
 class QSystemTrayIcon;
 class QWidget;
@@ -54,7 +54,7 @@ private:
     
 private:
     IESPSCQueue<QPointer<QWidget>> m_MidiListeningWidgets = IESPSCQueue<QPointer<QWidget>>(6);
-    QPointer<IEMidiLoggerTableWidget> m_MidiLoggerTableWidget;
+    QPointer<IEMidiLoggerTableFrameWidget> m_MidiLoggerTableFrameWidget;
     uint32_t m_OnMidiCallbackID = 0;
 
 private:

@@ -2,15 +2,15 @@
 // Copyright © Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEMidiLoggerTableWidget.h"
+#include "IEMidiLoggerTableFrameWidget.h"
 
 #include "qboxlayout.h"
 #include "qheaderview.h"
 #include "qlabel.h"
 #include "qtimer.h"
 
-IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent) :
-    QWidget(Parent),
+IEMidiLoggerTableFrameWidget::IEMidiLoggerTableFrameWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent) :
+    QFrame(Parent),
     m_MidiLogMessagesBuffer(IncomingMidiMessages)
 {
     QLabel* const MidiLoggerLabel = new QLabel("Midi Logger", this);
@@ -60,7 +60,7 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
     m_MidiLoggerTableWidget->setItem(0, 2, CreateCenteredTableWidgetItem("Data 2", true));
 
     QTimer* const UpdateTimer = new QTimer(this);
-    connect(UpdateTimer, &QTimer::timeout, this, &IEMidiLoggerTableWidget::FlushMidiMessagesToTable);
+    connect(UpdateTimer, &QTimer::timeout, this, &IEMidiLoggerTableFrameWidget::FlushMidiMessagesToTable);
     UpdateTimer->start(25);
     
     QVBoxLayout* const Layout = new QVBoxLayout(this);
@@ -70,7 +70,7 @@ IEMidiLoggerTableWidget::IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t,
     Layout->addWidget(m_MidiLoggerTableWidget, 1);
 }
 
-void IEMidiLoggerTableWidget::FlushMidiMessagesToTable() const
+void IEMidiLoggerTableFrameWidget::FlushMidiMessagesToTable() const
 {
     int Row = 1;
     while (!m_MidiLogMessagesBuffer.IsEmpty())
@@ -93,12 +93,11 @@ void IEMidiLoggerTableWidget::FlushMidiMessagesToTable() const
     }
 }
 
-QTableWidgetItem* IEMidiLoggerTableWidget::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
+QTableWidgetItem* IEMidiLoggerTableFrameWidget::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
 {
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
     TableWidgetItem->setTextAlignment(Qt::AlignCenter);
     QFont Font = TableWidgetItem->font();
-    Font.setPointSize(10);
     Font.setBold(bBold);
     TableWidgetItem->setFont(Font);
     TableWidgetItem->setBackground(Qt::NoBrush);

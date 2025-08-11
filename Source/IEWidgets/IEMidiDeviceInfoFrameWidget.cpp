@@ -2,14 +2,14 @@
 // Copyright © Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEMidiDeviceInfoWidget.h"
+#include "IEMidiDeviceInfoFrameWidget.h"
 
 #include "qboxlayout.h"
 #include "qheaderview.h"
 #include "qlabel.h"
 
-IEMidiDeviceInfoWidget::IEMidiDeviceInfoWidget(const IEMidiProcessor& MidiProcessor, QWidget* Parent) :
-    QWidget(Parent),
+IEMidiDeviceInfoFrameWidget::IEMidiDeviceInfoFrameWidget(const IEMidiProcessor& MidiProcessor, QWidget* Parent) :
+    QFrame(Parent),
     m_MidiProcessor(MidiProcessor)
 {
     if (m_MidiProcessor.HasActiveMidiDeviceProfile())
@@ -84,12 +84,11 @@ IEMidiDeviceInfoWidget::IEMidiDeviceInfoWidget(const IEMidiProcessor& MidiProces
     }
 }
 
-QTableWidgetItem* IEMidiDeviceInfoWidget::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
+QTableWidgetItem* IEMidiDeviceInfoFrameWidget::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
 {
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
     TableWidgetItem->setTextAlignment(Qt::AlignCenter);
     QFont Font = TableWidgetItem->font();
-    Font.setPointSize(10);
     Font.setBold(bBold);
     TableWidgetItem->setFont(Font);
     TableWidgetItem->setBackground(Qt::NoBrush);

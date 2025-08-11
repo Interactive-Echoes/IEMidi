@@ -162,8 +162,8 @@ std::vector<std::string> IEMidiProcessor::GetAvailableMidiDevices() const
     std::vector<std::string> AvailableMidiDevices;
     if (m_bTestMode)
     {
-        AvailableMidiDevices.emplace_back(std::string("Test"));
-        AvailableMidiDevices.emplace_back(std::string("Test 2"));
+        AvailableMidiDevices.emplace_back(std::string("Faderport"));
+        AvailableMidiDevices.emplace_back(std::string("M-Audio"));
     }
     else if (m_MidiIn)
     {
@@ -208,7 +208,7 @@ IEResult IEMidiProcessor::ActivateMidiDeviceProfile(const std::string& MidiDevic
 
     if (m_bTestMode)
     {
-        m_ActiveMidiDeviceProfile.emplace(MidiDeviceName, -1, -1);
+        m_ActiveMidiDeviceProfile.emplace(MidiDeviceName, 0, 0);
         Result.Type = IEResult::Type::Success;
         Result.Message = std::format("Successfully activated test midi device profile {}", MidiDeviceName);
     }

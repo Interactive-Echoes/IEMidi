@@ -6,18 +6,19 @@
 
 #include <array>
 
+#include "qframe.h"
 #include "qtablewidget.h"
 #include "qwidget.h"
 
 #include "IEConcurrency.h"
 #include "IEMidiTypes.h"
 
-class IEMidiLoggerTableWidget : public QWidget
+class IEMidiLoggerTableFrameWidget : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiLoggerTableWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent = nullptr);
+    explicit IEMidiLoggerTableFrameWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent = nullptr);
 
 private:
     QTableWidgetItem* CreateCenteredTableWidgetItem(const QString& Text, bool bBold = false) const;

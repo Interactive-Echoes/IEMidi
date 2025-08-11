@@ -6,41 +6,34 @@ Author: mozahzah
 
 QMainWindow
 {
-    background-color: rgb(0, 0, 0);
-}
-
-QMainWindow > QWidget 
-{
-    /* background-color: rgb(10, 10, 10); */
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(10, 10, 10);
 }
 
 QWidget 
 {
-    /* background-color: rgb(20, 20, 20); */
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(10, 10, 10);
     color: #d4d4d4;
     font-family: 'Segoe UI', sans-serif;
-    font-size: 12pt;
+    font-size: 13pt;
     border-radius: 10px;
 }
 
-#SidebarFrameWidget
+QLabel
 {
-    
+    background-color: none;
 }
 
-#MidiDeviceInfoFrameWidget, #MidiLoggerFrameWidget
+#MidiDeviceSelectionWidget, 
+#MidiDeviceEntryWidget,
+#MidiDeviceInfoFrameWidget, 
+#MidiLoggerFrameWidget
 {
-    background-color: rgb(15, 15, 15);
+    background-color: rgb(20, 20, 20);
 }
 
-#CentralWidget2
+#Separator
 {
-}
-
-#SelectedMidiDeviceEditorFrameWidget
-{
+    background-color: rgb(30,30,40);
 }
 
 #SelectedMidiDeviceLabel
@@ -48,18 +41,7 @@ QWidget
     font-size: 32px;
     padding-left: 100px;
     font-weight: bold;
-}
-
-#MidiOutputEditorFrameWidget
-{
-    border-bottom-left-radius: 0px; 
-    border-bottom-right-radius: 0px;
-}
-
-#SelectedMidiDeviceEditorFooter
-{
-    border-top-left-radius: 0px; 
-    border-top-right-radius: 0px;
+    padding: 0;
 }
 
 /* Menu (System Tray) */
@@ -79,28 +61,16 @@ QMenu::item:selected
 
 QComboBox 
 {
-    background-color: rgb(30, 30, 35);
+    background-color: rgb(30, 30, 40);
+    selection-background-color: rgb(30, 30, 40);
     border-radius: 5px;
     padding: 4px 28px 4px 8px;
 }
 
-QComboBox:drop-down 
+QComboBox QAbstractItemView 
 {
-    background-color: rgb(45, 45, 50);
+    background-color: rgb(15, 15, 25);
     border-radius: 5px;
-}
-
-/* CheckBox */
-
-QCheckBox 
-{
-    background-color: transparent;
-}
-
-QCheckBox::indicator:checked 
-{
-    background-color: gray;
-    border-radius: 4px;
 }
 
 /* TableWidget */
@@ -114,16 +84,16 @@ QTableWidget
 
 QPushButton 
 {
-    background-color: rgb(30, 30, 40);
+    background-color: rgb(30, 30, 55);
     border: 0px;
-    padding: 2px 8px;
+    padding: 4px 8px;
     border-radius: 4px;
 }
 
 QPushButton:hover 
 {
-    background-color: rgb(45, 45, 55);
-    border-radius: 5px;
+    background-color: rgb(45, 45, 70);
+    border-radius: 6px;
 }
 
 QPushButton#SaveProfileButton

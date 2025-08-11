@@ -4,17 +4,18 @@
 
 #pragma once
 
+#include "qframe.h"
 #include "qtablewidget.h"
 #include "qwidget.h"
 
 #include "IEMidiProcessor.h"
 
-class IEMidiDeviceInfoWidget : public QWidget
+class IEMidiDeviceInfoFrameWidget : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiDeviceInfoWidget(const IEMidiProcessor& MidiProcessor, QWidget* Parent = nullptr);
+    explicit IEMidiDeviceInfoFrameWidget(const IEMidiProcessor& MidiProcessor, QWidget* Parent = nullptr);
 
 private:
     QTableWidgetItem* CreateCenteredTableWidgetItem(const QString& Text, bool bBold = false) const;
