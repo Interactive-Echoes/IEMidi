@@ -111,7 +111,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
 
         QVBoxLayout* const MidiDeviceSelectionLayout = new QVBoxLayout(MidiDeviceSelectionWidget);
         MidiDeviceSelectionWidget->setLayout(MidiDeviceSelectionLayout);
-        MidiDeviceSelectionLayout->setSpacing(5);
+        MidiDeviceSelectionLayout->setSpacing(15);
         MidiDeviceSelectionLayout->setContentsMargins(20, 0, 20, 0);
         MidiDeviceSelectionLayout->setAlignment(Qt::Alignment::enum_type::AlignCenter);
 
