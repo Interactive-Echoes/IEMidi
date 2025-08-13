@@ -201,6 +201,11 @@ const IEMidiDeviceProfile& IEMidiProcessor::GetActiveMidiDeviceProfile() const
     return m_ActiveMidiDeviceProfile.value();
 }
 
+void IEMidiProcessor::SetTestMode(bool bTestMode)
+{
+    m_bTestMode = bTestMode;
+}
+
 IEResult IEMidiProcessor::ActivateMidiDeviceProfile(const std::string& MidiDeviceName)
 {
     IEResult Result(IEResult::Type::Fail);

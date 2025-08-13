@@ -19,14 +19,13 @@
 class IEMidiProcessor
 {
 public:
-    IEMidiProcessor(bool bTestMode = false) :
+    IEMidiProcessor() :
         m_MidiIn(std::make_unique<RtMidiIn>()),
         m_MidiOut(std::make_unique<RtMidiOut>()),
         m_VolumeAction(IEAction::GetVolumeAction()),
         m_MuteAction(IEAction::GetMuteAction()),
         m_ConsoleCommandAction(IEAction::GetConsoleCommandAction()),
-        m_OpenFileAction(IEAction::GetOpenFileAction()),
-        m_bTestMode(bTestMode)
+        m_OpenFileAction(IEAction::GetOpenFileAction())
     {
         m_MidiIn->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
         m_MidiOut->setErrorCallback(&IEMidiProcessor::OnRtMidiErrorCallback);
@@ -45,6 +44,7 @@ public:
     const IEMidiDeviceProfile& GetActiveMidiDeviceProfile() const;
     IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetMidiLogMessagesBuffer() { return m_MidiLogMessagesBuffer; }
     const IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& GetMidiLogMessagesBuffer() const { return m_MidiLogMessagesBuffer; }
+    void SetTestMode(bool bTestMode);
 
 public:
     [[nodiscard]] uint32_t AddOnMidiCallback(std::function<void(double, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>)> Func);

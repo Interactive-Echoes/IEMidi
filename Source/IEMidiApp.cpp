@@ -31,10 +31,27 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QApplication(Argc, Argv),
     m_MainWindow(new QMainWindow()),
     m_SystemTrayIcon(new QSystemTrayIcon(m_MainWindow)),
-    m_MidiProcessor(std::make_unique<IEMidiProcessor>(true)),
+    m_MidiProcessor(std::make_unique<IEMidiProcessor>()),
     m_MidiProfileManager(std::make_unique<IEMidiProfileManager>())
 {
     m_OnMidiCallbackID = m_MidiProcessor->AddOnMidiCallback(this, &IEMidiApp::OnMidiCallback);
+
+    const std::string TestFlag = std::string("test");
+    for (int i = 0; i < Argc; i++)
+    {
+        std::string Arg = Argv[i];
+
+        std::transform(Arg.begin(), Arg.end(), Arg.begin(),
+            [](unsigned char C)
+            {
+                return std::tolower(C);
+            });
+
+        if (Arg.find(TestFlag) != std::string::npos)
+        {
+            m_MidiProcessor->SetTestMode(true);
+        }
+    }
 
     const std::string& AppStylePath = std::format("{0}/Styles/App.qss", Resources_Folder_Path);
     QFile AppStyle(AppStylePath.c_str());
@@ -110,9 +127,9 @@ void IEMidiApp::DrawMidiDeviceSelection()
         QFrame* const MidiDeviceSelectionWidget = new QFrame(CentralWidget);
         CentralLayout->addWidget(MidiDeviceSelectionWidget);
         MidiDeviceSelectionWidget->setFrameStyle(QFrame::Panel);
-        MidiDeviceSelectionWidget->setMaximumSize(300, 600);
+        MidiDeviceSelectionWidget->setMaximumSize(340, 600);
         MidiDeviceSelectionWidget->setObjectName("MidiDeviceSelectionWidget");
-
+        
         QVBoxLayout* const MidiDeviceSelectionLayout = new QVBoxLayout(MidiDeviceSelectionWidget);
         MidiDeviceSelectionWidget->setLayout(MidiDeviceSelectionLayout);
         MidiDeviceSelectionLayout->setSpacing(15);

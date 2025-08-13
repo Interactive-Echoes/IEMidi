@@ -33,6 +33,10 @@ install(TARGETS ${PROJECT_NAME}
 include(InstallRequiredSystemLibraries)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/Resources" DESTINATION "IE")
 
+add_custom_target(IEMidi-Test
+    COMMAND "$<TARGET_FILE:${PROJECT_NAME}>" -test
+    DEPENDS ${PROJECT_NAME})
+
 begin_section_message("Setting packaging settings for IEMidi")
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
 set(CPACK_PACKAGE_VENDOR "Interactive Echoes")

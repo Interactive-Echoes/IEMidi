@@ -102,12 +102,12 @@ QPushButton:hover
 
 QPushButton#DeleteButton
 {
-    background-color: rgb(40, 20, 20);
+    background-color: rgb(80, 30, 30);
 }
 
 QPushButton#DeleteButton:hover 
 {
-    background-color: rgb(55, 35, 35);
+    background-color: rgb(95, 45, 45);
 }
 
 QPushButton#SaveProfileButton
