@@ -401,6 +401,14 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
                     IEMidiDeviceOutputProperty& NewMidiDeviceOutputProperty = m_MidiProcessor->GetActiveMidiDeviceProfile().MakeOutputProperty();
                     IEMidiOutputEditorWidget* const MidiOutputEditorWidget = new IEMidiOutputEditorWidget(NewMidiDeviceOutputProperty, MidiOutputEditorFrameWidget);
                     MidiOutputEditorFrameLayout->insertWidget(MidiOutputEditorFrameLayout->count() - 3, MidiOutputEditorWidget);
+                    MidiOutputEditorWidget->connect(MidiOutputEditorWidget, &IEMidiOutputEditorWidget::OnSendMidiButtonPressed,
+                    [this](const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
+                    {
+                        if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
+                        {
+                            m_MidiProcessor->SendMidiOutputMessage(MidiMessage);
+                        }
+                    });
                 }
             });
 
