@@ -64,14 +64,34 @@ QMenu::item:selected
 QComboBox 
 {
     background-color: rgb(30, 30, 40);
-    selection-background-color: rgb(30, 30, 40);
     border-radius: 5px;
     padding: 4px 28px 4px 8px;
 }
 
+QComboBox::item 
+{
+    min-height: 35px;
+    min-width: 50px;
+    outline: none;
+}
+
+QComboBox::item:selected
+{
+    color: black;
+    background-color: lightgray;
+    border-radius: 5px;
+} 
+
 QComboBox QAbstractItemView 
 {
-    background-color: rgb(15, 15, 25);
+    background-color: rgb(25, 25, 35);
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+QComboBox::drop-down 
+{
     border-radius: 5px;
 }
 
@@ -116,4 +136,32 @@ QPushButton#SaveProfileButton
 QPushButton#SaveProfileButton:hover 
 {
     background-color: rgb(30, 105, 35);
+}
+
+/* Checkbox */
+
+QCheckBox 
+{
+	padding: 6px;
+}
+
+QCheckBox:hover 
+{
+	border-radius:4px;
+	padding: 6px;
+	background-color:qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(190, 90, 50, 50), stop:1 rgba(250, 130, 40, 50));
+}
+
+QCheckBox::indicator:checked 
+{
+	border:1px solid rgb(246, 134, 86);
+	border-radius:4px;
+  	background-color:rgb(246, 134, 86)
+}
+
+QCheckBox::indicator:unchecked 
+{
+	border-width:1px solid rgb(246, 134, 86);
+	border-radius:4px;
+  	background-color:rgb(255,255,255);
 }
