@@ -11,10 +11,8 @@ QMainWindow
 
 QWidget 
 {
-    /* background-color: rgb(10, 10, 10); */
     background-color: none;
     color: #d4d4d4;
-    font-family: 'Segoe UI', sans-serif;
     font-size: 13pt;
     border-radius: 10px;
 }
