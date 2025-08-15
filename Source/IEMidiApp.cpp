@@ -127,7 +127,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
         QFrame* const MidiDeviceSelectionWidget = new QFrame(CentralWidget);
         CentralLayout->addWidget(MidiDeviceSelectionWidget);
         MidiDeviceSelectionWidget->setFrameStyle(QFrame::Panel);
-        MidiDeviceSelectionWidget->setMaximumSize(340, 600);
+        MidiDeviceSelectionWidget->setMaximumSize(320, 600);
         MidiDeviceSelectionWidget->setObjectName("MidiDeviceSelectionWidget");
         
         QVBoxLayout* const MidiDeviceSelectionLayout = new QVBoxLayout(MidiDeviceSelectionWidget);

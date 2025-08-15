@@ -70,7 +70,7 @@ IEMidiInputEditorWidget::IEMidiInputEditorWidget(IEMidiDeviceInputProperty& Midi
     m_RecordButtonWidget->setStyleSheet(R"(
         QPushButton 
         {
-            background-color: rgba(170, 135, 40, 1);
+            background-color: rgba(115, 90, 30, 1);
         }
 
         QPushButton:hover 
