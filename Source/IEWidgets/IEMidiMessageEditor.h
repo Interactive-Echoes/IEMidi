@@ -14,12 +14,12 @@
 
 class QSpinBox;
 
-class IEMidiMessageEditorWidget : public QWidget
+class IEMidiMessageEditor : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiMessageEditorWidget(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage, QWidget* Parent = nullptr);
+    explicit IEMidiMessageEditor(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage, QWidget* Parent = nullptr);
 
 public:
     std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> GetValues() const;

@@ -2,13 +2,13 @@
 // Copyright © Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEMidiDeviceInfoFrameWidget.h"
+#include "IEMidiDeviceInfo.h"
 
 #include "qboxlayout.h"
 #include "qheaderview.h"
 #include "qlabel.h"
 
-IEMidiDeviceInfoFrameWidget::IEMidiDeviceInfoFrameWidget(const IEMidiProcessor& MidiProcessor, QWidget* Parent) :
+IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget* Parent) :
     QFrame(Parent),
     m_MidiProcessor(MidiProcessor)
 {
@@ -77,14 +77,14 @@ IEMidiDeviceInfoFrameWidget::IEMidiDeviceInfoFrameWidget(const IEMidiProcessor& 
         MidiDeviceInfoTableWidget->setItem(4, 1, CreateCenteredTableWidgetItem("1"));
 
         QVBoxLayout* const Layout = new QVBoxLayout(this);
-        Layout->setContentsMargins(15, 15, 15, 15);
+        Layout->setContentsMargins(15, 40, 15, 15);
         Layout->addWidget(MidiDeviceInfoLabel);
         Layout->addSpacing(10);
         Layout->addWidget(MidiDeviceInfoTableWidget, 1);
     }
 }
 
-QTableWidgetItem* IEMidiDeviceInfoFrameWidget::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
+QTableWidgetItem* IEMidiDeviceInfo::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
 {
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
     TableWidgetItem->setTextAlignment(Qt::AlignCenter);

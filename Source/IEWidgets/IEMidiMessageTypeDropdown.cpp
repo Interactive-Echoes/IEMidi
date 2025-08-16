@@ -2,14 +2,14 @@
 // Copyright © Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEMidiMessageTypeDropdownWidget.h"
+#include "IEMidiMessageTypeDropdown.h"
 
 #include "qboxlayout.h"
 #include "qcombobox.h"
 
 #include "IELog.h"
 
-IEMidiMessageTypeDropdownWidget::IEMidiMessageTypeDropdownWidget(QWidget* Parent) :
+IEMidiMessageTypeDropdown::IEMidiMessageTypeDropdown(QWidget* Parent) :
     QWidget(Parent)
 {
     m_ComboBoxWidget = new QComboBox(this);
@@ -17,14 +17,14 @@ IEMidiMessageTypeDropdownWidget::IEMidiMessageTypeDropdownWidget(QWidget* Parent
     m_ComboBoxWidget->addItem("-Message Type-");
     m_ComboBoxWidget->addItem("NoteOnOff");
     m_ComboBoxWidget->addItem("ControlChange");
-    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdownWidget::OnComboBoxIndexChanged);
+    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdown::OnComboBoxIndexChanged);
 
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
     Layout->addWidget(m_ComboBoxWidget);
 }
 
-void IEMidiMessageTypeDropdownWidget::SetValue(IEMidiMessageType MidiMessageType)
+void IEMidiMessageTypeDropdown::SetValue(IEMidiMessageType MidiMessageType)
 {
     if (m_ComboBoxWidget)
     {
@@ -33,12 +33,12 @@ void IEMidiMessageTypeDropdownWidget::SetValue(IEMidiMessageType MidiMessageType
     }
 }
 
-IEMidiMessageType IEMidiMessageTypeDropdownWidget::GetValue() const
+IEMidiMessageType IEMidiMessageTypeDropdown::GetValue() const
 {
     return m_CachedMidiMessageType;
 }
 
-void IEMidiMessageTypeDropdownWidget::OnComboBoxIndexChanged(int NewIndex)
+void IEMidiMessageTypeDropdown::OnComboBoxIndexChanged(int NewIndex)
 {
     const IEMidiMessageType NewMidiMessageType = static_cast<IEMidiMessageType>(NewIndex);
     emit OnMidiMessageTypeChanged(m_CachedMidiMessageType, NewMidiMessageType);

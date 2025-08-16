@@ -2,12 +2,12 @@
 // Copyright © Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEMidiActionTypeDropdownWidget.h"
+#include "IEMidiActionTypeDropdown.h"
 
 #include "qboxlayout.h"
 #include "qcombobox.h"
 
-IEMidiActionTypeDropdownWidget::IEMidiActionTypeDropdownWidget(QWidget* Parent) :
+IEMidiActionTypeDropdown::IEMidiActionTypeDropdown(QWidget* Parent) :
     QWidget(Parent)
 {
     m_ComboBoxWidget = new QComboBox(this);
@@ -17,14 +17,14 @@ IEMidiActionTypeDropdownWidget::IEMidiActionTypeDropdownWidget(QWidget* Parent) 
     m_ComboBoxWidget->addItem("Mute");
     m_ComboBoxWidget->addItem("ConsoleCommand");
     m_ComboBoxWidget->addItem("OpenFile");
-    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdownWidget::OnComboBoxIndexChanged);
+    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdown::OnComboBoxIndexChanged);
 
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
     Layout->addWidget(m_ComboBoxWidget);
 }
 
-void IEMidiActionTypeDropdownWidget::SetValue(IEMidiActionType MidiActionType)
+void IEMidiActionTypeDropdown::SetValue(IEMidiActionType MidiActionType)
 {
     if (m_ComboBoxWidget)
     {
@@ -33,12 +33,12 @@ void IEMidiActionTypeDropdownWidget::SetValue(IEMidiActionType MidiActionType)
     }
 }
 
-IEMidiActionType IEMidiActionTypeDropdownWidget::GetValue() const
+IEMidiActionType IEMidiActionTypeDropdown::GetValue() const
 {
     return m_CachedMidiActionType;
 }
 
-void IEMidiActionTypeDropdownWidget::OnComboBoxIndexChanged(int NewIndex)
+void IEMidiActionTypeDropdown::OnComboBoxIndexChanged(int NewIndex)
 {
     const IEMidiActionType NewIEMidiActionType = static_cast<IEMidiActionType>(NewIndex);
     emit OnMidiActionTypeChanged(m_CachedMidiActionType, NewIEMidiActionType);

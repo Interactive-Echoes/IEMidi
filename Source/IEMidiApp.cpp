@@ -22,10 +22,10 @@
 
 #include "IELog.h"
 
-#include "IEWidgets/IEMidiDeviceInfoFrameWidget.h"
-#include "IEWidgets/IEMidiInputEditorWidget.h"
-#include "IEWidgets/IEMidiLoggerTableFrameWidget.h"
-#include "IEWidgets/IEMidiOutputEditorWidget.h"
+#include "IEWidgets/IEMidiDeviceInfo.h"
+#include "IEWidgets/IEMidiDeviceInputPropertyEditor.h"
+#include "IEWidgets/IEMidiLogger.h"
+#include "IEWidgets/IEMidiDeviceOutputPropertyEditor.h"
 
 IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QApplication(Argc, Argv),
@@ -205,73 +205,74 @@ void IEMidiApp::DrawActiveMidiDeviceEditor()
 
         QHBoxLayout* const CentralLayout = new QHBoxLayout(CentralWidget);
         CentralWidget->setLayout(CentralLayout);
-        CentralLayout->setSpacing(9);
+        CentralLayout->setSpacing(0);
+        CentralLayout->setContentsMargins(0, 0, 0, 0);
 
-        DrawActiveMidiDeviceSideBarFrameWidget(CentralWidget);
-        DrawActiveMidiDeviceEditorFrameWidget(CentralWidget);
+        DrawActiveMidiDeviceSideBar(CentralWidget);
+        DrawActiveMidiDeviceEditor(CentralWidget);
 
         m_MainWindow->show();
     }
 }
 
-void IEMidiApp::DrawActiveMidiDeviceSideBarFrameWidget(QWidget* Parent)
+void IEMidiApp::DrawActiveMidiDeviceSideBar(QWidget* Parent)
 {
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
-        QFrame* const SideBarFrameWidget = new QFrame(Parent);
-        ParentLayout->addWidget(SideBarFrameWidget, 1);
-        SideBarFrameWidget->setObjectName("SidebarFrameWidget");
+        QFrame* const SideBarFrame = new QFrame(Parent);
+        ParentLayout->addWidget(SideBarFrame, 1);
+        SideBarFrame->setObjectName("SidebarFrame");
 
-        QVBoxLayout* const SideBarLayout = new QVBoxLayout(SideBarFrameWidget);
-        SideBarFrameWidget->setLayout(SideBarLayout);
+        QVBoxLayout* const SideBarLayout = new QVBoxLayout(SideBarFrame);
+        SideBarFrame->setLayout(SideBarLayout);
         SideBarLayout->setContentsMargins(0, 0, 0, 0);
-        SideBarLayout->setSpacing(9);
+        SideBarLayout->setSpacing(0);
 
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
         {
-            IEMidiDeviceInfoFrameWidget* const MidiDeviceInfoFrameWidget = new IEMidiDeviceInfoFrameWidget(*m_MidiProcessor, SideBarFrameWidget);
-            SideBarLayout->addWidget(MidiDeviceInfoFrameWidget, 2);
-            MidiDeviceInfoFrameWidget->setObjectName("MidiDeviceInfoFrameWidget");
+            IEMidiDeviceInfo* const MidiDeviceInfo = new IEMidiDeviceInfo(*m_MidiProcessor, SideBarFrame);
+            SideBarLayout->addWidget(MidiDeviceInfo, 2);
+            MidiDeviceInfo->setObjectName("MidiDeviceInfo");
 
-            m_MidiLoggerTableFrameWidget = new IEMidiLoggerTableFrameWidget(m_MidiProcessor->GetMidiLogMessagesBuffer(), SideBarFrameWidget);
-            SideBarLayout->addWidget(m_MidiLoggerTableFrameWidget, 3);
-            m_MidiLoggerTableFrameWidget->setObjectName("MidiLoggerFrameWidget");
+            m_MidiLogger = new IEMidiLogger(m_MidiProcessor->GetMidiLogMessagesBuffer(), SideBarFrame);
+            SideBarLayout->addWidget(m_MidiLogger, 3);
+            m_MidiLogger->setObjectName("MidiLogger");
         }
     }
 }
 
-void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
+void IEMidiApp::DrawActiveMidiDeviceEditor(QWidget* Parent)
 {
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
-        QFrame* const SelectedMidiDeviceEditorFrameWidget = new QFrame(Parent);
-        ParentLayout->addWidget(SelectedMidiDeviceEditorFrameWidget, 8);
-        SelectedMidiDeviceEditorFrameWidget->setObjectName("SelectedMidiDeviceEditorFrameWidget");
+        QFrame* const SelectedMidiDeviceEditorFrame = new QFrame(Parent);
+        ParentLayout->addWidget(SelectedMidiDeviceEditorFrame, 8);
+        SelectedMidiDeviceEditorFrame->setObjectName("SelectedMidiDeviceEditorFrame");
 
-        QVBoxLayout* const SelectedMidiDeviceEditorLayout = new QVBoxLayout(SelectedMidiDeviceEditorFrameWidget);
-        SelectedMidiDeviceEditorFrameWidget->setLayout(SelectedMidiDeviceEditorLayout);
-        SelectedMidiDeviceEditorLayout->setContentsMargins(0, 0, 0, 0);
+        QVBoxLayout* const SelectedMidiDeviceEditorLayout = new QVBoxLayout(SelectedMidiDeviceEditorFrame);
+        SelectedMidiDeviceEditorFrame->setLayout(SelectedMidiDeviceEditorLayout);
+        SelectedMidiDeviceEditorLayout->setContentsMargins(60, 0, 60, 0);
         SelectedMidiDeviceEditorLayout->setSpacing(0);
 
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
         {
             const std::string ActiveMidiDeviceName = m_MidiProcessor->GetActiveMidiDeviceProfile().NameID;
 
-            QLabel* const SelectedMidiDeviceLabel = new QLabel(ActiveMidiDeviceName.c_str(), SelectedMidiDeviceEditorFrameWidget);
+            QLabel* const SelectedMidiDeviceLabel = new QLabel(ActiveMidiDeviceName.c_str(), SelectedMidiDeviceEditorFrame);
             SelectedMidiDeviceEditorLayout->addWidget(SelectedMidiDeviceLabel, 1);
             SelectedMidiDeviceLabel->setAlignment(Qt::AlignCenter);
             SelectedMidiDeviceLabel->setObjectName("SelectedMidiDeviceLabel");
 
-            DrawActiveMidiDeviceInputEditorFrameWidget(SelectedMidiDeviceEditorFrameWidget);
-            DrawActiveMidiDeviceOutputEditorFrameWidget(SelectedMidiDeviceEditorFrameWidget);
+            DrawActiveMidiDeviceInputEditor(SelectedMidiDeviceEditorFrame);
+            DrawActiveMidiDeviceOutputEditor(SelectedMidiDeviceEditorFrame);
 
-            QWidget* const SelectedMidiDeviceEditorFooter = new QWidget(SelectedMidiDeviceEditorFrameWidget);
+            QWidget* const SelectedMidiDeviceEditorFooter = new QWidget(SelectedMidiDeviceEditorFrame);
             SelectedMidiDeviceEditorLayout->addWidget(SelectedMidiDeviceEditorFooter, 1);
             SelectedMidiDeviceEditorFooter->setObjectName("SelectedMidiDeviceEditorFooter");
 
             QHBoxLayout* const FooterLayout = new QHBoxLayout(SelectedMidiDeviceEditorFooter);
             FooterLayout->addStretch(1);
-            FooterLayout->setContentsMargins(0, 0, 60, 0);
+            FooterLayout->setContentsMargins(0, 0, 0, 0);
 
             QPushButton* const SaveProfileButton = new QPushButton("Save", SelectedMidiDeviceEditorFooter);
             FooterLayout->addWidget(SaveProfileButton);
@@ -289,22 +290,22 @@ void IEMidiApp::DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent)
     }
 }
 
-void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
+void IEMidiApp::DrawActiveMidiDeviceInputEditor(QWidget* Parent)
 {
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
-        QFrame* const MidiInputEditorFrameWidget = new QFrame(Parent);
-        ParentLayout->addWidget(MidiInputEditorFrameWidget, 3);
-        MidiInputEditorFrameWidget->setObjectName("MidiInputEditorFrameWidget");
+        QFrame* const MidiInputEditorFrame = new QFrame(Parent);
+        ParentLayout->addWidget(MidiInputEditorFrame, 3);
+        MidiInputEditorFrame->setObjectName("MidiInputEditorFrame");
 
-        QVBoxLayout* const MidiInputEditorFrameLayout = new QVBoxLayout(MidiInputEditorFrameWidget);
-        MidiInputEditorFrameLayout->setContentsMargins(60, 20, 60, 10);
-        MidiInputEditorFrameLayout->setSpacing(10);
+        QVBoxLayout* const MidiInputEditorLayout = new QVBoxLayout(MidiInputEditorFrame);
+        MidiInputEditorLayout->setContentsMargins(0, 0, 0, 0);
+        MidiInputEditorLayout->setSpacing(10);
 
-        QLabel* const InputPropertiesLabel = new QLabel("Inputs", MidiInputEditorFrameWidget);
+        QLabel* const InputPropertiesLabel = new QLabel("Inputs", MidiInputEditorFrame);
         InputPropertiesLabel->setStyleSheet("font-size: 16px; font-weight: bold;");
-        MidiInputEditorFrameLayout->addWidget(InputPropertiesLabel);
-        MidiInputEditorFrameLayout->addSpacing(20);
+        MidiInputEditorLayout->addWidget(InputPropertiesLabel);
+        MidiInputEditorLayout->addSpacing(20);
 
         // Input For Loop
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
@@ -312,11 +313,11 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
             IEMidiDeviceInputProperty* MidiDeviceInputProperty = m_MidiProcessor->GetActiveMidiDeviceProfile().InputPropertiesHead.get();
             while (MidiDeviceInputProperty)
             {
-                IEMidiInputEditorWidget* const MidiInputEditorWidget = new IEMidiInputEditorWidget(*MidiDeviceInputProperty, MidiInputEditorFrameWidget);
-                MidiInputEditorFrameLayout->addWidget(MidiInputEditorWidget);
-                MidiInputEditorWidget->connect(MidiInputEditorWidget, &IEMidiInputEditorWidget::OnRecording, [this, MidiInputEditorWidget]()
+                IEMidiDeviceInputPropertyEditor* const MidiDeviceInputPropertyEditor = new IEMidiDeviceInputPropertyEditor(*MidiDeviceInputProperty, MidiInputEditorFrame);
+                MidiInputEditorLayout->addWidget(MidiDeviceInputPropertyEditor);
+                MidiDeviceInputPropertyEditor->connect(MidiDeviceInputPropertyEditor, &IEMidiDeviceInputPropertyEditor::OnRecording, [this, MidiDeviceInputPropertyEditor]()
                 {
-                    m_MidiListeningWidgets.Push(MidiInputEditorWidget);
+                    m_MidiListeningWidgets.Push(MidiDeviceInputPropertyEditor);
                 });
                 
                 MidiDeviceInputProperty = MidiDeviceInputProperty->Next();
@@ -324,10 +325,10 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
         }
         // End For loop
 
-        MidiInputEditorFrameLayout->addSpacing(10);
+        MidiInputEditorLayout->addSpacing(10);
 
-        QPushButton* const AddInputPropertyButton = new QPushButton("Add Property", MidiInputEditorFrameWidget);
-        MidiInputEditorFrameLayout->addWidget(AddInputPropertyButton);
+        QPushButton* const AddInputPropertyButton = new QPushButton("Add Property", MidiInputEditorFrame);
+        MidiInputEditorLayout->addWidget(AddInputPropertyButton);
         AddInputPropertyButton->setMaximumWidth(120);
         AddInputPropertyButton->connect(AddInputPropertyButton, &QPushButton::pressed, [=, this]()
             {
@@ -336,35 +337,35 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent)
                     IEMidiDeviceProfile& ActiveMidiDeviceProfile = m_MidiProcessor->GetActiveMidiDeviceProfile();
                     IEMidiDeviceInputProperty& NewMidiDeviceInputProperty = ActiveMidiDeviceProfile.MakeInputProperty();
 
-                    IEMidiInputEditorWidget* const MidiInputEditorWidget = new IEMidiInputEditorWidget(NewMidiDeviceInputProperty, MidiInputEditorFrameWidget);
-                    MidiInputEditorFrameLayout->insertWidget(MidiInputEditorFrameLayout->count() - 3, MidiInputEditorWidget);
-                    MidiInputEditorWidget->connect(MidiInputEditorWidget, &IEMidiInputEditorWidget::OnRecording, [this, MidiInputEditorWidget]()
+                    IEMidiDeviceInputPropertyEditor* const MidiDeviceInputPropertyEditor = new IEMidiDeviceInputPropertyEditor(NewMidiDeviceInputProperty, MidiInputEditorFrame);
+                    MidiInputEditorLayout->insertWidget(MidiInputEditorLayout->count() - 3, MidiDeviceInputPropertyEditor);
+                    MidiDeviceInputPropertyEditor->connect(MidiDeviceInputPropertyEditor, &IEMidiDeviceInputPropertyEditor::OnRecording, [this, MidiDeviceInputPropertyEditor]()
                     {
-                        m_MidiListeningWidgets.Push(MidiInputEditorWidget);
+                        m_MidiListeningWidgets.Push(MidiDeviceInputPropertyEditor);
                     });
                 }
             });
         
-        MidiInputEditorFrameLayout->addStretch(1);
+        MidiInputEditorLayout->addStretch(1);
     }
 }
 
-void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) const
+void IEMidiApp::DrawActiveMidiDeviceOutputEditor(QWidget* Parent) const
 {
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
-        QFrame* const MidiOutputEditorFrameWidget = new QFrame(Parent);
-        ParentLayout->addWidget(MidiOutputEditorFrameWidget, 3);
-        MidiOutputEditorFrameWidget->setObjectName("MidiOutputEditorFrameWidget");
+        QFrame* const MidiOutputEditorFrame = new QFrame(Parent);
+        ParentLayout->addWidget(MidiOutputEditorFrame, 3);
+        MidiOutputEditorFrame->setObjectName("MidiOutputEditorFrame");
 
-        QVBoxLayout* const MidiOutputEditorFrameLayout = new QVBoxLayout(MidiOutputEditorFrameWidget);
-        MidiOutputEditorFrameLayout->setContentsMargins(60, 30, 60, 10);
-        MidiOutputEditorFrameLayout->setSpacing(10);
+        QVBoxLayout* const MidiOutputEditorLayout = new QVBoxLayout(MidiOutputEditorFrame);
+        MidiOutputEditorLayout->setContentsMargins(0, 0, 0, 0);;
+        MidiOutputEditorLayout->setSpacing(10);
 
-        QLabel* const OutputPropertiesLabel = new QLabel("Outputs", MidiOutputEditorFrameWidget);
+        QLabel* const OutputPropertiesLabel = new QLabel("Outputs", MidiOutputEditorFrame);
         OutputPropertiesLabel->setStyleSheet("font-size: 16px; font-weight: bold;");
-        MidiOutputEditorFrameLayout->addWidget(OutputPropertiesLabel);
-        MidiOutputEditorFrameLayout->addSpacing(20);
+        MidiOutputEditorLayout->addWidget(OutputPropertiesLabel);
+        MidiOutputEditorLayout->addSpacing(20);
 
         // Output for loop
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
@@ -372,9 +373,9 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
             IEMidiDeviceOutputProperty* MidiDeviceOutputProperty = m_MidiProcessor->GetActiveMidiDeviceProfile().OutputPropertiesHead.get();
             while (MidiDeviceOutputProperty)
             {
-                IEMidiOutputEditorWidget* const MidiOutputEditorWidget = new IEMidiOutputEditorWidget(*MidiDeviceOutputProperty, MidiOutputEditorFrameWidget);
-                MidiOutputEditorFrameLayout->addWidget(MidiOutputEditorWidget);
-                MidiOutputEditorWidget->connect(MidiOutputEditorWidget, &IEMidiOutputEditorWidget::OnSendMidiButtonPressed,
+                IEMidiDeviceOutputPropertyEditor* const MidiDeviceOutputPropertyEditor = new IEMidiDeviceOutputPropertyEditor(*MidiDeviceOutputProperty, MidiOutputEditorFrame);
+                MidiOutputEditorLayout->addWidget(MidiDeviceOutputPropertyEditor);
+                MidiDeviceOutputPropertyEditor->connect(MidiDeviceOutputPropertyEditor, &IEMidiDeviceOutputPropertyEditor::OnSendMidiButtonPressed,
                     [this](const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
                     {
                         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
@@ -388,20 +389,20 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
         }
         // End For loop
 
-        MidiOutputEditorFrameLayout->addSpacing(10);
+        MidiOutputEditorLayout->addSpacing(10);
 
-        QPushButton* const AddOutputPropertyButton = new QPushButton("Add Property", MidiOutputEditorFrameWidget);
-        MidiOutputEditorFrameLayout->addWidget(AddOutputPropertyButton);
+        QPushButton* const AddOutputPropertyButton = new QPushButton("Add Property", MidiOutputEditorFrame);
+        MidiOutputEditorLayout->addWidget(AddOutputPropertyButton);
         AddOutputPropertyButton->setMaximumWidth(120);
         AddOutputPropertyButton->connect(AddOutputPropertyButton, &QPushButton::pressed,
-            [this, MidiOutputEditorFrameWidget, MidiOutputEditorFrameLayout]()
+            [this, MidiOutputEditorFrame, MidiOutputEditorLayout]()
             {
                 if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
                 {
                     IEMidiDeviceOutputProperty& NewMidiDeviceOutputProperty = m_MidiProcessor->GetActiveMidiDeviceProfile().MakeOutputProperty();
-                    IEMidiOutputEditorWidget* const MidiOutputEditorWidget = new IEMidiOutputEditorWidget(NewMidiDeviceOutputProperty, MidiOutputEditorFrameWidget);
-                    MidiOutputEditorFrameLayout->insertWidget(MidiOutputEditorFrameLayout->count() - 3, MidiOutputEditorWidget);
-                    MidiOutputEditorWidget->connect(MidiOutputEditorWidget, &IEMidiOutputEditorWidget::OnSendMidiButtonPressed,
+                    IEMidiDeviceOutputPropertyEditor* const MidiDeviceOutputPropertyEditor = new IEMidiDeviceOutputPropertyEditor(NewMidiDeviceOutputProperty, MidiOutputEditorFrame);
+                    MidiOutputEditorLayout->insertWidget(MidiOutputEditorLayout->count() - 3, MidiDeviceOutputPropertyEditor);
+                    MidiDeviceOutputPropertyEditor->connect(MidiDeviceOutputPropertyEditor, &IEMidiDeviceOutputPropertyEditor::OnSendMidiButtonPressed,
                     [this](const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
                     {
                         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
@@ -412,7 +413,7 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) con
                 }
             });
 
-        MidiOutputEditorFrameLayout->addStretch(1);
+        MidiOutputEditorLayout->addStretch(1);
     }
 }
 
@@ -508,9 +509,9 @@ void IEMidiApp::OnMidiCallback(double Timestamp, const std::array<uint8_t, MIDI_
                 }
             }
 
-            if (m_MidiLoggerTableFrameWidget)
+            if (m_MidiLogger)
             {
-                m_MidiLoggerTableFrameWidget->repaint();
+                m_MidiLogger->repaint();
             }
         }, Qt::QueuedConnection);
 }

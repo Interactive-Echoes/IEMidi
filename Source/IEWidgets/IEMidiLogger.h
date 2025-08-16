@@ -13,12 +13,12 @@
 #include "IEConcurrency.h"
 #include "IEMidiTypes.h"
 
-class IEMidiLoggerTableFrameWidget : public QFrame
+class IEMidiLogger : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiLoggerTableFrameWidget(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent = nullptr);
+    explicit IEMidiLogger(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>>& IncomingMidiMessages, QWidget* Parent = nullptr);
 
 private:
     QTableWidgetItem* CreateCenteredTableWidgetItem(const QString& Text, bool bBold = false) const;

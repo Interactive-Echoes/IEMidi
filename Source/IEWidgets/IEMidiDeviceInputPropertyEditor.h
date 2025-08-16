@@ -12,19 +12,19 @@
 #include "IEMidiTypes.h"
 
 class IEFileBrowserWidget;
-class IEMidiActionTypeDropdownWidget;
-class IEMidiMessageEditorWidget;
-class IEMidiMessageTypeDropdownWidget;
+class IEMidiActionTypeDropdown;
+class IEMidiMessageEditor;
+class IEMidiMessageTypeDropdown;
 class QCheckBox;
 class QLineEdit;
 class QPushButton;
 
-class IEMidiInputEditorWidget : public QWidget
+class IEMidiDeviceInputPropertyEditor : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiInputEditorWidget(IEMidiDeviceInputProperty& MidiDeviceInputProperty, QWidget* Parent = nullptr);
+    explicit IEMidiDeviceInputPropertyEditor(IEMidiDeviceInputProperty& MidiDeviceInputProperty, QWidget* Parent = nullptr);
 
 public:
     bool IsRecording() const;
@@ -50,9 +50,9 @@ private:
 
 private:
     IEFileBrowserWidget* m_OpenFileBrowserWidget;
-    IEMidiActionTypeDropdownWidget* m_MidiActionTypeDropdownWidget;
-    IEMidiMessageEditorWidget* m_MidiMessageEditorWidget;
-    IEMidiMessageTypeDropdownWidget* m_MidiMessageTypeDropdownWidget;
+    IEMidiActionTypeDropdown* m_MidiActionTypeDropdownWidget;
+    IEMidiMessageEditor* m_MidiMessageEditorWidget;
+    IEMidiMessageTypeDropdown* m_MidiMessageTypeDropdownWidget;
     QCheckBox* m_MidiToggleCheckboxWidget;
     QLineEdit* m_ConsoleCommandWidget;
     QPushButton* m_RecordButtonWidget;

@@ -12,7 +12,7 @@
 #include "IEMidiProfileManager.h"
 #include "IEMidiTypes.h"
 
-class IEMidiLoggerTableFrameWidget;
+class IEMidiLogger;
 class QMainWindow;
 class QSystemTrayIcon;
 class QWidget;
@@ -31,10 +31,10 @@ private:
     void DrawMidiDeviceSelection();
     void DrawActiveMidiDeviceEditor();
 
-    void DrawActiveMidiDeviceSideBarFrameWidget(QWidget* Parent);
-    void DrawActiveMidiDeviceEditorFrameWidget(QWidget* Parent);
-    void DrawActiveMidiDeviceInputEditorFrameWidget(QWidget* Parent);
-    void DrawActiveMidiDeviceOutputEditorFrameWidget(QWidget* Parent) const;
+    void DrawActiveMidiDeviceSideBar(QWidget* Parent);
+    void DrawActiveMidiDeviceEditor(QWidget* Parent);
+    void DrawActiveMidiDeviceInputEditor(QWidget* Parent);
+    void DrawActiveMidiDeviceOutputEditor(QWidget* Parent) const;
      
 private:
     void ActivateMidiDeviceProfile(const std::string& MidiDeviceName) const;
@@ -54,9 +54,9 @@ private:
     
 private:
     IESPSCQueue<QPointer<QWidget>> m_MidiListeningWidgets = IESPSCQueue<QPointer<QWidget>>(6);
-    QPointer<IEMidiLoggerTableFrameWidget> m_MidiLoggerTableFrameWidget;
+    QPointer<IEMidiLogger> m_MidiLogger;
     uint32_t m_OnMidiCallbackID = 0;
 
 private:
-    const std::string m_IEIconPath = std::format("{0}/IE-Brand-Kit/IE-Logo-NoBg.png", IEResources_Folder_Path); // compile time definition
+    inline static const std::string m_IEIconPath = std::string(IEResources_Folder_Path) + "/IE-Brand-Kit/IE-Logo-NoBg.png";
 };

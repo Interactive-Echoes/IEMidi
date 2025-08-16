@@ -11,15 +11,15 @@
 
 #include "IEMidiTypes.h"
 
-class IEMidiMessageEditorWidget;
+class IEMidiMessageEditor;
 class QPushButton;
 
-class IEMidiOutputEditorWidget : public QWidget
+class IEMidiDeviceOutputPropertyEditor : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiOutputEditorWidget(IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent = nullptr);
+    explicit IEMidiDeviceOutputPropertyEditor(IEMidiDeviceOutputProperty& MidiDeviceOutputProperty, QWidget* Parent = nullptr);
 
 Q_SIGNALS:
     void OnSendMidiButtonPressed(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const;
@@ -33,6 +33,6 @@ private:
     IEMidiDeviceOutputProperty& m_MidiDeviceOutputProperty;
 
 private:
-    IEMidiMessageEditorWidget* m_MidiMessageEditorWidget;
+    IEMidiMessageEditor* m_MidiMessageEditorWidget;
     QPushButton* m_SendButtonWidget;
 };

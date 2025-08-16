@@ -10,12 +10,12 @@
 
 #include "IEMidiProcessor.h"
 
-class IEMidiDeviceInfoFrameWidget : public QFrame
+class IEMidiDeviceInfo : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiDeviceInfoFrameWidget(const IEMidiProcessor& MidiProcessor, QWidget* Parent = nullptr);
+    explicit IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget* Parent = nullptr);
 
 private:
     QTableWidgetItem* CreateCenteredTableWidgetItem(const QString& Text, bool bBold = false) const;

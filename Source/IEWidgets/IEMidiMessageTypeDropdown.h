@@ -10,12 +10,12 @@
 
 class QComboBox;
 
-class IEMidiMessageTypeDropdownWidget : public QWidget
+class IEMidiMessageTypeDropdown : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiMessageTypeDropdownWidget(QWidget* Parent = nullptr);
+    explicit IEMidiMessageTypeDropdown(QWidget* Parent = nullptr);
 
 public:
     void SetValue(IEMidiMessageType MidiMessageType);

@@ -10,12 +10,12 @@
 
 class QComboBox;
 
-class IEMidiActionTypeDropdownWidget : public QWidget
+class IEMidiActionTypeDropdown : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IEMidiActionTypeDropdownWidget(QWidget* Parent = nullptr);
+    explicit IEMidiActionTypeDropdown(QWidget* Parent = nullptr);
 
 public:
     void SetValue(IEMidiActionType MidiActionType);
