@@ -14,15 +14,6 @@
 IEMidiMessageEditor::IEMidiMessageEditor(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage, QWidget* Parent) :
     QWidget(Parent)
 {
-    QString SpinBoxStyle = R"(
-        QSpinBox {
-            border-radius: 6px;
-            padding: 4px 8px;
-            background: rgb(33, 33, 33);
-            selection-background-color: #0078d7;
-            font-size: 14px;
-        })";
-
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
     Layout->setSpacing(5);
@@ -40,7 +31,6 @@ IEMidiMessageEditor::IEMidiMessageEditor(const std::array<uint8_t, MIDI_MESSAGE_
         }
         m_SpinBoxWidgets[i]->setValue(MidiMessage[i]);
         m_SpinBoxWidgets[i]->connect(m_SpinBoxWidgets[i], &QSpinBox::editingFinished, this, &IEMidiMessageEditor::OnMidiByteCommitted);
-        m_SpinBoxWidgets[i]->setStyleSheet(SpinBoxStyle);
         m_SpinBoxWidgets[i]->setButtonSymbols(QAbstractSpinBox::NoButtons);
         Layout->addWidget(m_SpinBoxWidgets[i]);
     }

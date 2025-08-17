@@ -22,7 +22,7 @@ IEFileBrowserWidget::IEFileBrowserWidget(QWidget* Parent) :
     
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
-    Layout->setSpacing(0);
+    Layout->setSpacing(5);
     Layout->addWidget(m_FilePathTextWidget);
     Layout->addWidget(m_BrowseButtonWidget);
 }
