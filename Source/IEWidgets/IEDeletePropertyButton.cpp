@@ -25,7 +25,7 @@ void IEDeletePropertyButton::paintEvent(QPaintEvent* PaintEvent)
     TrashIconPainter.drawImage(TrashIconImage.rect(), TrashIconImage);
     TrashIconPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
 
-    const QColor FillColor = underMouse() ? QColor(200, 30, 30) : QColor(100, 30, 30);
+    const QColor FillColor = underMouse() ? QColor(215, 95, 95) : QColor(175, 55, 55);
     TrashIconPainter.fillRect(TrashIconImage.rect(), FillColor);
     
     QPainter Painter(this);

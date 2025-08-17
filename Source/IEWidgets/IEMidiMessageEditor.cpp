@@ -17,7 +17,8 @@ IEMidiMessageEditor::IEMidiMessageEditor(const std::array<uint8_t, MIDI_MESSAGE_
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
     Layout->setSpacing(5);
-    
+
+    m_MidiMessage = MidiMessage;
     for (int i = 0; i < MIDI_MESSAGE_BYTE_COUNT; i++)
     {
         m_SpinBoxWidgets[i] = new QSpinBox(this);
@@ -29,25 +30,24 @@ IEMidiMessageEditor::IEMidiMessageEditor(const std::array<uint8_t, MIDI_MESSAGE_
         {
             m_SpinBoxWidgets[i]->setRange(0, 127);
         }
-        m_SpinBoxWidgets[i]->setValue(MidiMessage[i]);
+        m_SpinBoxWidgets[i]->setValue(m_MidiMessage[i]);
         m_SpinBoxWidgets[i]->connect(m_SpinBoxWidgets[i], &QSpinBox::editingFinished, this, &IEMidiMessageEditor::OnMidiByteCommitted);
         m_SpinBoxWidgets[i]->setButtonSymbols(QAbstractSpinBox::NoButtons);
         Layout->addWidget(m_SpinBoxWidgets[i]);
     }
 }
 
-std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> IEMidiMessageEditor::GetValues() const
+const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& IEMidiMessageEditor::GetValues() const
 {
-    return  {   static_cast<uint8_t>(m_SpinBoxWidgets[0]->value()),
-                static_cast<uint8_t>(m_SpinBoxWidgets[1]->value()),
-                static_cast<uint8_t>(m_SpinBoxWidgets[2]->value()) };
+    return m_MidiMessage;
 }
 
-void IEMidiMessageEditor::SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const
+void IEMidiMessageEditor::SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage)
 {
+    m_MidiMessage = MidiMessage;
     for (int i = 0; i < m_SpinBoxWidgets.size(); i++)
     {
-        m_SpinBoxWidgets[i]->setValue(MidiMessage[i]);
+        m_SpinBoxWidgets[i]->setValue(m_MidiMessage[i]);
     }
 }
 
@@ -69,7 +69,10 @@ void IEMidiMessageEditor::HideByteWidget(size_t Index) const
     }
 }
 
-void IEMidiMessageEditor::OnMidiByteCommitted() const
+void IEMidiMessageEditor::OnMidiByteCommitted()
 {
+    m_MidiMessage = {   static_cast<uint8_t>(m_SpinBoxWidgets[0]->value()),
+                        static_cast<uint8_t>(m_SpinBoxWidgets[1]->value()),
+                        static_cast<uint8_t>(m_SpinBoxWidgets[2]->value()) };
     emit OnMidiMessageCommitted();
 }

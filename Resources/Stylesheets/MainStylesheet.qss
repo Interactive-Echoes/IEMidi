@@ -32,7 +32,7 @@ QLabel
 #MidiDeviceInfo,
 #MidiLogger
 {
-    background-color: rgb(10, 10, 10);
+    background-color: rgb(20, 20, 20);
 }
 
 #SelectedMidiDeviceLabel
@@ -44,7 +44,7 @@ QLabel
 
 #SelectedMidiDeviceEditorFrame
 {
-    background-color: rgb(20, 20, 20);
+    background-color: rgb(25, 25, 25);
 }
 
 /* Menu (System Tray) */
@@ -76,19 +76,13 @@ QComboBox QAbstractItemView
     padding: 5px 5px 5px 5px;
 }
 
-QLineEdit
-{
-    background-color: rgb(40, 40, 65);
-    border-radius: 10px;
-    padding: 4px 8px 4px 8px;
-}
-
+QLineEdit,
 QSpinBox 
 {
-    border-radius: 6px;
-    padding: 4px 8px;
     background-color: rgb(45, 45, 50);
     selection-background-color: #0078d7;
+    border-radius: 6px;
+    padding: 4px 8px 4px 8px;
 }
 
 /* TableWidget */
@@ -110,7 +104,7 @@ QPushButton
 
 QPushButton:hover 
 {
-    background-color: rgb(50, 50, 75);
+    background-color: rgb(80, 80, 105);
     border-radius: 6px;
 }
 
@@ -121,7 +115,7 @@ QPushButton#SaveProfileButton
 
 QPushButton#SaveProfileButton:hover 
 {
-    background-color: rgb(30, 95, 35);
+    background-color: rgb(55, 120, 60);
 }
 
 /* Checkbox */

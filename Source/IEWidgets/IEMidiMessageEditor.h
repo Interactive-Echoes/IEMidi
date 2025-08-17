@@ -22,8 +22,8 @@ public:
     explicit IEMidiMessageEditor(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage, QWidget* Parent = nullptr);
 
 public:
-    std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> GetValues() const;
-    void SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage) const;
+    const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& GetValues() const;
+    void SetValues(const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>& MidiMessage);
     void ShowByteWidget(size_t Index) const;
     void HideByteWidget(size_t Index) const;
     
@@ -31,8 +31,9 @@ Q_SIGNALS:
     void OnMidiMessageCommitted() const;
 
 private Q_SLOTS:
-    void OnMidiByteCommitted() const;
+    void OnMidiByteCommitted();
 
 private:
     std::array<QSpinBox*, MIDI_MESSAGE_BYTE_COUNT> m_SpinBoxWidgets;
+    std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> m_MidiMessage;
 };

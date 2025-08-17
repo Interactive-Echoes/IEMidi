@@ -94,16 +94,6 @@ IEMidiDeviceInputPropertyEditor::IEMidiDeviceInputPropertyEditor(IEMidiDeviceInp
     OnMidiActionTypeChanged(IEMidiActionType::None, m_MidiActionTypeDropdownWidget->GetValue());
 }
 
-bool IEMidiDeviceInputPropertyEditor::IsRecording() const
-{
-    bool bIsRecording = false;
-    if (m_RecordButtonWidget)
-    {
-        bIsRecording = m_RecordButtonWidget->isChecked();
-    }
-    return bIsRecording;
-}
-
 void IEMidiDeviceInputPropertyEditor::OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType) const
 {
     m_MidiDeviceInputProperty.MidiMessageType = NewMidiMessageType;
@@ -129,9 +119,13 @@ void IEMidiDeviceInputPropertyEditor::paintEvent(QPaintEvent* event)
             m_RecordButtonWidget->setChecked(m_MidiDeviceInputProperty.bIsRecording);
         }
 
+        // We need to poll for incoming midi messages when we are done recording
         if (m_MidiMessageEditorWidget)
         {
-            m_MidiMessageEditorWidget->SetValues(m_MidiDeviceInputProperty.MidiMessage);
+            if (m_MidiMessageEditorWidget->GetValues() != m_MidiDeviceInputProperty.MidiMessage)
+            {
+                m_MidiMessageEditorWidget->SetValues(m_MidiDeviceInputProperty.MidiMessage);
+            }
         }
     }
 

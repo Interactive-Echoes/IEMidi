@@ -53,6 +53,8 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
         }
     }
 
+    m_MidiProcessor->SetTestMode(true);
+
     const std::string& AppStylePath = std::format("{0}/Stylesheets/MainStylesheet.qss", Resources_Folder_Path);
     QFile AppStyle(AppStylePath.c_str());
     if (AppStyle.open(QFile::ReadOnly))
@@ -68,7 +70,7 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str());
     const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
     QFont GlobalFont(FontFamily, 14);
-    GlobalFont.setStretch(95);
+    GlobalFont.setStretch(92);
     GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5f);
     setFont(GlobalFont);
 
@@ -195,7 +197,7 @@ void IEMidiApp::DrawMidiDeviceSelection()
                 QLabel* const SelectMIDIDeviceLabel = new QLabel("No Midi Device Available", MidiDeviceSelectionWidget);
                 MidiDeviceSelectionLayout->addWidget(SelectMIDIDeviceLabel);
                 SelectMIDIDeviceLabel->setAlignment(Qt::AlignCenter);
-                SelectMIDIDeviceLabel->setStyleSheet("font-size: 24px; font-weight: bold; color: rgba(175, 55, 55, 1);");
+                SelectMIDIDeviceLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: rgba(175, 55, 55, 1);");
             }
         }
         m_MainWindow->show();
