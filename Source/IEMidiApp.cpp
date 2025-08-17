@@ -53,8 +53,6 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
         }
     }
 
-    m_MidiProcessor->SetTestMode(true);
-
     const std::string& AppStylePath = std::format("{0}/Stylesheets/MainStylesheet.qss", Resources_Folder_Path);
     QFile AppStyle(AppStylePath.c_str());
     if (AppStyle.open(QFile::ReadOnly))
