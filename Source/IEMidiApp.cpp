@@ -57,13 +57,20 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QFile AppStyle(AppStylePath.c_str());
     if (AppStyle.open(QFile::ReadOnly))
     {
-        QString StyleSheet = QLatin1String(AppStyle.readAll());
+        const QString StyleSheet = QLatin1String(AppStyle.readAll());
         setStyleSheet(StyleSheet);
     }
 
     QPalette Palette = QApplication::palette();
     Palette.setColor(QPalette::Window, Qt::black);
     QApplication::setPalette(Palette);
+
+    const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str());
+    const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
+    QFont GlobalFont(FontFamily, 14);
+    GlobalFont.setStretch(95);
+    GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5f);
+    setFont(GlobalFont);
 
     SetupMainWindow();
     SetupTrayIcon();

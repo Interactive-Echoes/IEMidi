@@ -5,37 +5,56 @@
 #include "IEMidiActionTypeDropdown.h"
 
 #include "qboxlayout.h"
-#include "qcombobox.h"
+#include "qpainter.h"
 
 IEMidiActionTypeDropdown::IEMidiActionTypeDropdown(QWidget* Parent) :
-    QWidget(Parent)
+    QComboBox(Parent)
 {
-    m_ComboBoxWidget = new QComboBox(this);
-    m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_ComboBoxWidget->addItem("-Action Type-");
-    m_ComboBoxWidget->addItem("Volume");
-    m_ComboBoxWidget->addItem("Mute");
-    m_ComboBoxWidget->addItem("ConsoleCommand");
-    m_ComboBoxWidget->addItem("OpenFile");
-    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdown::OnComboBoxIndexChanged);
+    //setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    addItem("-Action Type-");
+    addItem("Volume");
+    addItem("Mute");
+    addItem("ConsoleCommand");
+    addItem("OpenFile");
+    //setFixedWidth(160);
+    connect(this, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdown::OnComboBoxIndexChanged);
 
     QHBoxLayout* const Layout = new QHBoxLayout(this);
-    Layout->setContentsMargins(0, 0, 0, 0);
-    Layout->addWidget(m_ComboBoxWidget);
+    //Layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void IEMidiActionTypeDropdown::SetValue(IEMidiActionType MidiActionType)
 {
-    if (m_ComboBoxWidget)
-    {
-        m_ComboBoxWidget->setCurrentIndex(static_cast<int>(MidiActionType));
-        m_CachedMidiActionType = MidiActionType;
-    }
+    setCurrentIndex(static_cast<int>(MidiActionType));
+    m_CachedMidiActionType = MidiActionType;
 }
 
 IEMidiActionType IEMidiActionTypeDropdown::GetValue() const
 {
     return m_CachedMidiActionType;
+}
+
+void IEMidiActionTypeDropdown::paintEvent(QPaintEvent* PaintEvent)
+{
+    static const std::string ArrowIconPath = std::string(IEResources_Folder_Path) + "/Icons/Down-Arrow.png";
+    static const QPixmap ArrowPixmap(ArrowIconPath.c_str());
+
+    QPainter Painter(this);
+
+    QStyleOptionComboBox StyleOption;
+    initStyleOption(&StyleOption);
+
+    style()->drawPrimitive(QStyle::PE_PanelButtonCommand, &StyleOption, &Painter, this);
+    style()->drawControl(QStyle::CE_ComboBoxLabel, &StyleOption, &Painter, this);
+    
+    if (!ArrowPixmap.isNull())
+    {
+        static const int ArrowSize = 12;
+        QRect ArrowRect(width() - ArrowSize - 6, (height() - ArrowSize) / 2, ArrowSize, ArrowSize);
+        Painter.fillRect(ArrowRect.adjusted(-2, -2, 2, 2), palette().button());
+        Painter.drawPixmap(ArrowRect, ArrowPixmap);
+        style()->drawItemPixmap(&Painter, ArrowRect, 0, ArrowPixmap);
+    }
 }
 
 void IEMidiActionTypeDropdown::OnComboBoxIndexChanged(int NewIndex)

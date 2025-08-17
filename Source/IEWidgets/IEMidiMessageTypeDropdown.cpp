@@ -5,37 +5,55 @@
 #include "IEMidiMessageTypeDropdown.h"
 
 #include "qboxlayout.h"
-#include "qcombobox.h"
+#include "qpainter.h"
 
 #include "IELog.h"
 
 IEMidiMessageTypeDropdown::IEMidiMessageTypeDropdown(QWidget* Parent) :
-    QWidget(Parent)
+    QComboBox(Parent)
 {
-    m_ComboBoxWidget = new QComboBox(this);
-    m_ComboBoxWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_ComboBoxWidget->addItem("-Message Type-");
-    m_ComboBoxWidget->addItem("NoteOnOff");
-    m_ComboBoxWidget->addItem("ControlChange");
-    m_ComboBoxWidget->connect(m_ComboBoxWidget, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdown::OnComboBoxIndexChanged);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    addItem("-Message Type-");
+    addItem("NoteOnOff");
+    addItem("ControlChange");
+    setFixedWidth(160);
+    connect(this, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdown::OnComboBoxIndexChanged);
 
     QHBoxLayout* const Layout = new QHBoxLayout(this);
     Layout->setContentsMargins(0, 0, 0, 0);
-    Layout->addWidget(m_ComboBoxWidget);
 }
 
 void IEMidiMessageTypeDropdown::SetValue(IEMidiMessageType MidiMessageType)
 {
-    if (m_ComboBoxWidget)
-    {
-        m_ComboBoxWidget->setCurrentIndex(static_cast<int>(MidiMessageType));
-        m_CachedMidiMessageType = MidiMessageType;
-    }
+    setCurrentIndex(static_cast<int>(MidiMessageType));
 }
 
 IEMidiMessageType IEMidiMessageTypeDropdown::GetValue() const
 {
     return m_CachedMidiMessageType;
+}
+
+void IEMidiMessageTypeDropdown::paintEvent(QPaintEvent* PaintEvent)
+{
+    static const std::string ArrowIconPath = std::string(IEResources_Folder_Path) + "/Icons/Down-Arrow.png";
+    static const QPixmap ArrowPixmap(ArrowIconPath.c_str());
+
+    QPainter Painter(this);
+
+    QStyleOptionComboBox StyleOption;
+    initStyleOption(&StyleOption);
+
+    style()->drawPrimitive(QStyle::PE_PanelButtonCommand, &StyleOption, &Painter, this);
+    style()->drawControl(QStyle::CE_ComboBoxLabel, &StyleOption, &Painter, this);
+    
+    if (!ArrowPixmap.isNull())
+    {
+        static const int ArrowSize = 12;
+        QRect ArrowRect(width() - ArrowSize - 6, (height() - ArrowSize) / 2, ArrowSize, ArrowSize);
+        Painter.fillRect(ArrowRect.adjusted(-2, -2, 2, 2), palette().button());
+        Painter.drawPixmap(ArrowRect, ArrowPixmap);
+        style()->drawItemPixmap(&Painter, ArrowRect, 0, ArrowPixmap);
+    }
 }
 
 void IEMidiMessageTypeDropdown::OnComboBoxIndexChanged(int NewIndex)

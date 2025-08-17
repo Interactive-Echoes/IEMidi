@@ -4,13 +4,11 @@
 
 #pragma once
 
-#include "qwidget.h"
+#include "qcombobox.h"
 
 #include "IEMidiTypes.h"
 
-class QComboBox;
-
-class IEMidiActionTypeDropdown : public QWidget
+class IEMidiActionTypeDropdown : public QComboBox
 {
     Q_OBJECT
 
@@ -21,14 +19,14 @@ public:
     void SetValue(IEMidiActionType MidiActionType);
     IEMidiActionType GetValue() const;
 
+protected:
+    void paintEvent(QPaintEvent* PaintEvent) override;
+
 Q_SIGNALS:
     void OnMidiActionTypeChanged(IEMidiActionType OldMidiActionType, IEMidiActionType NewMidiActionType);
 
 private Q_SLOTS:
     void OnComboBoxIndexChanged(int NewIndex);
-
-private:
-    QComboBox* m_ComboBoxWidget;
 
 private:
     IEMidiActionType m_CachedMidiActionType = IEMidiActionType::None;

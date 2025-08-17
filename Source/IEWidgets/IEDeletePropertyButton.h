@@ -16,7 +16,4 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* PaintEvent) override;
-
-private:
-    
 };

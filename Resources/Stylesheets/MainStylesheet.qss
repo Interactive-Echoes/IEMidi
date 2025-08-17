@@ -70,7 +70,7 @@ QComboBox
 {
     background-color: rgb(30, 30, 40);
     border-radius: 5px;
-    padding: 4px 28px 4px 8px;
+    padding: 4px 8px 4px 8px;
 }
 
 QComboBox::item 
@@ -91,13 +91,7 @@ QComboBox QAbstractItemView
 {
     background-color: rgb(25, 25, 35);
     border-radius: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-QComboBox::drop-down 
-{
-    border-radius: 5px;
+    padding: 5px 5px 5px 5px;
 }
 
 /* TableWidget */

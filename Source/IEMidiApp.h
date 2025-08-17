@@ -59,4 +59,5 @@ private:
 
 private:
     inline static const std::string m_IEIconPath = std::string(IEResources_Folder_Path) + "/IE-Brand-Kit/IE-Logo-NoBg.png";
+    inline static const std::string m_IEFontPath = std::string(IEResources_Folder_Path) + "/Fonts/Montserrat/Montserrat-VariableFont_wght.ttf";
 };

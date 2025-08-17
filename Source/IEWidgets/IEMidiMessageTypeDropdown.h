@@ -4,13 +4,12 @@
 
 #pragma once
 
-#include "qwidget.h"
+#include "qcombobox.h"
+#include "qpixmap.h"
 
 #include "IEMidiTypes.h"
 
-class QComboBox;
-
-class IEMidiMessageTypeDropdown : public QWidget
+class IEMidiMessageTypeDropdown : public QComboBox
 {
     Q_OBJECT
 
@@ -21,6 +20,9 @@ public:
     void SetValue(IEMidiMessageType MidiMessageType);
     IEMidiMessageType GetValue() const;
 
+protected:
+    void paintEvent(QPaintEvent* PaintEvent) override;
+
 Q_SIGNALS:
     void OnMidiMessageTypeChanged(IEMidiMessageType OldMidiMessageType, IEMidiMessageType NewMidiMessageType);
 
@@ -28,8 +30,6 @@ private Q_SLOTS:
     void OnComboBoxIndexChanged(int NewIndex);
 
 private:
-    QComboBox* m_ComboBoxWidget;
-
-private:
+    QPixmap m_Arrow;
     IEMidiMessageType m_CachedMidiMessageType = IEMidiMessageType::None;
 };
