@@ -6,21 +6,26 @@
 
 #include "qboxlayout.h"
 #include "qpainter.h"
+#include "qstyleditemdelegate.h"
+#include "qabstractitemview.h"
+
+#include "IEDropdownItemDelegate.h"
 
 IEMidiActionTypeDropdown::IEMidiActionTypeDropdown(QWidget* Parent) :
     QComboBox(Parent)
 {
-    //setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setFixedWidth(160);
+    connect(this, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdown::OnComboBoxIndexChanged);
+    setItemDelegate(new IEDropdownItemDelegate(this));
+
     addItem("-Action Type-");
     addItem("Volume");
     addItem("Mute");
     addItem("ConsoleCommand");
     addItem("OpenFile");
-    //setFixedWidth(160);
-    connect(this, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdown::OnComboBoxIndexChanged);
-
+    
     QHBoxLayout* const Layout = new QHBoxLayout(this);
-    //Layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void IEMidiActionTypeDropdown::SetValue(IEMidiActionType MidiActionType)

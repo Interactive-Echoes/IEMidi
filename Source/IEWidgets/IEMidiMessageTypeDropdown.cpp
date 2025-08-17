@@ -9,18 +9,21 @@
 
 #include "IELog.h"
 
+#include "IEDropdownItemDelegate.h"
+
 IEMidiMessageTypeDropdown::IEMidiMessageTypeDropdown(QWidget* Parent) :
     QComboBox(Parent)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setFixedWidth(160);
+    connect(this, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdown::OnComboBoxIndexChanged);
+    setItemDelegate(new IEDropdownItemDelegate(this));
+
     addItem("-Message Type-");
     addItem("NoteOnOff");
     addItem("ControlChange");
-    setFixedWidth(160);
-    connect(this, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdown::OnComboBoxIndexChanged);
-
+    
     QHBoxLayout* const Layout = new QHBoxLayout(this);
-    Layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void IEMidiMessageTypeDropdown::SetValue(IEMidiMessageType MidiMessageType)

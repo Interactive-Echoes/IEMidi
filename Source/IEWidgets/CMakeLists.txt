@@ -7,6 +7,8 @@ cmake_minimum_required(VERSION 3.20)
 set(IEMidi_WIDGET_FILES 
   "${CMAKE_CURRENT_SOURCE_DIR}/IEDeletePropertyButton.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEDeletePropertyButton.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEDropdownItemDelegate.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IEDropdownItemDelegate.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEFileBrowserWidget.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/IEMidiActionTypeDropdown.cpp"

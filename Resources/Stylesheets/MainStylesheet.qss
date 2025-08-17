@@ -69,23 +69,9 @@ QMenu::item:selected
 QComboBox 
 {
     background-color: rgb(30, 30, 40);
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 4px 8px 4px 8px;
 }
-
-QComboBox::item 
-{
-    min-height: 35px;
-    min-width: 50px;
-    outline: none;
-}
-
-QComboBox::item:selected
-{
-    color: black;
-    background-color: lightgray;
-    border-radius: 5px;
-} 
 
 QComboBox QAbstractItemView 
 {
