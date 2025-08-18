@@ -14,8 +14,6 @@
 IEMidiActionTypeDropdown::IEMidiActionTypeDropdown(QWidget* Parent) :
     QComboBox(Parent)
 {
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    setFixedWidth(160);
     connect(this, &QComboBox::currentIndexChanged, this, &IEMidiActionTypeDropdown::OnComboBoxIndexChanged);
     setItemDelegate(new IEDropdownItemDelegate(this));
 
@@ -24,8 +22,6 @@ IEMidiActionTypeDropdown::IEMidiActionTypeDropdown(QWidget* Parent) :
     addItem("Mute");
     addItem("ConsoleCommand");
     addItem("OpenFile");
-    
-    QHBoxLayout* const Layout = new QHBoxLayout(this);
 }
 
 void IEMidiActionTypeDropdown::SetValue(IEMidiActionType MidiActionType)

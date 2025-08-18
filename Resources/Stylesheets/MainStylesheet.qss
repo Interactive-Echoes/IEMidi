@@ -13,7 +13,6 @@ QWidget
 {
     background-color: none;
     color: #eaeaea;
-    font-size: 13pt;
     border-radius: 0px;
 }
 
@@ -98,7 +97,7 @@ QPushButton
 {
     background-color: rgb(40, 40, 65);
     border: 0px;
-    padding: 3px 8px;
+    padding: 4px 8px;
     border-radius: 4px;
 }
 

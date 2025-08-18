@@ -14,16 +14,12 @@
 IEMidiMessageTypeDropdown::IEMidiMessageTypeDropdown(QWidget* Parent) :
     QComboBox(Parent)
 {
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    setFixedWidth(160);
     connect(this, &QComboBox::currentIndexChanged, this, &IEMidiMessageTypeDropdown::OnComboBoxIndexChanged);
     setItemDelegate(new IEDropdownItemDelegate(this));
 
     addItem("-Message Type-");
     addItem("NoteOnOff");
     addItem("ControlChange");
-    
-    QHBoxLayout* const Layout = new QHBoxLayout(this);
 }
 
 void IEMidiMessageTypeDropdown::SetValue(IEMidiMessageType MidiMessageType)

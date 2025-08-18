@@ -65,12 +65,14 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     Palette.setColor(QPalette::Window, Qt::black);
     QApplication::setPalette(Palette);
 
-    const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str());
-    const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
-    QFont GlobalFont(FontFamily, 14);
-    GlobalFont.setStretch(92);
-    GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5f);
-    setFont(GlobalFont);
+    if (const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str()); FontID != -1)
+    {
+        const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
+        QFont GlobalFont(FontFamily, 12);
+        GlobalFont.setStretch(95);
+        GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5f);
+        setFont(GlobalFont);
+    }
 
     SetupMainWindow();
     SetupTrayIcon();
@@ -335,8 +337,8 @@ void IEMidiApp::DrawActiveMidiDeviceInputEditor(QWidget* Parent)
         MidiInputEditorLayout->addSpacing(10);
 
         QPushButton* const AddInputPropertyButton = new QPushButton("Add Property", MidiInputEditorFrame);
+        AddInputPropertyButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         MidiInputEditorLayout->addWidget(AddInputPropertyButton);
-        AddInputPropertyButton->setMaximumWidth(120);
         AddInputPropertyButton->connect(AddInputPropertyButton, &QPushButton::pressed, [=, this]()
             {
                 if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
@@ -400,7 +402,7 @@ void IEMidiApp::DrawActiveMidiDeviceOutputEditor(QWidget* Parent) const
 
         QPushButton* const AddOutputPropertyButton = new QPushButton("Add Property", MidiOutputEditorFrame);
         MidiOutputEditorLayout->addWidget(AddOutputPropertyButton);
-        AddOutputPropertyButton->setMaximumWidth(120);
+        AddOutputPropertyButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         AddOutputPropertyButton->connect(AddOutputPropertyButton, &QPushButton::pressed,
             [this, MidiOutputEditorFrame, MidiOutputEditorLayout]()
             {
