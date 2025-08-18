@@ -26,9 +26,6 @@ class IEMidiDeviceInputPropertyEditor : public QWidget
 public:
     explicit IEMidiDeviceInputPropertyEditor(IEMidiDeviceInputProperty& MidiDeviceInputProperty, QWidget* Parent = nullptr);
 
-public:
-    bool IsRecording() const;
-
 Q_SIGNALS:
     void OnRecording() const;
 
