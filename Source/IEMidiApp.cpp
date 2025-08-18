@@ -17,6 +17,7 @@
 #include "qobject.h"
 #include "qpushbutton.h"
 #include "qsizepolicy.h"
+#include "qstylefactory.h"
 #include "qsystemtrayicon.h"
 #include "qtablewidget.h"
 
@@ -64,6 +65,8 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QPalette Palette = QApplication::palette();
     Palette.setColor(QPalette::Window, Qt::black);
     QApplication::setPalette(Palette);
+
+    QApplication::setStyle(QStyleFactory::create("fusion"));
 
     if (const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str()); FontID != -1)
     {

@@ -22,7 +22,6 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
                 font-size: 16px; 
                 font-weight: bold;
                 background: transparent;
-                padding-left: 2px;
                 border: none;
             }
         )");

@@ -21,7 +21,6 @@ IEMidiLogger::IEMidiLogger(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COU
             font-size: 16px; 
             font-weight: bold;
             background: transparent;
-            padding-left: 2px;
             border: none;
         }
     )");
