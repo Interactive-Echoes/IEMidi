@@ -66,7 +66,7 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     Palette.setColor(QPalette::Window, Qt::black);
     QApplication::setPalette(Palette);
 
-    QApplication::setStyle(QStyleFactory::create("fusion"));
+    QApplication::setStyle(QStyleFactory::create("windows"));
 
     if (const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str()); FontID != -1)
     {

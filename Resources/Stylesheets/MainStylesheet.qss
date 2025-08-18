@@ -14,6 +14,12 @@ QWidget
     background-color: none;
     color: rgb(220, 220, 220);
     border-radius: 0px;
+    border: 0px;
+}
+
+*:focus 
+{ 
+    outline: none;
 }
 
 QLabel
@@ -77,9 +83,8 @@ QComboBox
 
 QComboBox QAbstractItemView 
 {
-    background-color: rgb(25, 25, 35);
-    border-radius: 5px;
-    padding: 5px 5px 5px 5px;
+    /* background-color: rgb(25, 25, 35); */
+    border-radius: 10px;
 }
 
 QLineEdit,
