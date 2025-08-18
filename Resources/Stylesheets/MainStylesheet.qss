@@ -6,32 +6,27 @@ Author: mozahzah
 
 QMainWindow
 {
-    background-color: rgb(5, 5, 5);
+    background-color: rgb(0, 0, 0);
 }
 
 QWidget 
 {
     background-color: none;
-    color: #eaeaea;
+    color: rgb(220, 220, 220);
     border-radius: 0px;
 }
 
 QLabel
 {
     background-color: none;
+    color: rgb(234,234,234);
 }
 
 #MidiDeviceSelectionWidget, 
 #MidiDeviceEntryWidget
 {
-    background-color: rgb(20, 20, 20);
+    background-color: rgb(15, 15, 15);
     border-radius: 10px;
-}
-
-#MidiDeviceInfo,
-#MidiLogger
-{
-    background-color: rgb(20, 20, 20);
 }
 
 #SelectedMidiDeviceLabel
@@ -39,6 +34,18 @@ QLabel
     font-size: 30px;
     font-weight: bold;
     padding: 0;
+}
+
+#SidebarFrame
+{
+    background-color: rgb(15, 15, 15);
+    margin: 20px 0px 20px 20px;
+    border-radius: 10px;
+}
+
+#CentralWidget
+{
+    background-color: rgb(25, 25, 25);
 }
 
 #SelectedMidiDeviceEditorFrame
@@ -89,6 +96,13 @@ QSpinBox
 QTableWidget 
 {
     background: transparent;
+    padding: 0px;
+}
+
+QTableWidget::item 
+{
+    padding: 1px;
+    margin: 0px;
 }
 
 /* PushButton */
@@ -122,25 +136,24 @@ QPushButton#SaveProfileButton:hover
 QCheckBox 
 {
 	padding: 6px;
+    spacing: 5px;
 }
 
 QCheckBox:hover 
 {
 	border-radius:8px;
 	padding: 6px;
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(190, 90, 50, 50), stop:1 rgba(250, 130, 40, 50));
+    background-color: rgba(198, 121, 246, 0.2);
 }
 
 QCheckBox::indicator:checked 
 {
-	border:1px solid rgb(246, 134, 86);
 	border-radius:4px;
-  	background-color:rgb(246, 134, 86)
+  	background-color: rgb(198, 121, 246);
 }
 
 QCheckBox::indicator:unchecked 
 {
-	border-width:1px solid rgb(246, 134, 86);
-	border-radius:4px;
-  	background-color:rgb(255,255,255);
+	border-radius: 4px;
+  	background-color: rgb(255,255,255);
 }

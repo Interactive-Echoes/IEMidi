@@ -14,13 +14,14 @@ IEMidiLogger::IEMidiLogger(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COU
     m_MidiLogMessagesBuffer(IncomingMidiMessages)
 {
     QLabel* const MidiLoggerLabel = new QLabel("Midi Logger", this);
-    MidiLoggerLabel->setAlignment(Qt::AlignCenter);
+    MidiLoggerLabel->setAlignment(Qt::AlignLeft);
     MidiLoggerLabel->setStyleSheet(R"(
         QLabel 
         {
             font-size: 16px; 
             font-weight: bold;
             background: transparent;
+            padding-left: 2px;
             border: none;
         }
     )");
@@ -64,9 +65,9 @@ IEMidiLogger::IEMidiLogger(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COU
     UpdateTimer->start(25);
     
     QVBoxLayout* const Layout = new QVBoxLayout(this);
-    Layout->setContentsMargins(15, 15, 15, 15);
+    Layout->setContentsMargins(20, 10, 20, 20);
     Layout->addWidget(MidiLoggerLabel);
-    Layout->addSpacing(10);
+    Layout->addSpacing(30);
     Layout->addWidget(m_MidiLoggerTableWidget, 1);
 }
 
@@ -96,7 +97,7 @@ void IEMidiLogger::FlushMidiMessagesToTable() const
 QTableWidgetItem* IEMidiLogger::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
 {
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
-    TableWidgetItem->setTextAlignment(Qt::AlignCenter);
+    TableWidgetItem->setTextAlignment(Qt::AlignLeft);
     QFont Font = TableWidgetItem->font();
     Font.setBold(bBold);
     TableWidgetItem->setFont(Font);

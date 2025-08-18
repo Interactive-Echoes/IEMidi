@@ -15,13 +15,14 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
     if (m_MidiProcessor.HasActiveMidiDeviceProfile())
     {
         QLabel* const MidiDeviceInfoLabel = new QLabel("Midi Device Info", this);
-        MidiDeviceInfoLabel->setAlignment(Qt::AlignCenter);
+        MidiDeviceInfoLabel->setAlignment(Qt::AlignLeft);
         MidiDeviceInfoLabel->setStyleSheet(R"(
             QLabel 
             {
                 font-size: 16px; 
                 font-weight: bold;
                 background: transparent;
+                padding-left: 2px;
                 border: none;
             }
         )");
@@ -36,13 +37,7 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
         MidiDeviceInfoTableWidget->setShowGrid(false);
         MidiDeviceInfoTableWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         MidiDeviceInfoTableWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        MidiDeviceInfoTableWidget->setStyleSheet(R"(
-            QTableWidget 
-            {
-                background: transparent;
-                border: none;
-            }
-        )");
+        MidiDeviceInfoTableWidget->setContentsMargins(0, 0, 0, 0);
 
         if (QHeaderView* const HHeader = MidiDeviceInfoTableWidget->horizontalHeader())
         {
@@ -77,9 +72,9 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
         MidiDeviceInfoTableWidget->setItem(4, 1, CreateCenteredTableWidgetItem("1"));
 
         QVBoxLayout* const Layout = new QVBoxLayout(this);
-        Layout->setContentsMargins(15, 40, 15, 15);
+        Layout->setContentsMargins(20, 30, 20, 20);
         Layout->addWidget(MidiDeviceInfoLabel);
-        Layout->addSpacing(10);
+        Layout->addSpacing(30);
         Layout->addWidget(MidiDeviceInfoTableWidget, 1);
     }
 }
@@ -87,7 +82,7 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
 QTableWidgetItem* IEMidiDeviceInfo::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
 {
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
-    TableWidgetItem->setTextAlignment(Qt::AlignCenter);
+    TableWidgetItem->setTextAlignment(Qt::AlignLeft);
     QFont Font = TableWidgetItem->font();
     Font.setBold(bBold);
     TableWidgetItem->setFont(Font);
