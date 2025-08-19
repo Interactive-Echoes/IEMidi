@@ -83,7 +83,7 @@ QTableWidgetItem* IEMidiDeviceInfo::CreateCenteredTableWidgetItem(const QString&
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
     TableWidgetItem->setTextAlignment(Qt::AlignLeft);
     QFont Font = TableWidgetItem->font();
-    Font.setBold(bBold);
+    bBold ? Font.setBold(true) : Font.setWeight(QFont::Weight::Normal);
     TableWidgetItem->setFont(Font);
     TableWidgetItem->setBackground(Qt::NoBrush);
     TableWidgetItem->setFlags(TableWidgetItem->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEditable);

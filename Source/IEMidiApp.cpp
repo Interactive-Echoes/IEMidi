@@ -71,8 +71,13 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     if (const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str()); FontID != -1)
     {
         const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
-        QFont GlobalFont(FontFamily, 12);
+        QFont GlobalFont(FontFamily, 13);
         GlobalFont.setStretch(95);
+        GlobalFont.setWeight(QFont::Weight::Normal);
+        GlobalFont.setHintingPreference(QFont::PreferFullHinting);
+        GlobalFont.setStyleStrategy(QFont::PreferAntialias);
+        GlobalFont.setKerning(true);
+        GlobalFont.setFixedPitch(false);
         GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5f);
         setFont(GlobalFont);
     }
