@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Interactive-Echoes/IECore/raw/master/Resources/IE-Brand-Kit/IE-Logo-Alt-NoBg.png?">
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Interactive-Echoes/IECore/raw/master/Resources/IE-Brand-Kit/IE-Logo-NoBg.png?">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Interactive-Echoes/IEResources/raw/master/IE-Brand-Kit/IE-Logo-Alt-NoBg.png?">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Interactive-Echoes/IEResources/raw/master/IE-Brand-Kit/IE-Logo-NoBg.png?">
   <img alt="IELogo" width="128">
   </picture>
 </div>
