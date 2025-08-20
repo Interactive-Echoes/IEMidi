@@ -71,7 +71,7 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
         MidiDeviceInfoTableWidget->setItem(4, 1, CreateCenteredTableWidgetItem("1"));
 
         QVBoxLayout* const Layout = new QVBoxLayout(this);
-        Layout->setContentsMargins(20, 30, 20, 20);
+        Layout->setContentsMargins(30, 30, 30, 20);
         Layout->addWidget(MidiDeviceInfoLabel);
         Layout->addSpacing(30);
         Layout->addWidget(MidiDeviceInfoTableWidget, 1);

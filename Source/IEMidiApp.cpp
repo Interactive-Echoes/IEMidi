@@ -269,7 +269,7 @@ void IEMidiApp::DrawActiveMidiDeviceEditor(QWidget* Parent)
 
         QVBoxLayout* const SelectedMidiDeviceEditorLayout = new QVBoxLayout(SelectedMidiDeviceEditorFrame);
         SelectedMidiDeviceEditorFrame->setLayout(SelectedMidiDeviceEditorLayout);
-        SelectedMidiDeviceEditorLayout->setContentsMargins(30, 0, 30, 0);
+        SelectedMidiDeviceEditorLayout->setContentsMargins(40, 0, 40, 0);
         SelectedMidiDeviceEditorLayout->setSpacing(0);
 
         if (m_MidiProcessor && m_MidiProcessor->HasActiveMidiDeviceProfile())
