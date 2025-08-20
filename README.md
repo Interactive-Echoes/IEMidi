@@ -11,7 +11,7 @@
 **IEMidi** is a cross-platform MIDI editor built with ImGui and RtMidi.  
 The editor is designed to map any MIDI message to various actions such as volume control, mute, console commands or opening files.
 <div align="center">
-<img src="https://github.com/Interactive-Echoes/IEMidi/raw/master/Resources/Demos/IEMidi-Demo-Editor.png" alt="Demo" width="1920"> 
+<img src="https://github.com/Interactive-Echoes/IEMidi/raw/master/Resources/Demos/IEMidi-2-Demo-Editor.png" alt="Demo" width="1920"> 
 </div>
 
 ## Installation
