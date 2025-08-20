@@ -15,7 +15,7 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
     if (m_MidiProcessor.HasActiveMidiDeviceProfile())
     {
         QLabel* const MidiDeviceInfoLabel = new QLabel("Midi Device Info", this);
-        MidiDeviceInfoLabel->setAlignment(Qt::AlignLeft);
+        MidiDeviceInfoLabel->setAlignment(Qt::AlignCenter);
         MidiDeviceInfoLabel->setStyleSheet(R"(
             QLabel 
             {

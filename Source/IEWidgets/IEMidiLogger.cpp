@@ -14,7 +14,7 @@ IEMidiLogger::IEMidiLogger(IESPSCQueue<std::array<uint8_t, MIDI_MESSAGE_BYTE_COU
     m_MidiLogMessagesBuffer(IncomingMidiMessages)
 {
     QLabel* const MidiLoggerLabel = new QLabel("Midi Logger", this);
-    MidiLoggerLabel->setAlignment(Qt::AlignLeft);
+    MidiLoggerLabel->setAlignment(Qt::AlignCenter);
     MidiLoggerLabel->setStyleSheet(R"(
         QLabel 
         {
@@ -96,7 +96,7 @@ void IEMidiLogger::FlushMidiMessagesToTable() const
 QTableWidgetItem* IEMidiLogger::CreateCenteredTableWidgetItem(const QString& Text, bool bBold) const
 {
     QTableWidgetItem* const TableWidgetItem = new QTableWidgetItem(Text);
-    TableWidgetItem->setTextAlignment(Qt::AlignLeft);
+    TableWidgetItem->setTextAlignment(Qt::AlignCenter);
     QFont Font = TableWidgetItem->font();
     bBold ? Font.setBold(true) : Font.setWeight(QFont::Weight::Normal);
     TableWidgetItem->setFont(Font);

@@ -237,8 +237,9 @@ void IEMidiApp::DrawActiveMidiDeviceSideBar(QWidget* Parent)
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
         QFrame* const SideBarFrame = new QFrame(Parent);
-        ParentLayout->addWidget(SideBarFrame, 1);
+        ParentLayout->addWidget(SideBarFrame);
         SideBarFrame->setObjectName("SidebarFrame");
+        SideBarFrame->setFixedWidth(300);
 
         QVBoxLayout* const SideBarLayout = new QVBoxLayout(SideBarFrame);
         SideBarFrame->setLayout(SideBarLayout);
@@ -263,7 +264,7 @@ void IEMidiApp::DrawActiveMidiDeviceEditor(QWidget* Parent)
     if (QBoxLayout* const ParentLayout = qobject_cast<QBoxLayout*>(Parent->layout()))
     {
         QFrame* const SelectedMidiDeviceEditorFrame = new QFrame(Parent);
-        ParentLayout->addWidget(SelectedMidiDeviceEditorFrame, 8);
+        ParentLayout->addWidget(SelectedMidiDeviceEditorFrame);
         SelectedMidiDeviceEditorFrame->setObjectName("SelectedMidiDeviceEditorFrame");
 
         QVBoxLayout* const SelectedMidiDeviceEditorLayout = new QVBoxLayout(SelectedMidiDeviceEditorFrame);

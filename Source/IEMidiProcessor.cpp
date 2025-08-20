@@ -204,6 +204,10 @@ const IEMidiDeviceProfile& IEMidiProcessor::GetActiveMidiDeviceProfile() const
 void IEMidiProcessor::SetTestMode(bool bTestMode)
 {
     m_bTestMode = bTestMode;
+    for (int i = 0; i < 10; i++)
+    {
+        m_MidiLogMessagesBuffer.Push(std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT>{127, 0, 0});
+    }
 }
 
 IEResult IEMidiProcessor::ActivateMidiDeviceProfile(const std::string& MidiDeviceName)
