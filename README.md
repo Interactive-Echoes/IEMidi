@@ -44,7 +44,8 @@ sudo apt install iemidi
 
 ## Third-Party Libraries Used
 - [Qt](https://github.com/qt)
-- [IEActions](https://github.com/mozahzah/IEActions.git)
+- [IEActions](https://github.com/Interactive-Echoes/IEActions)
+- [IEConcurrency](https://github.com/Interactive-Echoes/IEConcurrency)
 - [RtMidi](https://github.com/thestk/rtmidi)
 - [Rapid YAML](https://github.com/biojppm/rapidyaml)
 
