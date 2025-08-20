@@ -8,7 +8,7 @@
 
 # IEMidi
 
-**IEMidi** is a cross-platform MIDI editor built with ImGui and RtMidi.  
+**IEMidi** is a cross-platform MIDI editor built with Qt and RtMidi.  
 The editor is designed to map any MIDI message to various actions such as volume control, mute, console commands or opening files.
 <div align="center">
 <img src="https://github.com/Interactive-Echoes/IEMidi/raw/master/Resources/Demos/IEMidi-2-Demo-Editor.png" alt="Demo" width="1920"> 
@@ -43,7 +43,7 @@ sudo apt install iemidi
 ```
 
 ## Third-Party Libraries Used
-- [IECore](https://github.com/mozahzah/IECore.git)
+- [Qt](https://github.com/qt)
 - [IEActions](https://github.com/mozahzah/IEActions.git)
 - [RtMidi](https://github.com/thestk/rtmidi)
 - [Rapid YAML](https://github.com/biojppm/rapidyaml)
