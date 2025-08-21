@@ -67,7 +67,7 @@ IEMidiDeviceInfo::IEMidiDeviceInfo(const IEMidiProcessor& MidiProcessor, QWidget
         MidiDeviceInfoTableWidget->setItem(3, 0, CreateCenteredTableWidgetItem("Current API:", true));
         MidiDeviceInfoTableWidget->setItem(3, 1, CreateCenteredTableWidgetItem(m_MidiProcessor.GetAPIName().c_str()));
 
-        MidiDeviceInfoTableWidget->setItem(4, 0, CreateCenteredTableWidgetItem("IEMidi Version:", true));
+        MidiDeviceInfoTableWidget->setItem(4, 0, CreateCenteredTableWidgetItem("Version:", true));
         MidiDeviceInfoTableWidget->setItem(4, 1, CreateCenteredTableWidgetItem("2"));
 
         QVBoxLayout* const Layout = new QVBoxLayout(this);

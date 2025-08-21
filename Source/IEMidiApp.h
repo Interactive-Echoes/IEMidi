@@ -24,7 +24,7 @@ public:
     ~IEMidiApp();
 
 private:
-    void SetupMainWindow() const;
+    void SetupMainWindow();
     void SetupTrayIcon();
 
 private:
@@ -45,8 +45,8 @@ private:
     void OnMidiCallback(double Timestamp, const std::array<uint8_t, MIDI_MESSAGE_BYTE_COUNT> MidiMessage);
 
 private:
-    const QPointer<QMainWindow> m_MainWindow;
-    const QPointer<QSystemTrayIcon> m_SystemTrayIcon;
+    QPointer<QMainWindow> m_MainWindow;
+    QPointer<QSystemTrayIcon> m_SystemTrayIcon;
 
 private:
     const std::unique_ptr<IEMidiProcessor> m_MidiProcessor;

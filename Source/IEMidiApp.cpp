@@ -30,8 +30,6 @@
 
 IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     QApplication(Argc, Argv),
-    m_MainWindow(new QMainWindow()),
-    m_SystemTrayIcon(new QSystemTrayIcon(m_MainWindow)),
     m_MidiProcessor(std::make_unique<IEMidiProcessor>()),
     m_MidiProfileManager(std::make_unique<IEMidiProfileManager>())
 {
@@ -62,18 +60,19 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
         setStyleSheet(StyleSheet);
     }
 
-    QPalette Palette = QApplication::palette();
+    QPalette Palette = palette();
     Palette.setColor(QPalette::Window, Qt::black);
-    QApplication::setPalette(Palette);
+    setPalette(Palette);
 
-    QApplication::setStyle(QStyleFactory::create("windows"));
+    setStyle(QStyleFactory::create("windows"));
 
     if (const int FontID = QFontDatabase::addApplicationFont(m_IEFontPath.c_str()); FontID != -1)
     {
         const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
-        QFont GlobalFont(FontFamily, 13);
+        QFont GlobalFont(FontFamily);
         GlobalFont.setStretch(95);
-        GlobalFont.setWeight(QFont::Weight::Normal);
+        GlobalFont.setPixelSize(13);
+        GlobalFont.setWeight(QFont::Weight::Medium);
         GlobalFont.setHintingPreference(QFont::PreferFullHinting);
         GlobalFont.setStyleStrategy(QFont::PreferAntialias);
         GlobalFont.setKerning(true);
@@ -96,8 +95,9 @@ IEMidiApp::~IEMidiApp()
     }
 }
 
-void IEMidiApp::SetupMainWindow() const
+void IEMidiApp::SetupMainWindow()
 {
+    m_MainWindow = new QMainWindow();
     if (m_MainWindow)
     {
         m_MainWindow->setWindowTitle("IEMidi");
@@ -109,25 +109,29 @@ void IEMidiApp::SetupMainWindow() const
 
 void IEMidiApp::SetupTrayIcon()
 {
-    if (m_MainWindow && m_SystemTrayIcon)
+    if (m_MainWindow)
     {
-        m_SystemTrayIcon->setIcon(QIcon(m_IEIconPath.c_str()));
-        QMenu* const SystemTrayMenu = new QMenu(m_MainWindow);
-        
-        QAction* const ShowAction = new QAction("Show", SystemTrayMenu);
-        SystemTrayMenu->addAction(ShowAction);
-        m_MainWindow->connect(ShowAction, &QAction::triggered, [this]()
-            {
-                m_MainWindow->show();
-                DrawActiveMidiDeviceEditor();
-            });
+        m_SystemTrayIcon = new QSystemTrayIcon(m_MainWindow);
+        if (m_SystemTrayIcon)
+        {
+            m_SystemTrayIcon->setIcon(QIcon(m_IEIconPath.c_str()));
+            QMenu* const SystemTrayMenu = new QMenu(m_MainWindow);
 
-        QAction* const QuitAction = new QAction("Quit", SystemTrayMenu);
-        SystemTrayMenu->addAction(QuitAction);
-        connect(QuitAction, &QAction::triggered, this, &QCoreApplication::quit);
+            QAction* const ShowAction = new QAction("Show", SystemTrayMenu);
+            SystemTrayMenu->addAction(ShowAction);
+            m_MainWindow->connect(ShowAction, &QAction::triggered, [this]()
+                {
+                    m_MainWindow->show();
+                    DrawActiveMidiDeviceEditor();
+                });
 
-        m_SystemTrayIcon->setContextMenu(SystemTrayMenu);
-        m_SystemTrayIcon->show();
+            QAction* const QuitAction = new QAction("Quit", SystemTrayMenu);
+            SystemTrayMenu->addAction(QuitAction);
+            connect(QuitAction, &QAction::triggered, this, &QCoreApplication::quit);
+
+            m_SystemTrayIcon->setContextMenu(SystemTrayMenu);
+            m_SystemTrayIcon->show();
+        }
     }
 }
 
