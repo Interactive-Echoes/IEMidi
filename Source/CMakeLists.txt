@@ -19,7 +19,7 @@ set(IEMidi_SOURCE_FILES
 add_subdirectory(IEWidgets)
 add_library(LIEMidi STATIC ${IEMidi_SOURCE_FILES} ${IEMidi_WIDGET_FILES})
 target_include_directories(LIEMidi PUBLIC "./")
-set(IEMidi_HEADER_FILES "./IEMidi.h")
+set(IEMidi_HEADER_FILES "./IEMidiApp.h")
 set_property(TARGET LIEMidi PROPERTY PUBLIC_HEADER ${IEMidi_HEADER_FILES})
 
 message("Linking LIEMidi with required libraries")
