@@ -70,14 +70,13 @@ IEMidiApp::IEMidiApp(int& Argc, char** Argv) :
     {
         const QString FontFamily = QFontDatabase::applicationFontFamilies(FontID).at(0);
         QFont GlobalFont(FontFamily);
-        GlobalFont.setStretch(95);
-        GlobalFont.setPixelSize(13);
+        GlobalFont.setPixelSize(14);
         GlobalFont.setWeight(QFont::Weight::Medium);
         GlobalFont.setHintingPreference(QFont::PreferFullHinting);
         GlobalFont.setStyleStrategy(QFont::PreferAntialias);
         GlobalFont.setKerning(true);
         GlobalFont.setFixedPitch(false);
-        GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5f);
+        GlobalFont.setLetterSpacing(QFont::AbsoluteSpacing, 1.0f);
         setFont(GlobalFont);
     }
 
